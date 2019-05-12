@@ -16,6 +16,6 @@ namespace Karen.Interop
         [Description("🔜 LANraragi is starting...")]
         Starting = 3,
         [Description("✌ LANraragi is running")]
-        Started = 3,
+        Started = 4,
     }
 }

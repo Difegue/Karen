@@ -58,5 +58,17 @@ namespace Karen.Properties {
                 this["StartWithWindows"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3000")]
+        public string NetworkPort {
+            get {
+                return ((string)(this["NetworkPort"]));
+            }
+            set {
+                this["NetworkPort"] = value;
+            }
+        }
     }
 }

@@ -8,28 +8,31 @@
         Loaded="KarenPopup_Loaded"
         mc:Ignorable="d"
         BorderThickness="1"
-        Height="450" Width="250">
+        Height="500" Width="250">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" >
-
+        
         <ContentControl Style="{StaticResource LogoIcon}"
                         Foreground="{Binding ForegroundColor}"
                         Width="125" Height="125" Margin="0,25,0,0"/>
 
         <Separator Height="10" Visibility="Hidden"/>
 
-        <emoji:TextBlock Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Center" 
+        <emoji:TextBlock Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="-16,0,0,0"
                          FontSize="16" FontWeight="Bold" Foreground="{Binding ForegroundColor}"
-                         Text="🆙 LANraragi is starting">
+                         Text="{Binding DistroStatus, Converter={StaticResource EnumDescriptionConverter}}">
         </emoji:TextBlock>
 
         <TextBlock TextWrapping="Wrap" Padding="10" FontSize="13" HorizontalAlignment="Center" Foreground="{Binding ForegroundColor}">
-            <Run>You're currently using version</Run><LineBreak/>
-            <Run>0.6.0.BETA.2 - "Moss Garden". </Run>
+            <Run>Version</Run>
+            <Run Text="{Binding Version, Mode=OneWay}"/>
         </TextBlock>
 
-        <Button Width="125" Height="30" Content="Open Client" Margin="10" Style="{StaticResource MDLButton}"  />
+        <Button Width="125" Height="30" Content="Start" Margin="10" Style="{StaticResource MDLButton}" Click="Start_Distro" Visibility="{Binding IsStopped, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Width="125" Height="30" Content="Stop" Margin="10" Style="{StaticResource MDLButton}" Click="Stop_Distro" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Width="125" Height="30" Content="Open Client" Margin="10" Style="{StaticResource MDLButton}" Click="Open_Webclient" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Width="125" Height="30" Content="Log Console" Margin="10" Style="{StaticResource MDLButton}" Click="Show_Console" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Width="125" Height="30" Content="Settings" Margin="10" Style="{StaticResource MDLButton}" Click="Show_Config"/>
-        <Button Width="125" Height="30" Content="Shutdown" Margin="10" Style="{StaticResource MDLButton}" Command="{Binding ExitApplicationCommand}"/>
+        <Button Width="125" Height="30" Content="Quit" Margin="10" Style="{StaticResource MDLButton}" Click="Shutdown_App"/>
     </StackPanel>
 </UserControl>

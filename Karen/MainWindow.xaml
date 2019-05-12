@@ -4,27 +4,42 @@
         xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
         x:Class="Karen.MainWindow"
         xmlns:p="clr-namespace:Karen.Properties" 
-        Title="LANraragi Windows Settings" Height="530" Width="335"
+        Title="LANraragi Windows Settings" Height="650" Width="360"
         Closing="OnClosing">
     <DockPanel LastChildFill="False" Margin="10">
         <StackPanel VerticalAlignment="Top"  DockPanel.Dock="Top">
-            <emoji:TextBlock Text="📁 Content Folder Location" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Width="245" Height="20" Margin="0,0,10,0" IsReadOnly="True" Text="{Binding Source={x:Static p:Settings.Default}, Path=ContentFolder, Mode=TwoWay}"/>
-                <Button Content="Browse" Click="PickFolder"/>
+
+            <emoji:TextBlock Text="📦 Package Installation" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock FontSize="10" TextWrapping="Wrap">
+                You can use those buttons to install a new LANraragi package on your machine, or uninstall the current one.
+            </TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                <Button Height="30" Content="Install Package" Click="PickFolder" Style="{StaticResource MDLButton}" Margin="0,0,10,0"/>
+                <Button Height="30" Content="Uninstall Package" Click="PickFolder" Style="{StaticResource MDLButton}"/>
             </StackPanel>
+            <TextBlock FontSize="14" TextWrapping="Wrap">
+                <Run FontWeight="Bold">Currently installed:</Run> 0.6.0.BETA.1 - 'Sense of Doubt'.
+            </TextBlock>
+            <Separator Height="11.5" Margin="0"/>
+            <emoji:TextBlock Text="🗃 Content Folder Location" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock FontSize="10">Where LANraragi looks for archives on your machine.</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="245" Padding="0,6,0,0" Height="30" Margin="0,0,10,0" IsReadOnly="True" Text="{Binding Source={x:Static p:Settings.Default}, Path=ContentFolder, Mode=TwoWay}"/>
+                <Button Height="30" Content="Browse" Click="PickFolder" Style="{StaticResource MDLButton}" Width="65"/>
+            </StackPanel>
+            <emoji:TextBlock Text="🌐 Network Port" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock FontSize="10">Port of your machine the server will run on.</TextBlock>
+            <TextBox MaxLength="5" Padding="0,6,0,0" Height="30" Margin="0,0,10,0" Text="{Binding Source={x:Static p:Settings.Default}, Path=NetworkPort, Mode=TwoWay}" PreviewTextInput="NumberValidationTextBox"/>
             <Separator Height="11.5" Margin="0"/>
             <CheckBox Content="Start server automatically" FontSize="12" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartServerAutomatically, Mode=TwoWay}" />
             <CheckBox Content="Start on Windows boot" FontSize="12" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartWithWindows, Mode=TwoWay}"/>
             <Separator Height="11.5" Margin="0"/>
 
             <TextBlock FontSize="14">
-                You're using the Karen Bootstrapper,
+                You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper,
                 <LineBreak/> Version 1.0. <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
-                <Hyperlink>https://github.com/Difegue/LANraragi</Hyperlink>
-                <LineBreak/>
-                <Hyperlink>https://github.com/Difegue/Karen-Bootstrapper</Hyperlink>
+                <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/Difegue/LANraragi</Hyperlink>
                 <LineBreak/>
             </TextBlock>
             
@@ -34,7 +49,7 @@
             <Run FontSize="10">
                 Copyright 2019 Difegue</Run>
             <LineBreak/>
-            <Run FontSize="10">
+            <Run FontSize="9">
                 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             </Run>
                 <LineBreak/>

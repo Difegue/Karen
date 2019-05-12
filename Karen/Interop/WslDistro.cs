@@ -1,29 +1,210 @@
-﻿using System;
+﻿using HideConsoleOnCloseManaged;
+using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Karen.Interop
 {
-    class WslDistro
+    /// <summary>
+    /// Abstracts a WSL distro, allowing to start and stop a process within it.
+    /// Also features a togglable console with the process' STDOUT.
+    /// </summary>
+    public class WslDistro
     {
-        const string DISTRO_NAME = "LANraragi";
+        const string DISTRO_NAME = "lanraragi";
 
-        
-        public bool CheckDistro()
+        public AppStatus Status { get; private set; }
+        public String Version { get; private set; }
+
+        private IntPtr _lrrHandle;
+        private Process _lrrProc;
+
+        public WslDistro()
         {
-            return WslApi.WslIsDistributionRegistered(DISTRO_NAME);
+            Status = CheckDistro() ? AppStatus.Stopped : AppStatus.NotInstalled;
+            Version = GetVersion();
         }
 
-        public string GetVersion()
+        private bool CheckDistro()
         {
-            //perl - Mojo - E 'my $conf = eval(f("lrr.conf")->slurp); say %$conf{version} ." - ". %$conf{version_name}'
+            //return WslApi.WslIsDistributionRegistered(DISTRO_NAME);
+            // ^ This WSL API call is currently broken from WPF applications.
+            // See https://stackoverflow.com/questions/55681500/why-did-wslapi-suddenly-stop-working-in-wpf-applications.
+            // Stuck doing a manual wsl.exe call for now...
 
-            return "";
+            var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "wsl.exe",
+                    Arguments = "-l",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                }
+            };
+            try
+            {
+                proc.Start();
+                while (!proc.StandardOutput.EndOfStream)
+                {
+                    string line = proc.StandardOutput.ReadLine();
+                    if (line.Replace("\0","").Contains(DISTRO_NAME))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                //WSL might not be enabled ?
+                return false;
+            }
+
+            return false;
+        }
+
+        private string GetVersion()
+        {
+            // Perl one-liner to execute on the distro to get the version number+name
+            string oneLiner = "perl -Mojo -E \"my $conf = eval(f(qw(/home/koyomi/lanraragi/lrr.conf))->slurp); say %$conf{version}.q/ - '/.%$conf{version_name}.q/'/\"";
+
+            var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "wsl.exe",
+                    Arguments = "-d "+DISTRO_NAME+" --exec " + oneLiner,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                }
+            };
+            try
+            {
+                proc.Start();
+                while (!proc.StandardOutput.EndOfStream)
+                {
+                    string line = proc.StandardOutput.ReadLine();
+                    return line;
+                }
+            }
+            catch (Exception e)
+            {
+                //WSL might not be enabled ?
+                return "????????";
+            }
+
+            return "????????";
 
         }
 
+        public void ShowConsole()
+        {
+            ShowWindow(GetConsoleWindow(), SW_SHOW);
+            ShowWindow(GetConsoleWindow(), SW_RESTORE);
+        }
+
+        public void HideConsole()
+        {
+            ShowWindow(GetConsoleWindow(), SW_HIDE);
+        }
+
+        public bool? StartApp()
+        {
+            Status = AppStatus.Starting;
+
+            // Spawn a new console 
+            AllocConsole();
+
+            // Hide it 
+            HideConsole();
+            HideConsoleOnClose.Enable();
+
+            // Get its handles
+            var stdIn = GetStdHandle(STD_INPUT_HANDLE);
+            var stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+            var stdError = GetStdHandle(STD_ERROR_HANDLE);
+
+            // Map the user's content folder to its WSL equivalent
+            // This means lowercasing the drive letter, removing the : and replacing every \ by a /.
+            string winPath = Properties.Settings.Default.ContentFolder;
+            string contentFolder = "/mnt/" + Char.ToLowerInvariant(winPath[0]) + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
+
+            // The big bazooper. Export port, create a symlink to content folder and start supervisord.
+            string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
+                             "&& cd /home/koyomi/lanraragi && touch content && rm -r content " +
+                             "&& ln -s '"+contentFolder+"' content " +
+                             "&& supervisord --nodaemon --configuration ./tools/DockerSetup/supervisord.conf";
+
+            // Start process in WSL and hook up handles 
+            // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.
+            // See https://stackoverflow.com/questions/15604014/no-console-output-when-using-allocconsole-and-target-architecture-x86
+            WslApi.WslLaunch(DISTRO_NAME, command, false, stdIn,stdOut,stdError, out _lrrHandle);
+
+            // Get Process ID of the returned procHandle
+            int lrrId = GetProcessId(_lrrHandle);
+            _lrrProc = Process.GetProcessById(lrrId);
+
+            // Check that the returned process is still alive
+            if (_lrrProc != null && !_lrrProc.HasExited)
+                Status = AppStatus.Started;
+
+            return !_lrrProc?.HasExited;
+        }
+
+        public bool? StopApp()
+        {
+            // Ensure child unix processes are killed as well
+
+            // Kill WSL Process
+            if (_lrrProc != null && !_lrrProc.HasExited)
+                _lrrProc.Kill();
+
+            // No need to remove the attached console here in case the app is restarted later down
+
+            Status = AppStatus.Stopped;
+            return _lrrProc?.HasExited;
+        }
+
+        #region Your friendly neighborhood P/Invokes for console host wizardry
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool FreeConsole();
+
+        [DllImport("kernel32.dll")]
+        static extern int GetProcessId(IntPtr handle);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("User32")]
+        static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+
+        [DllImport("kernel32.dll", EntryPoint = "GetStdHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        private static extern IntPtr GetStdHandle(int nStdHandle);
+
+        private const int STD_INPUT_HANDLE = -10;
+        private const int STD_OUTPUT_HANDLE = -11;
+        private const int STD_ERROR_HANDLE = -12;
+
+        private const int SW_HIDE = 0;
+        private const int SW_SHOW = 5;
+        private const int SW_RESTORE = 9;
+
+        #endregion
     }
 }

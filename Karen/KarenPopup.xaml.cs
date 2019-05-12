@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Karen.Interop;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -11,6 +12,8 @@ using System.Windows.Media;
 
 namespace Karen
 {
+
+    #region Some more Win32 to ask the DWM for acrylic
     internal enum AccentState
     {
         ACCENT_DISABLED = 0,
@@ -44,6 +47,7 @@ namespace Karen
         WCA_ACCENT_POLICY = 19
         // ...
     }
+    #endregion
 
     public partial class KarenPopup : UserControl, INotifyPropertyChanged
     {
@@ -52,6 +56,12 @@ namespace Karen
         private uint _blurBackgroundColor = 0x99FFFFFF;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Version => ((App)Application.Current).Distro.Version;
+        public AppStatus DistroStatus => ((App)Application.Current).Distro.Status;
+        public bool IsStarted => DistroStatus == AppStatus.Started;
+        public bool IsStopped => DistroStatus == AppStatus.Stopped;
+        public bool IsNotInstalled => DistroStatus == AppStatus.NotInstalled;
 
         private Brush foreground;
         public Brush ForegroundColor
@@ -108,6 +118,7 @@ namespace Karen
                 //eh 
             }
 
+            //Display the popup...with cool acrylic!
             EnableBlur((HwndSource)sender);
         }
 
@@ -144,6 +155,41 @@ namespace Karen
                 Application.Current.MainWindow.WindowState = WindowState.Normal;
 
             ((Popup)this.Parent).IsOpen = false;
+        }
+
+        private void UpdateProperties()
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs("DistroStatus"));
+            PropertyChanged(this, new PropertyChangedEventArgs("IsStarted"));
+            PropertyChanged(this, new PropertyChangedEventArgs("IsStopped"));
+            PropertyChanged(this, new PropertyChangedEventArgs("Version"));
+        }
+
+        private void Show_Console(object sender, RoutedEventArgs e)
+        {
+            ((App)Application.Current).Distro.ShowConsole();
+        }
+
+        private void Shutdown_App(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void Start_Distro(object sender, RoutedEventArgs e)
+        {
+            ((App)Application.Current).Distro.StartApp();
+            UpdateProperties();
+        }
+
+        private void Stop_Distro(object sender, RoutedEventArgs e)
+        {
+            ((App)Application.Current).Distro.StopApp();
+            UpdateProperties();
+        }
+
+        private void Open_Webclient(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://localhost:"+ Properties.Settings.Default.NetworkPort);
         }
     }
 }

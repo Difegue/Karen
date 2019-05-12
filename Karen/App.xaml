@@ -1,6 +1,7 @@
 ﻿<Application x:Class="Karen.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Karen"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
 
@@ -16,6 +17,9 @@
                 <ResourceDictionary Source="NotifyIconResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            
             <Style TargetType="{x:Type ContentControl}" x:Key="LogoIcon">
                 <Setter Property="ContentTemplate">
                     <Setter.Value>

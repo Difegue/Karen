@@ -16,6 +16,9 @@ namespace Karen.Interop
         ENABLE_DRIVE_MOUNTING = 4
     }
 
+    /// <summary>
+    /// Imports straight from the WSL API. See https://docs.microsoft.com/en-us/windows/desktop/api/_wsl/ .
+    /// </summary>
     public static class WslApi
     {
         [DllImport("wslapi.dll", EntryPoint = "WslConfigureDistribution", ExactSpelling = true, CharSet = CharSet.Unicode)]
@@ -36,6 +39,7 @@ namespace Karen.Interop
             );
 
         [DllImport("wslapi.dll", EntryPoint = "WslIsDistributionRegistered", ExactSpelling = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool WslIsDistributionRegistered(
             [In] string distributionName
             );
