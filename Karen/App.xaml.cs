@@ -10,7 +10,12 @@ namespace Karen
     public partial class App : Application
     {
         private TaskbarIcon notifyIcon;
-        public WslDistro Distro { get; private set; }
+        public WslDistro Distro { get; set; }
+
+        public void ToastNotification(string text)
+        {
+            notifyIcon.ShowBalloonTip("LANraragi", text, notifyIcon.Icon);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -22,11 +27,13 @@ namespace Karen
             Distro = new WslDistro();
 
             //check if server starts with app 
-            if (Karen.Properties.Settings.Default.StartServerAutomatically)
+            if (Karen.Properties.Settings.Default.StartServerAutomatically && Distro.Status == AppStatus.Stopped)
             {
-                notifyIcon.ShowBalloonTip("LANraragi", "LANraragi is starting automagically...", notifyIcon.Icon);
+                ToastNotification("LANraragi is starting automagically...");
                 Distro.StartApp();
             }
+            else
+                ToastNotification("The Launcher is now running! Please click the icon in your Taskbar.");
         }
 
         protected override void OnExit(ExitEventArgs e)

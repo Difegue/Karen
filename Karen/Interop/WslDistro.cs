@@ -19,7 +19,6 @@ namespace Karen.Interop
     /// </summary>
     public class WslDistro
     {
-        const string DISTRO_NAME = "lanraragi";
 
         public AppStatus Status { get; private set; }
         public String Version { get; private set; }
@@ -57,7 +56,7 @@ namespace Karen.Interop
                 while (!proc.StandardOutput.EndOfStream)
                 {
                     string line = proc.StandardOutput.ReadLine();
-                    if (line.Replace("\0","").Contains(DISTRO_NAME))
+                    if (line.Replace("\0","").Contains(Properties.Resources.DISTRO_NAME))
                     {
                         return true;
                     }
@@ -82,7 +81,7 @@ namespace Karen.Interop
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "wsl.exe",
-                    Arguments = "-d "+DISTRO_NAME+" --exec " + oneLiner,
+                    Arguments = "-d "+ Properties.Resources.DISTRO_NAME + " --exec " + oneLiner,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
@@ -148,7 +147,7 @@ namespace Karen.Interop
             // Start process in WSL and hook up handles 
             // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.
             // See https://stackoverflow.com/questions/15604014/no-console-output-when-using-allocconsole-and-target-architecture-x86
-            WslApi.WslLaunch(DISTRO_NAME, command, false, stdIn,stdOut,stdError, out _lrrHandle);
+            WslApi.WslLaunch(Properties.Resources.DISTRO_NAME, command, false, stdIn,stdOut,stdError, out _lrrHandle);
 
             // Get Process ID of the returned procHandle
             int lrrId = GetProcessId(_lrrHandle);
@@ -162,15 +161,27 @@ namespace Karen.Interop
         }
 
         public bool? StopApp()
-        {
-            // Ensure child unix processes are killed as well
-
+        {  
             // Kill WSL Process
             if (_lrrProc != null && !_lrrProc.HasExited)
+            {
                 _lrrProc.Kill();
 
-            // No need to remove the attached console here in case the app is restarted later down
+                // Ensure child unix processes are killed as well by killing the distro. This is only possible on 1809 and up.
+                new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "wslconfig.exe",
+                        Arguments = "/terminate " + Properties.Resources.DISTRO_NAME,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true,
+                    }
+                }.Start();
+            }
 
+            // No need to remove the attached console here in case the app is restarted later down
             Status = AppStatus.Stopped;
             return _lrrProc?.HasExited;
         }

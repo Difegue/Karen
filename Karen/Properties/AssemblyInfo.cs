@@ -7,7 +7,7 @@ using System.Windows;
 // Les informations générales relatives à un assembly dépendent de
 // l'ensemble d'attributs suivant. Pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("Karen")]
+[assembly: AssemblyTitle("LANraragi for Windows")]
 [assembly: AssemblyDescription("Windows Bootstrapper for LANraragi.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
