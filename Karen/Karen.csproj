@@ -128,6 +128,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Tools\Karen-Installer.ps1" />
+    <None Include="Tools\Karen-Uninstaller.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

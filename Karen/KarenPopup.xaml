@@ -28,6 +28,11 @@
             <Run Text="{Binding Version, Mode=OneWay}"/>
         </TextBlock>
 
+        <TextBlock TextWrapping="Wrap" Padding="10" FontSize="13" Visibility="{Binding IsNotInstalled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   HorizontalAlignment="Center" Foreground="{Binding ForegroundColor}">
+            <Run>The WSL distro couldn't be detected on your system. Please re-run the installer.</Run>
+        </TextBlock>
+
         <Button Width="125" Height="30" Content="Start" Margin="10" Style="{StaticResource MDLButton}" Click="Start_Distro" Visibility="{Binding IsStopped, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Button Width="125" Height="30" Content="Stop" Margin="10" Style="{StaticResource MDLButton}" Click="Stop_Distro" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Button Width="125" Height="30" Content="Open Client" Margin="10" Style="{StaticResource MDLButton}" Click="Open_Webclient" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />

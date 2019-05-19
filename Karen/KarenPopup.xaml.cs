@@ -146,13 +146,7 @@ namespace Karen
 
         private void Show_Config(object sender, RoutedEventArgs e)
         {
-            if (Application.Current.MainWindow == null)
-                Application.Current.MainWindow = new MainWindow();
-
-            Application.Current.MainWindow.Show();
-
-            if (Application.Current.MainWindow.WindowState == WindowState.Minimized)
-                Application.Current.MainWindow.WindowState = WindowState.Normal;
+            ((App)Application.Current).ShowConfigWindow();
 
             ((Popup)this.Parent).IsOpen = false;
         }

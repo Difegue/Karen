@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using Hardcodet.Wpf.TaskbarNotification;
 using Karen.Interop;
 
@@ -17,16 +18,42 @@ namespace Karen
             notifyIcon.ShowBalloonTip("LANraragi", text, notifyIcon.Icon);
         }
 
+        public void ShowConfigWindow()
+        {
+            if (Application.Current.MainWindow == null)
+                Application.Current.MainWindow = new MainWindow();
+
+            Application.Current.MainWindow.Show();
+
+            if (Application.Current.MainWindow.WindowState == WindowState.Minimized)
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // Only one instance of the bootloader allowed at a time
+            var exists = System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Count() > 1;
+            if (exists)
+            {
+                MessageBox.Show("Another instance of the application is already running.");
+                Application.Current.Shutdown();
+            }
 
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
 
             Distro = new WslDistro();
 
-            //check if server starts with app 
+            // First time ?
+            if (Karen.Properties.Settings.Default.FirstLaunch)
+            {
+                MessageBox.Show("Looks like this is your first time running the app! Please setup your Content Folder in the Settings.");
+                ShowConfigWindow();
+            }
+
+            // Otherwise, check if server starts with app 
             if (Karen.Properties.Settings.Default.StartServerAutomatically && Distro.Status == AppStatus.Stopped)
             {
                 ToastNotification("LANraragi is starting automagically...");

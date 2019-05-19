@@ -33,6 +33,9 @@ namespace Karen
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
+            // Set first launch to false
+            Properties.Settings.Default.FirstLaunch = false;
+
             Properties.Settings.Default.Save();
 
             //Update registry according to the StartWithWindows pref
