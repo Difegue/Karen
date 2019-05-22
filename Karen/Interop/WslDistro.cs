@@ -43,9 +43,11 @@ namespace Karen.Interop
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "wsl.exe",
+                    FileName = Environment.SystemDirectory + "\\wsl.exe",
                     Arguments = "-l",
                     UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
                 }
@@ -65,6 +67,7 @@ namespace Karen.Interop
             catch (Exception e)
             {
                 //WSL might not be enabled ?
+                Version = e.Message;
                 return false;
             }
 
@@ -80,7 +83,7 @@ namespace Karen.Interop
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "wsl.exe",
+                    FileName = Environment.SystemDirectory + "\\wsl.exe",
                     Arguments = "-d "+ Properties.Resources.DISTRO_NAME + " --exec " + oneLiner,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -99,7 +102,7 @@ namespace Karen.Interop
             catch (Exception e)
             {
                 //WSL might not be enabled ?
-                return "????????";
+                return e.Message;
             }
 
             return "????????";
