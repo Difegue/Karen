@@ -1,3 +1,8 @@
+if (-Not [System.Environment]::Is64BitOperatingSystem) {
+    Read-Host -Prompt "This software only works on a 64-bit version of Windows. Press Enter to exit"
+    Exit
+}
+
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 
 # Self-elevate the script if required
