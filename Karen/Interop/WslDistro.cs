@@ -43,8 +43,8 @@ namespace Karen.Interop
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Environment.SystemDirectory + "\\wsl.exe",
-                    Arguments = "-l",
+                    FileName = Environment.SystemDirectory + "\\wslconfig.exe",
+                    Arguments = "/l",
                     UseShellExecute = false,
                     RedirectStandardInput = true,
                     RedirectStandardError = true,
