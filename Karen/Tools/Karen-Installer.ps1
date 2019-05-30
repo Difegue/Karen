@@ -9,7 +9,7 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
     if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
         Read-Host -Prompt "The installer will now ask you for Administrator rights. Press Enter to continue"
-        $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
+        $CommandLine = "-ExecutionPolicy UnRestricted -File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
         Start-Process -FilePath PowerShell.exe -Verb Runas -ArgumentList $CommandLine
         Exit
     }

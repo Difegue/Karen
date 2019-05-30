@@ -29,7 +29,10 @@ namespace Karen.Interop
         public WslDistro()
         {
             Status = CheckDistro() ? AppStatus.Stopped : AppStatus.NotInstalled;
-            Version = GetVersion();
+
+            // Compute version only if the distro exists
+            if (Status == AppStatus.Stopped)
+                Version = GetVersion();
         }
 
         private bool CheckDistro()
@@ -96,12 +99,12 @@ namespace Karen.Interop
                 while (!proc.StandardOutput.EndOfStream)
                 {
                     string line = proc.StandardOutput.ReadLine();
-                    return line;
+                    return "Version " + line;
                 }
             }
             catch (Exception e)
             {
-                //WSL might not be enabled ?
+                // Distro exists but the one-liner fails ?
                 return e.Message;
             }
 

@@ -13,31 +13,30 @@
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" >
         
         <ContentControl Style="{StaticResource LogoIcon}"
-                        Foreground="{Binding ForegroundColor}"
+                        Foreground="{DynamicResource WindowForeground}"
                         Width="125" Height="125" Margin="0,25,0,0"/>
 
         <Separator Height="10" Visibility="Hidden"/>
 
         <emoji:TextBlock Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="-16,0,0,0"
-                         FontSize="16" FontWeight="Bold" Foreground="{Binding ForegroundColor}"
+                         FontSize="16" FontWeight="Bold" Foreground="{DynamicResource WindowForeground}"
                          Text="{Binding DistroStatus, Converter={StaticResource EnumDescriptionConverter}}">
         </emoji:TextBlock>
 
-        <TextBlock TextWrapping="Wrap" Padding="10" FontSize="13" HorizontalAlignment="Center" Foreground="{Binding ForegroundColor}">
-            <Run>Version</Run>
+        <TextBlock TextWrapping="Wrap" Padding="10" FontSize="13" HorizontalAlignment="Center" Foreground="{DynamicResource WindowForeground}">
             <Run Text="{Binding Version, Mode=OneWay}"/>
         </TextBlock>
 
         <TextBlock TextWrapping="Wrap" Padding="10" FontSize="13" Visibility="{Binding IsNotInstalled, Converter={StaticResource BooleanToVisibilityConverter}}"
-                   HorizontalAlignment="Center" Foreground="{Binding ForegroundColor}">
+                   HorizontalAlignment="Center" Foreground="{DynamicResource WindowForeground}">
             <Run>The WSL distro couldn't be detected on your system. Please re-run the installer.</Run>
         </TextBlock>
 
-        <Button Width="125" Height="30" Content="Start" Margin="10" Style="{StaticResource MDLButton}" Click="Start_Distro" Visibility="{Binding IsStopped, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Button Width="125" Height="30" Content="Stop" Margin="10" Style="{StaticResource MDLButton}" Click="Stop_Distro" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Button Width="125" Height="30" Content="Open Client" Margin="10" Style="{StaticResource MDLButton}" Click="Open_Webclient" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Button Width="125" Height="30" Content="Log Console" Margin="10" Style="{StaticResource MDLButton}" Click="Show_Console" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        <Button Width="125" Height="30" Content="Settings" Margin="10" Style="{StaticResource MDLButton}" Click="Show_Config"/>
-        <Button Width="125" Height="30" Content="Quit" Margin="10" Style="{StaticResource MDLButton}" Click="Shutdown_App"/>
+        <Button Width="125" Height="30" Content="Start" Margin="10" Style="{DynamicResource MDLButton}" Click="Start_Distro" Visibility="{Binding IsStopped, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Width="125" Height="30" Content="Stop" Margin="10" Style="{DynamicResource MDLButton}" Click="Stop_Distro" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Width="125" Height="30" Content="Open Client" Margin="10" Style="{DynamicResource MDLButton}" Click="Open_Webclient" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Width="125" Height="30" Content="Log Console" Margin="10" Style="{DynamicResource MDLButton}" Click="Show_Console" Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Button Width="125" Height="30" Content="Settings" Margin="10" Style="{DynamicResource MDLButton}" Click="Show_Config"/>
+        <Button Width="125" Height="30" Content="Quit" Margin="10" Style="{DynamicResource MDLButton}" Click="Shutdown_App"/>
     </StackPanel>
 </UserControl>

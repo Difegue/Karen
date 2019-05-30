@@ -41,9 +41,6 @@ namespace Karen
                 Application.Current.Shutdown();
             }
 
-            //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
-            notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
-
             Distro = new WslDistro();
 
             // First time ?
@@ -53,7 +50,10 @@ namespace Karen
                 ShowConfigWindow();
             }
 
-            // Otherwise, check if server starts with app 
+            // Create the Taskbar Icon now so it appears in the tray
+            notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+
+            // Check if server starts with app 
             if (Karen.Properties.Settings.Default.StartServerAutomatically && Distro.Status == AppStatus.Stopped)
             {
                 ToastNotification("LANraragi is starting automagically...");

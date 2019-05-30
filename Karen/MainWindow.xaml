@@ -7,7 +7,7 @@
         Title="LANraragi Windows Settings" Height="600" Width="360"
         Closing="OnClosing">
     <DockPanel LastChildFill="False" Margin="10">
-        <StackPanel VerticalAlignment="Top"  DockPanel.Dock="Top">
+        <StackPanel VerticalAlignment="Top"  DockPanel.Dock="Top" >
 
             <emoji:TextBlock Text="🗃 Content Folder Location" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
             <TextBlock FontSize="10">Where LANraragi looks for archives on your machine.</TextBlock>

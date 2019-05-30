@@ -63,20 +63,6 @@ namespace Karen
         public bool IsStopped => DistroStatus == AppStatus.Stopped;
         public bool IsNotInstalled => DistroStatus == AppStatus.NotInstalled;
 
-        private Brush foreground;
-        public Brush ForegroundColor
-        {
-            get { return foreground; }
-            set
-            {
-                foreground = value;
-                if (null != this.PropertyChanged)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("ForegroundColor"));
-                }
-            }
-        }
-
         public KarenPopup()
         {
             InitializeComponent();
@@ -96,6 +82,8 @@ namespace Karen
 
         void KarenPopup_ContentRendered(object sender, EventArgs e)
         {
+            this.Resources.MergedDictionaries.Clear();
+
             try
             {
                 //Get Light/Dark theme from registry
@@ -106,16 +94,18 @@ namespace Karen
                 if (lightThemeOn != "0")
                 {
                     _blurBackgroundColor = 0x99FFFFFF;
-                    ForegroundColor = System.Windows.Media.Brushes.Black;
+                    this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Themes/Light.xaml", UriKind.Relative) });
                 }
                 else
                 {
                     _blurBackgroundColor = 0xAA000000;
-                    ForegroundColor = System.Windows.Media.Brushes.White;
+                    this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Themes/Dark.xaml", UriKind.Relative) });
                 }
+                this.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             } catch (Exception)
             {
                 //eh 
+                this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Themes/Light.xaml", UriKind.Relative) });
             }
 
             //Display the popup...with cool acrylic!
