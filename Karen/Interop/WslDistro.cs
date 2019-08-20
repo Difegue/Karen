@@ -105,10 +105,13 @@ namespace Karen.Interop
             catch (Exception e)
             {
                 // Distro exists but the one-liner fails ?
+                Status = AppStatus.NotInstalled;
                 return e.Message;
             }
 
-            return "????????";
+            // Distro exists but the one-liner returns nothing
+            Status = AppStatus.NotInstalled;
+            return "WSL Distro doesn't function properly. Consider updating Windows 10.";
 
         }
 
@@ -125,6 +128,12 @@ namespace Karen.Interop
 
         public bool? StartApp()
         {
+            if (!Directory.Exists(Properties.Settings.Default.ContentFolder))
+            {
+                Version = "Content Folder doesn't exist!";
+                return false;
+            }
+
             Status = AppStatus.Starting;
 
             // Spawn a new console 

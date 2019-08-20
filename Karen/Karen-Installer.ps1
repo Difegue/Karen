@@ -34,6 +34,11 @@ Write-Output "Starting LANraragi for Windows Install/Update."
 $appDataFolder = $env:APPDATA + "\LANraragi"
 $lxRunLocation = $PSScriptRoot + "\LxRunOffline\LxRunOffline.exe"
 
+if(get-process | ?{$_.path -eq $appDataFolder + "\Bootloader\Karen.exe" }){
+   Write-Output "An instance of LRR for Windows is already running! Please close it and try again."
+   Exit
+}
+
 Write-Output "Terminating potential existing instances"
 wslconfig.exe /terminate lanraragi
 Write-Output "Uninstalling previous WSL distro..."
