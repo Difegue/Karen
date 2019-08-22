@@ -80,7 +80,7 @@ namespace Karen.Interop
         private string GetVersion()
         {
             // Perl one-liner to execute on the distro to get the version number+name
-            string oneLiner = "perl -Mojo -E \"my $conf = eval(f(qw(/home/koyomi/lanraragi/lrr.conf))->slurp); say %$conf{version}.q/ - '/.%$conf{version_name}.q/'/\"";
+            string oneLiner = "perl -Mojo -E \"my $conf = j(f(qw(/home/koyomi/lanraragi/package.json))->slurp); say %$conf{version}.q/ - '/.%$conf{version_name}.q/'/\"";
 
             var proc = new Process
             {
