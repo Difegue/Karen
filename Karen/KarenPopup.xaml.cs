@@ -175,5 +175,10 @@ namespace Karen
         {
             System.Diagnostics.Process.Start("http://localhost:"+ Properties.Settings.Default.NetworkPort);
         }
+
+        private void Open_Distro(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"\\wsl$\lanraragi\home\koyomi\lanraragi");
+        }
     }
 }

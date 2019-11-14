@@ -156,7 +156,8 @@ namespace Karen.Interop
             // The big bazooper. Export port, create a symlink to content folder and start supervisord.
             string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
                              "&& cd /home/koyomi/lanraragi && touch content && rm -r content " +
-                             "&& ln -s '"+contentFolder+"' content " +
+                             "&& ln -s '"+contentFolder+ "' content && rm -f script/hypnotoad.pid " +
+                             "&& sysctl vm.overcommit_memory=1 " +
                              "&& supervisord --nodaemon --configuration ./tools/DockerSetup/supervisord.conf";
 
             // Start process in WSL and hook up handles 
