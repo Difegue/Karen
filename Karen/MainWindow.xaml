@@ -21,11 +21,12 @@
             <Separator Height="11.5" Margin="0"/>
             <CheckBox Content="Start server automatically" FontSize="12" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartServerAutomatically, Mode=TwoWay}" />
             <CheckBox Content="Start on Windows boot" FontSize="12" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartWithWindows, Mode=TwoWay}"/>
+            <CheckBox Content="Force Debug Mode" FontSize="12" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=ForceDebugMode, Mode=TwoWay}"/>
             <Separator Height="11.5" Margin="0"/>
 
             <TextBlock FontSize="14">
                 You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper,
-                <LineBreak/> Version 1.3. <emoji:TextBlock Text="🐝"/>
+                <LineBreak/> Version 1.5. <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
                 <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/Difegue/LANraragi</Hyperlink>
                 <LineBreak/>

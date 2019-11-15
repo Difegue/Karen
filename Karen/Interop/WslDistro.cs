@@ -153,10 +153,11 @@ namespace Karen.Interop
             string winPath = Properties.Settings.Default.ContentFolder;
             string contentFolder = "/mnt/" + Char.ToLowerInvariant(winPath[0]) + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
 
-            // The big bazooper. Export port, create a symlink to content folder and start supervisord.
+            // The big bazooper. Export port and content folder and start supervisord.
             string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
-                             "&& cd /home/koyomi/lanraragi && touch content && rm -r content " +
-                             "&& ln -s '"+contentFolder+ "' content && rm -f script/hypnotoad.pid " +
+                             "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
+                             (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
+                             "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
                              "&& sysctl vm.overcommit_memory=1 " +
                              "&& supervisord --nodaemon --configuration ./tools/DockerSetup/supervisord.conf";
 
