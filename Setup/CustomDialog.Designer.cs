@@ -26,67 +26,67 @@
     /// </summary>
     private void InitializeComponent()
     {
-        this.cancelBtn = new System.Windows.Forms.Button();
-        this.nextBtn = new System.Windows.Forms.Button();
-        this.backBtn = new System.Windows.Forms.Button();
-        this.button1 = new System.Windows.Forms.Button();
-        this.SuspendLayout();
-        // 
-        // cancelBtn
-        // 
-        this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-        this.cancelBtn.Location = new System.Drawing.Point(463, 298);
-        this.cancelBtn.Name = "cancelBtn";
-        this.cancelBtn.Size = new System.Drawing.Size(75, 23);
-        this.cancelBtn.TabIndex = 8;
-        this.cancelBtn.Text = "Cancel";
-        this.cancelBtn.UseVisualStyleBackColor = true;
-        this.cancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
-        // 
-        // nextBtn
-        // 
-        this.nextBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-        this.nextBtn.Location = new System.Drawing.Point(367, 298);
-        this.nextBtn.Name = "nextBtn";
-        this.nextBtn.Size = new System.Drawing.Size(75, 23);
-        this.nextBtn.TabIndex = 7;
-        this.nextBtn.Text = "Next";
-        this.nextBtn.UseVisualStyleBackColor = true;
-        this.nextBtn.Click += new System.EventHandler(this.nextBtn_Click);
-        // 
-        // backBtn
-        // 
-        this.backBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-        this.backBtn.Location = new System.Drawing.Point(286, 298);
-        this.backBtn.Name = "backBtn";
-        this.backBtn.Size = new System.Drawing.Size(75, 23);
-        this.backBtn.TabIndex = 6;
-        this.backBtn.Text = "Back";
-        this.backBtn.UseVisualStyleBackColor = true;
-        this.backBtn.Click += new System.EventHandler(this.backBtn_Click);
-        // 
-        // button1
-        // 
-        this.button1.Location = new System.Drawing.Point(135, 88);
-        this.button1.Name = "button1";
-        this.button1.Size = new System.Drawing.Size(75, 23);
-        this.button1.TabIndex = 9;
-        this.button1.Text = "Test";
-        this.button1.UseVisualStyleBackColor = true;
-        this.button1.Click += new System.EventHandler(this.button1_Click);
-        // 
-        // EmptyDialog
-        // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(560, 333);
-        this.Controls.Add(this.button1);
-        this.Controls.Add(this.cancelBtn);
-        this.Controls.Add(this.nextBtn);
-        this.Controls.Add(this.backBtn);
-        this.Name = "CustomDialog";
-        this.Text = "Custom CLR Dialog";
-        this.ResumeLayout(false);
+            this.cancelBtn = new System.Windows.Forms.Button();
+            this.nextBtn = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.backBtn = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // cancelBtn
+            // 
+            this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelBtn.Location = new System.Drawing.Point(463, 298);
+            this.cancelBtn.Name = "cancelBtn";
+            this.cancelBtn.Size = new System.Drawing.Size(75, 23);
+            this.cancelBtn.TabIndex = 8;
+            this.cancelBtn.Text = "Cancel";
+            this.cancelBtn.UseVisualStyleBackColor = true;
+            this.cancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
+            // 
+            // nextBtn
+            // 
+            this.nextBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.nextBtn.Location = new System.Drawing.Point(367, 298);
+            this.nextBtn.Name = "nextBtn";
+            this.nextBtn.Size = new System.Drawing.Size(75, 23);
+            this.nextBtn.TabIndex = 7;
+            this.nextBtn.Text = "Next";
+            this.nextBtn.UseVisualStyleBackColor = true;
+            this.nextBtn.Click += new System.EventHandler(this.nextBtn_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(135, 88);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // backBtn
+            // 
+            this.backBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.backBtn.Location = new System.Drawing.Point(286, 298);
+            this.backBtn.Name = "backBtn";
+            this.backBtn.Size = new System.Drawing.Size(75, 23);
+            this.backBtn.TabIndex = 6;
+            this.backBtn.Text = "Back";
+            this.backBtn.UseVisualStyleBackColor = true;
+            this.backBtn.Click += new System.EventHandler(this.backBtn_Click);
+            // 
+            // CustomDialog
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(560, 333);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.cancelBtn);
+            this.Controls.Add(this.nextBtn);
+            this.Controls.Add(this.backBtn);
+            this.Name = "CustomDialog";
+            this.Text = "Custom CLR Dialog";
+            this.ResumeLayout(false);
 
     }
 
@@ -94,6 +94,6 @@
 
     private System.Windows.Forms.Button cancelBtn;
     private System.Windows.Forms.Button nextBtn;
-    private System.Windows.Forms.Button backBtn;
     private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Button backBtn;
 }

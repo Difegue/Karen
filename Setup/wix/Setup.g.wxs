@@ -6,116 +6,123 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="6fe30b47-2577-43ad-9095-1861ca25889c" Name="MyProduct" Language="1033" Codepage="Windows-1252" Version="1.0.0.0" UpgradeCode="6fe30b47-2577-43ad-9095-1861ba25889b" Manufacturer="Vincent">
+  <Product Id="6fe30b47-2577-43ad-9095-1861ca25889c" Name="MyProduct" Language="1033" Codepage="Windows-1252" Version="1.0.0.0" UpgradeCode="6fe30b47-2577-43ad-9095-1861ba25889b" Manufacturer="v.alves">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" Languages="1033" />
     <Media Id="1" Cabinet="MyProduct.cab" EmbedCab="yes" />
 
     <Condition Message="LANraragi for Windows can only be installed on a 64-bit Windows.">VersionNT64</Condition>
     <Condition Message="LANraragi for Windows can only be installed on Windows 10 and up."><![CDATA[VersionNT>="603"]]></Condition>
-    <Condition Message="You must install the Windows Subsystem for Linux in order to use LANraragi for Windows. Check here: https://docs.microsoft.com/en-us/windows/wsl/install-win10">WSLInstalled="true"</Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="AppDataFolder" Name="AppDataFolder">
         <Directory Id="INSTALLDIR" Name="LANraragi">
 
-          <Component Id="Component.Emoji.Wpf.dll_229897616" Guid="6fe30b47-2577-43ad-9095-1861a341051c" Win64="yes">
-            <File Id="Emoji.Wpf.dll_229897616" Source="..\Karen\bin\x64\Release\Emoji.Wpf.dll" />
+          <Component Id="Component.Emoji.Wpf.dll_466526152" Guid="6fe30b47-2577-43ad-9095-1861e25b1271" Win64="yes">
+            <File Id="Emoji.Wpf.dll_466526152" Source="..\Karen\bin\x64\Release\Emoji.Wpf.dll" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_1010392422" Guid="6fe30b47-2577-43ad-9095-1861179f98af" Win64="yes">
-            <File Id="Hardcodet.Wpf.TaskbarNotification.dll_1010392422" Source="..\Karen\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.dll" />
+          <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_1734062057" Guid="6fe30b47-2577-43ad-9095-18610ab8d6d7" Win64="yes">
+            <File Id="Hardcodet.Wpf.TaskbarNotification.dll_1734062057" Source="..\Karen\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.dll" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.pdb_508113084" Guid="6fe30b47-2577-43ad-9095-18619a76a676" Win64="yes">
-            <File Id="Hardcodet.Wpf.TaskbarNotification.pdb_508113084" Source="..\Karen\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.pdb" />
+          <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.pdb_926968735" Guid="6fe30b47-2577-43ad-9095-18616a7d9c1b" Win64="yes">
+            <File Id="Hardcodet.Wpf.TaskbarNotification.pdb_926968735" Source="..\Karen\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.pdb" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.HideConsoleOnClose32.dll_1301435147" Guid="6fe30b47-2577-43ad-9095-1861614fc3ae" Win64="yes">
-            <File Id="HideConsoleOnClose32.dll_1301435147" Source="..\Karen\bin\x64\Release\HideConsoleOnClose32.dll" />
+          <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.xml_1734127621" Guid="6fe30b47-2577-43ad-9095-18618cd480d4" Win64="yes">
+            <File Id="Hardcodet.Wpf.TaskbarNotification.xml_1734127621" Source="..\Karen\bin\x64\Release\Hardcodet.Wpf.TaskbarNotification.xml" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.HideConsoleOnClose64.dll_1288720814" Guid="6fe30b47-2577-43ad-9095-1861dfd3d2f2" Win64="yes">
-            <File Id="HideConsoleOnClose64.dll_1288720814" Source="..\Karen\bin\x64\Release\HideConsoleOnClose64.dll" />
+          <Component Id="Component.HideConsoleOnClose32.dll_418966349" Guid="6fe30b47-2577-43ad-9095-1861dda2afe2" Win64="yes">
+            <File Id="HideConsoleOnClose32.dll_418966349" Source="..\Karen\bin\x64\Release\HideConsoleOnClose32.dll" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.HideConsoleOnCloseManaged.dll_867210709" Guid="6fe30b47-2577-43ad-9095-1861664c631e" Win64="yes">
-            <File Id="HideConsoleOnCloseManaged.dll_867210709" Source="..\Karen\bin\x64\Release\HideConsoleOnCloseManaged.dll" />
+          <Component Id="Component.HideConsoleOnClose64.dll_414903024" Guid="6fe30b47-2577-43ad-9095-18615764423d" Win64="yes">
+            <File Id="HideConsoleOnClose64.dll_414903024" Source="..\Karen\bin\x64\Release\HideConsoleOnClose64.dll" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Karen_Installer.ps1_1407539582" Guid="6fe30b47-2577-43ad-9095-186117baca43" Win64="yes">
-            <File Id="Karen_Installer.ps1_1407539582" Source="..\Karen\bin\x64\Release\Karen-Installer.ps1" />
+          <Component Id="Component.HideConsoleOnCloseManaged.dll_2102558679" Guid="6fe30b47-2577-43ad-9095-186195b9a57a" Win64="yes">
+            <File Id="HideConsoleOnCloseManaged.dll_2102558679" Source="..\Karen\bin\x64\Release\HideConsoleOnCloseManaged.dll" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Karen_Uninstaller.ps1_1629319376" Guid="6fe30b47-2577-43ad-9095-1861337018d5" Win64="yes">
-            <File Id="Karen_Uninstaller.ps1_1629319376" Source="..\Karen\bin\x64\Release\Karen-Uninstaller.ps1" />
+          <Component Id="Component.Karen_Installer.ps1_1728975438" Guid="6fe30b47-2577-43ad-9095-18613e1de1d0" Win64="yes">
+            <File Id="Karen_Installer.ps1_1728975438" Source="..\Karen\bin\x64\Release\Karen-Installer.ps1" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Karen.exe_1188372425" Guid="6fe30b47-2577-43ad-9095-186162c7b539" Win64="yes">
-            <File Id="Karen.exe_1188372425" Source="..\Karen\bin\x64\Release\Karen.exe" />
+          <Component Id="Component.Karen_Uninstaller.ps1_1384243076" Guid="6fe30b47-2577-43ad-9095-18618ab46273" Win64="yes">
+            <File Id="Karen_Uninstaller.ps1_1384243076" Source="..\Karen\bin\x64\Release\Karen-Uninstaller.ps1" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Karen.exe.config_2118951197" Guid="6fe30b47-2577-43ad-9095-18614da5756d" Win64="yes">
-            <File Id="Karen.exe.config_2118951197" Source="..\Karen\bin\x64\Release\Karen.exe.config" />
+          <Component Id="Component.Karen.exe_788959134" Guid="6fe30b47-2577-43ad-9095-186117edfa4d" Win64="yes">
+            <File Id="Karen.exe_788959134" Source="..\Karen\bin\x64\Release\Karen.exe" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Karen.pdb_785350063" Guid="6fe30b47-2577-43ad-9095-18611c4ecbfa" Win64="yes">
-            <File Id="Karen.pdb_785350063" Source="..\Karen\bin\x64\Release\Karen.pdb" />
+          <Component Id="Component.Karen.exe.config_1812699045" Guid="6fe30b47-2577-43ad-9095-1861ef53c918" Win64="yes">
+            <File Id="Karen.exe.config_1812699045" Source="..\Karen\bin\x64\Release\Karen.exe.config" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Typography.GlyphLayout.dll_994343102" Guid="6fe30b47-2577-43ad-9095-1861d3cd3ca9" Win64="yes">
-            <File Id="Typography.GlyphLayout.dll_994343102" Source="..\Karen\bin\x64\Release\Typography.GlyphLayout.dll" />
+          <Component Id="Component.Karen.pdb_1191457242" Guid="6fe30b47-2577-43ad-9095-18614621a1e5" Win64="yes">
+            <File Id="Karen.pdb_1191457242" Source="..\Karen\bin\x64\Release\Karen.pdb" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
             </RegistryKey>
           </Component>
 
-          <Component Id="Component.Typography.OpenFont.dll_693950555" Guid="6fe30b47-2577-43ad-9095-18614ee0ab1d" Win64="yes">
-            <File Id="Typography.OpenFont.dll_693950555" Source="..\Karen\bin\x64\Release\Typography.OpenFont.dll" />
+          <Component Id="Component.Typography.GlyphLayout.dll_791157290" Guid="6fe30b47-2577-43ad-9095-186128ce0eda" Win64="yes">
+            <File Id="Typography.GlyphLayout.dll_791157290" Source="..\Karen\bin\x64\Release\Typography.GlyphLayout.dll" />
+
+            <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+              <RegistryValue Value="0" Type="string" KeyPath="yes" />
+            </RegistryKey>
+          </Component>
+
+          <Component Id="Component.Typography.OpenFont.dll_1028736062" Guid="6fe30b47-2577-43ad-9095-18619f7d48c9" Win64="yes">
+            <File Id="Typography.OpenFont.dll_1028736062" Source="..\Karen\bin\x64\Release\Typography.OpenFont.dll" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
               <RegistryValue Value="0" Type="string" KeyPath="yes" />
@@ -160,52 +167,52 @@
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
 
-      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg" Order="1">1</Publish>
-      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="5">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
-      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg" Order="1">1</Publish>
-      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="5">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="ShowCustomDialog" Order="2">1</Publish>
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="3"> Custom_UI_Command = "next" </Publish>
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="EndDialog" Value="Exit" Order="2"> Custom_UI_Command = "abort" </Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="2">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="5">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Value="[WIXUI_INSTALLDIR]" Property="_BrowseProperty" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
       <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg">1</Publish>
       <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg" Order="1"> (NOT Installed) </Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2"> (Installed) </Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg" Order="5">1</Publish>
       <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
       <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
       <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
       <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="9999">1</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="DoAction" Value="ShowCustomDialog" Order="1">1</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg" Order="2"> Custom_UI_Command = "back" </Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="DoAction" Value="ShowDialogIfWslDisabled" Order="1">1</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="2"> Custom_UI_Command = "next" </Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Exit" Order="2"> Custom_UI_Command = "abort" </Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="DoAction" Value="ShowDialogIfWslDisabled" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2"> Custom_UI_Command = "back" </Publish>
     </UI>
 
-    <CustomAction Id="ShowCustomDialog" BinaryKey="ShowCustomDialog_File" DllEntry="ShowCustomDialog" Return="check" Execute="immediate" />
+    <CustomAction Id="ShowDialogIfWslDisabled" BinaryKey="ShowDialogIfWslDisabled_File" DllEntry="ShowDialogIfWslDisabled" Return="check" Execute="immediate" />
 
-    <Binary Id="ShowCustomDialog_File" SourceFile="bin\%this%.CA.dll" />
+    <Binary Id="ShowDialogIfWslDisabled_File" SourceFile="bin\%this%.CA.dll" />
 
     <UIRef Id="WixUI_Common" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
-    <Property Id="WSLInstalled" Value="false" />
-
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
-      <ComponentRef Id="Component.Emoji.Wpf.dll_229897616" />
-      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_1010392422" />
-      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.pdb_508113084" />
-      <ComponentRef Id="Component.HideConsoleOnClose32.dll_1301435147" />
-      <ComponentRef Id="Component.HideConsoleOnClose64.dll_1288720814" />
-      <ComponentRef Id="Component.HideConsoleOnCloseManaged.dll_867210709" />
-      <ComponentRef Id="Component.Karen_Installer.ps1_1407539582" />
-      <ComponentRef Id="Component.Karen_Uninstaller.ps1_1629319376" />
-      <ComponentRef Id="Component.Karen.exe_1188372425" />
-      <ComponentRef Id="Component.Karen.exe.config_2118951197" />
-      <ComponentRef Id="Component.Karen.pdb_785350063" />
-      <ComponentRef Id="Component.Typography.GlyphLayout.dll_994343102" />
-      <ComponentRef Id="Component.Typography.OpenFont.dll_693950555" />
+      <ComponentRef Id="Component.Emoji.Wpf.dll_466526152" />
+      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_1734062057" />
+      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.pdb_926968735" />
+      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.xml_1734127621" />
+      <ComponentRef Id="Component.HideConsoleOnClose32.dll_418966349" />
+      <ComponentRef Id="Component.HideConsoleOnClose64.dll_414903024" />
+      <ComponentRef Id="Component.HideConsoleOnCloseManaged.dll_2102558679" />
+      <ComponentRef Id="Component.Karen_Installer.ps1_1728975438" />
+      <ComponentRef Id="Component.Karen_Uninstaller.ps1_1384243076" />
+      <ComponentRef Id="Component.Karen.exe_788959134" />
+      <ComponentRef Id="Component.Karen.exe.config_1812699045" />
+      <ComponentRef Id="Component.Karen.pdb_1191457242" />
+      <ComponentRef Id="Component.Typography.GlyphLayout.dll_791157290" />
+      <ComponentRef Id="Component.Typography.OpenFont.dll_1028736062" />
       <ComponentRef Id="Component.Uninstall_My_Product" />
     </Feature>
 
