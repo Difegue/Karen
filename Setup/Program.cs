@@ -3,6 +3,7 @@ using Microsoft.Deployment.WindowsInstaller;
 using WixSharp;
 using WixSharp.CommonTasks;
 using WixSharp.Controls;
+using System.Management.Automation;
 
 namespace Setup
 {
@@ -31,14 +32,16 @@ namespace Setup
             project.LaunchConditions.Add(new LaunchCondition("VersionNT>=\"603\"", "LANraragi for Windows can only be installed on Windows 10 and up."));
 
             // Check for WSL
-            var wslProp = new Property("WSLInstalled", "false");
-            project.AddProperty(wslProp);
-            project.LaunchConditions.Add(new LaunchCondition("WSLInstalled=\"true\"", "You must install the Windows Subsystem for Linux in order to use LANraragi for Windows. Check here: https://docs.microsoft.com/en-us/windows/wsl/install-win10"));
+            //var wslProp = new Property("WSLInstalled", "false");
+            //project.AddProperty(wslProp);
+            //project.LaunchConditions.Add(new LaunchCondition("WSLInstalled=\"true\"", "You must install the Windows Subsystem for Linux in order to use LANraragi for Windows. Check here: https://docs.microsoft.com/en-us/windows/wsl/install-win10"));
 
-            //Schedule custom dialog between InsallDirDlg and VerifyReadyDlg standard MSI dialogs.
-            project.InjectClrDialog("ShowCustomDialog", NativeDialogs.InstallDirDlg, NativeDialogs.VerifyReadyDlg);
+            //Schedule custom dialog between WelcomeDlg and InstallDirDlg standard MSI dialogs.
+            project.InjectClrDialog(nameof(ShowDialogIfWslDisabled), NativeDialogs.WelcomeDlg, NativeDialogs.InstallDirDlg);
+
             //remove LicenceDlg
-            project.RemoveDialogsBetween(NativeDialogs.WelcomeDlg, NativeDialogs.InstallDirDlg);
+            project.RemoveDialogsBetween(NativeDialogs.InstallDirDlg, NativeDialogs.VerifyReadyDlg);
+
             //reference assembly that is needed by the custom dialog
             //project.DefaultRefAssemblies.Add(<External Asm Location>);
 
@@ -49,9 +52,24 @@ namespace Setup
         }
 
         [CustomAction]
-        public static ActionResult ShowCustomDialog(Session session)
+        public static ActionResult ShowDialogIfWslDisabled(Session session)
         {
-            return WixCLRDialog.ShowAsMsiDialog(new CustomDialog(session));
+            using (var powerShellInstance = PowerShell.Create())
+            {
+                powerShellInstance.AddScript(@"Get-Command wsl"); // This command fails if wsl.exe doesn't exist
+                var pSOutput = powerShellInstance.Invoke();
+                var psOutput = "";
+
+                if (powerShellInstance.Streams.Error.Count > 0)
+                {
+                    foreach (var err in powerShellInstance.Streams.Error)
+                        psOutput = err.ToString();
+                    return WixCLRDialog.ShowAsMsiDialog(new CustomDialog(session, psOutput));
+                }
+            }
+
+            // Do nothing if WSL is enabled
+            return ActionResult.Success;
         }
     }
 }
