@@ -54,22 +54,7 @@ namespace Setup
         [CustomAction]
         public static ActionResult ShowDialogIfWslDisabled(Session session)
         {
-            using (var powerShellInstance = PowerShell.Create())
-            {
-                powerShellInstance.AddScript(@"Get-Command wsl"); // This command fails if wsl.exe doesn't exist
-                var pSOutput = powerShellInstance.Invoke();
-                var psOutput = "";
-
-                if (powerShellInstance.Streams.Error.Count > 0)
-                {
-                    foreach (var err in powerShellInstance.Streams.Error)
-                        psOutput = err.ToString();
-                    return WixCLRDialog.ShowAsMsiDialog(new CustomDialog(session, psOutput));
-                }
-            }
-
-            // Do nothing if WSL is enabled
-            return ActionResult.Success;
+            return WixCLRDialog.ShowAsMsiDialog(new CustomDialog(session));
         }
     }
 }

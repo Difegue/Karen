@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Management.Automation;
 using System.Windows.Forms;
 using Microsoft.Deployment.WindowsInstaller;
 using WixSharp;
@@ -12,11 +14,22 @@ public partial class CustomDialog : WixCLRDialog
         InitializeComponent();
     }
 
-    public CustomDialog(Session session, string obj)
+    public CustomDialog(Session session)
         : base(session)
     {
         InitializeComponent();
-        this.obj = obj;
+
+        using (var powerShellInstance = PowerShell.Create())
+        {
+            powerShellInstance.AddScript(@"Get-Command wsl"); // This command fails if wsl.exe doesn't exist
+            var psOutput = powerShellInstance.Invoke();
+
+            if (powerShellInstance.Streams.Error.Count > 0)
+            {
+                foreach (var err in powerShellInstance.Streams.Error)
+                    obj += err.ToString();
+            }
+        }
     }
 
     void backBtn_Click(object sender, EventArgs e)
@@ -35,8 +48,21 @@ public partial class CustomDialog : WixCLRDialog
         MSICancel();
     }
 
-    void button1_Click(object sender, EventArgs e)
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        MessageBox.Show(obj, "Wix#");
+        Process.Start("https://docs.microsoft.com/en-us/windows/wsl/install-win10");
+    }
+
+    private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        MessageBox.Show(obj, "Error thrown while looking for WSL");
+    }
+
+    private void CustomDialog_Load(object sender, EventArgs e)
+    {
+        // Do nothing if WSL is enabled
+        // This prevents going back to the very first page of the setup but whatever tbh
+        if (obj == null)
+            MSINext();
     }
 }
