@@ -53,6 +53,9 @@ namespace Setup
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
             project.Version = Version.Parse("1.0.0.1");
 
+            // TODO: remove reg key on uninstall
+            // Remove-ItemProperty -Name 'Karen' -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+
             // Check for x64 Windows 10
             project.LaunchConditions.Add(new LaunchCondition("VersionNT64","LANraragi for Windows can only be installed on a 64-bit Windows."));
             project.LaunchConditions.Add(new LaunchCondition("VersionNT>=\"603\"", "LANraragi for Windows can only be installed on Windows 10 and up."));
