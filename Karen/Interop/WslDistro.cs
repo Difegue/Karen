@@ -159,7 +159,7 @@ namespace Karen.Interop
                              (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
                              "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
                              "&& sysctl vm.overcommit_memory=1 " +
-                             "&& supervisord --nodaemon --configuration ./tools/DockerSetup/supervisord.conf";
+                             "&& supervisord --nodaemon --configuration ./tools/build/docker/supervisord.conf";
 
             // Start process in WSL and hook up handles 
             // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.

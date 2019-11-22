@@ -51,7 +51,7 @@ namespace Setup
             project.GUID = new Guid("6fe30b47-2577-43ad-1337-1861ba25889b");
             project.Platform = Platform.x64;
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
-            project.Version = Version.Parse("1.0.0.1");
+            project.Version = Version.Parse("1.0.0.1"); //TODO: override by env var
 
             // TODO: remove reg key on uninstall
             // Remove-ItemProperty -Name 'Karen' -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
@@ -66,7 +66,6 @@ namespace Setup
             //remove LicenceDlg
             project.RemoveDialogsBetween(NativeDialogs.InstallDirDlg, NativeDialogs.VerifyReadyDlg);
 
-            //project.SourceBaseDir = "<input dir path>";
             project.OutDir = "bin";
             project.BuildMsi();
         }
