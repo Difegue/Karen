@@ -86,7 +86,10 @@ namespace Setup
             {
                 // Use LxRunOffline to either install or uninstall the WSL distro.
                 session.Log("Installing WSL Distro from package.tar");
-                Process.Start(lxRunLocation + @"\LxRunOffline.exe",  "i -n lanraragi -d " + distroLocation + " -f " + packageLocation);
+                var lxProc = Process.Start(lxRunLocation + @"\LxRunOffline.exe", "i -n lanraragi -d " + distroLocation + " -f " + packageLocation);
+                lxProc.OutputDataReceived += (s, e) => session.Log(e.Data);
+                lxProc.ErrorDataReceived += (s, e) => session.Log(e.Data);
+                lxProc.WaitForExit();
                 
                 session.Log("Removing package.tar");
                 System.IO.File.Delete(packageLocation);
@@ -99,7 +102,10 @@ namespace Setup
             return session.HandleErrors(() =>
             {
                 session.Log("Removing previous WSL Distro");
-                Process.Start("wslconfig.exe", "/unregister lanraragi");
+                var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
+                wslProc.OutputDataReceived += (s, e) => session.Log(e.Data);
+                wslProc.ErrorDataReceived += (s, e) => session.Log(e.Data);
+                wslProc.WaitForExit();
             });
         }
 
