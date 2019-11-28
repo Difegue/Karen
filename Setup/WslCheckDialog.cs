@@ -5,16 +5,16 @@ using System.Windows.Forms;
 using Microsoft.Deployment.WindowsInstaller;
 using WixSharp;
 
-public partial class CustomDialog : WixCLRDialog
+public partial class WslCheckDialog : WixCLRDialog
 {
     private string obj;
 
-    public CustomDialog()
+    public WslCheckDialog()
     {
         InitializeComponent();
     }
 
-    public CustomDialog(Session session)
+    public WslCheckDialog(Session session)
         : base(session)
     {
         InitializeComponent();

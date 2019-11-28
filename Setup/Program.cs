@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.Deployment.WindowsInstaller;
 using WixSharp;
 using WixSharp.CommonTasks;
 using WixSharp.Controls;
 using System.Linq;
+using System.Windows.Forms;
+using File = WixSharp.File;
 
 namespace Setup
 {
@@ -28,33 +31,26 @@ namespace Setup
                                                  new Files(@"..\External\LxRunOffline\*.*")),
                                             uninstallerShortcut
                                     ),
-                             new ElevatedManagedAction(RegisterWslDistro,
+                             new Dir(@"%ProgramMenu%\LANraragi for Windows",
+                                 new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", ""),
+                                 new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]")),
+                             new RegValue(RegistryHive.LocalMachineOrUsers, @"Software\Microsoft\Windows\CurrentVersion\Run", "Karen", "[INSTALLDIR]Karen.exe"),
+                             new ManagedAction(RegisterWslDistro,
                                  Return.check,
                                  When.After,
-                                 Step.InstallFiles,
+                                 Step.InstallFinalize,
                                  Condition.NOT_BeingRemoved),
-                             new ElevatedManagedAction(UnRegisterWslDistro,
+                             new ManagedAction(UnRegisterWslDistro,
                                  Return.check,
                                  When.Before,
                                  Step.RemoveFiles,
                                  Condition.BeingUninstalled)
                             );
 
-            project.ResolveWildCards()
-                .FindFile((f) => f.Name.EndsWith("Karen.exe"))
-                .First()
-                .Shortcuts = new[] {
-                new FileShortcut("LANraragi for Windows", "INSTALLDIR"),
-                new FileShortcut("LANraragi for Windows", "%Desktop%")
-            };
-
             project.GUID = new Guid("6fe30b47-2577-43ad-1337-1861ba25889b");
             project.Platform = Platform.x64;
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
             project.Version = Version.Parse("1.0.0.1"); //TODO: override by env var
-
-            // TODO: remove reg key on uninstall
-            // Remove-ItemProperty -Name 'Karen' -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
 
             // Check for x64 Windows 10
             project.LaunchConditions.Add(new LaunchCondition("VersionNT64","LANraragi for Windows can only be installed on a 64-bit Windows."));
@@ -73,26 +69,41 @@ namespace Setup
         [CustomAction]
         public static ActionResult RegisterWslDistro(Session session)
         {
-            UnRegisterWslDistro(session);
+#if DEBUG
+            System.Diagnostics.Debugger.Launch();
+#endif
+            MessageBox.Show("The WSL Distro will now be installed on your system. You should see one or two cmd windows.");
+
+            var result = UnRegisterWslDistro(session);
 
             if (session.IsUninstalling())
-                return ActionResult.Success;
+                return result;
 
-            var packageLocation = session.Property("INSTALLDIR") + @"\package.tar";
+            var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
             var lxRunLocation = session.Property("INSTALLDIR") + @"LxRunOffline";
-            var distroLocation = session.Property("INSTALLDIR") + @"Distro";
+            var distroLocation = @"%AppData%\LANraragi\Distro";
+
+            Directory.CreateDirectory(distroLocation);
 
             return session.HandleErrors(() =>
             {
                 // Use LxRunOffline to either install or uninstall the WSL distro.
                 session.Log("Installing WSL Distro from package.tar");
-                var lxProc = Process.Start(lxRunLocation + @"\LxRunOffline.exe", "i -n lanraragi -d " + distroLocation + " -f " + packageLocation);
-                lxProc.OutputDataReceived += (s, e) => session.Log(e.Data);
-                lxProc.ErrorDataReceived += (s, e) => session.Log(e.Data);
+                session.Log("LxRunOffline location: " + lxRunLocation);
+                session.Log("package.tar location: " + packageLocation);
+
+                var lxProc = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = "/K " + lxRunLocation + @"\LxRunOffline.exe i -n lanraragi -d " + distroLocation + " -f " + packageLocation + " && pause && exit"
+                    }
+                };
+
+                lxProc.Start();
                 lxProc.WaitForExit();
-                
-                session.Log("Removing package.tar");
-                System.IO.File.Delete(packageLocation);
+                session.Log("Exit code of LxRunOffline is " + lxProc.ExitCode);
             });
         }
 
@@ -103,8 +114,6 @@ namespace Setup
             {
                 session.Log("Removing previous WSL Distro");
                 var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
-                wslProc.OutputDataReceived += (s, e) => session.Log(e.Data);
-                wslProc.ErrorDataReceived += (s, e) => session.Log(e.Data);
                 wslProc.WaitForExit();
             });
         }
@@ -112,7 +121,7 @@ namespace Setup
         [CustomAction]
         public static ActionResult ShowDialogIfWslDisabled(Session session)
         {
-            return WixCLRDialog.ShowAsMsiDialog(new CustomDialog(session));
+            return WixCLRDialog.ShowAsMsiDialog(new WslCheckDialog(session));
         }
 
     }

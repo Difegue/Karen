@@ -1,4 +1,4 @@
-﻿partial class CustomDialog
+﻿partial class WslCheckDialog
 {
     /// <summary>
     /// Required designer variable.
@@ -26,7 +26,7 @@
     /// </summary>
     private void InitializeComponent()
     {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CustomDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WslCheckDialog));
             this.cancelBtn = new System.Windows.Forms.Button();
             this.nextBtn = new System.Windows.Forms.Button();
             this.backBtn = new System.Windows.Forms.Button();
