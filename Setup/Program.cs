@@ -50,7 +50,17 @@ namespace Setup
             project.GUID = new Guid("6fe30b47-2577-43ad-1337-1861ba25889b");
             project.Platform = Platform.x64;
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
-            project.Version = Version.Parse("1.0.0.1"); //TODO: override by env var
+
+            // Version number is based on GitHub Tags
+            var version = "v.0.0.0";
+
+            // Use environment variable if defined
+            if (Environment.GetEnvironmentVariable("LRR_VERSION_NUM") != null)
+                version = Environment.GetEnvironmentVariable("LRR_VERSION_NUM");
+
+            // Remove "v."
+            version = version.Remove(0, 2);
+            project.Version = Version.Parse(version);
 
             // Check for x64 Windows 10
             project.LaunchConditions.Add(new LaunchCondition("VersionNT64","LANraragi for Windows can only be installed on a 64-bit Windows."));
@@ -61,6 +71,10 @@ namespace Setup
 
             //remove LicenceDlg
             project.RemoveDialogsBetween(NativeDialogs.InstallDirDlg, NativeDialogs.VerifyReadyDlg);
+
+            // Customize
+            project.BackgroundImage = @"Images\dlgbmp.bmp";
+            project.BannerImage = @"Images\bannrbmp.bmp";
 
             project.OutDir = "bin";
             project.BuildMsi();
