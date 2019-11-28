@@ -52,7 +52,7 @@ namespace Setup
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
 
             // Version number is based on GitHub Tags
-            var version = "v.0.0.0";
+            var version = "v.0.0.1";
 
             // Use environment variable if defined
             if (Environment.GetEnvironmentVariable("LRR_VERSION_NUM") != null)
