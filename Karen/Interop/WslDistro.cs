@@ -153,13 +153,14 @@ namespace Karen.Interop
             string winPath = Properties.Settings.Default.ContentFolder;
             string contentFolder = "/mnt/" + Char.ToLowerInvariant(winPath[0]) + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
 
-            // The big bazooper. Export port and content folder and start supervisord.
+            // The big bazooper. Export port and content folder, start redis with directory override, and start server.
             string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
                              "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
                              (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
                              "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
-                             "&& sysctl vm.overcommit_memory=1 " +
-                             "&& supervisord --nodaemon --configuration ./tools/build/docker/supervisord.conf";
+                             "&& mkdir -p log && mkdir -p content && sysctl vm.overcommit_memory=1 " +
+                             "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir "+contentFolder+"/ --daemonize yes " +
+                             "&& perl ./script/launcher.pl -f ./script/lanraragi";
 
             // Start process in WSL and hook up handles 
             // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.
