@@ -159,8 +159,10 @@ namespace Karen.Interop
                              (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
                              "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
                              "&& mkdir -p log && mkdir -p content && sysctl vm.overcommit_memory=1 " +
-                             "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir "+contentFolder+"/ --daemonize yes " +
+                             "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '"+contentFolder+"'/ --daemonize yes " +
                              "&& perl ./script/launcher.pl -f ./script/lanraragi";
+
+            Console.WriteLine("Executing the following command on WSL: " + command);
 
             // Start process in WSL and hook up handles 
             // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.
