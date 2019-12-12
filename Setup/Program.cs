@@ -80,6 +80,7 @@ namespace Setup
             project.ControlPanelInfo.UrlUpdateInfo = "https://sugoi.gitbook.io/lanraragi/";
             project.ControlPanelInfo.ProductIcon = @"Images\favicon.ico";
             project.ControlPanelInfo.Contact = "Difegue";
+            project.ControlPanelInfo.Manufacturer = "Difegue";
 
             project.OutDir = "bin";
             project.BuildMsi();
