@@ -51,20 +51,17 @@ namespace Setup
             project.Platform = Platform.x64;
             project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
 
-            // Version number is based on GitHub Tags
-            var version = "v.0.0.1";
-
-            // Use environment variable if defined
+            // Version number is based on the LRR_VERSION_NUM env variable
+            var version = "0.0.1";
             if (Environment.GetEnvironmentVariable("LRR_VERSION_NUM") != null)
                 version = Environment.GetEnvironmentVariable("LRR_VERSION_NUM");
 
             try
             {
-                // Remove "v."
-                version = version.Remove(0, 2);
                 project.Version = Version.Parse(version);
             } catch
             {
+                Console.WriteLine("Couldn't get version from te environment variable "+version);
                 project.Version = Version.Parse("0.0.1");
             }
 
