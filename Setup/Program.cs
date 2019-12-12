@@ -58,9 +58,15 @@ namespace Setup
             if (Environment.GetEnvironmentVariable("LRR_VERSION_NUM") != null)
                 version = Environment.GetEnvironmentVariable("LRR_VERSION_NUM");
 
-            // Remove "v."
-            version = version.Remove(0, 2);
-            project.Version = Version.Parse(version);
+            try
+            {
+                // Remove "v."
+                version = version.Remove(0, 2);
+                project.Version = Version.Parse(version);
+            } catch
+            {
+                project.Version = Version.Parse("0.0.1");
+            }
 
             // Check for x64 Windows 10
             project.LaunchConditions.Add(new LaunchCondition("VersionNT64","LANraragi for Windows can only be installed on a 64-bit Windows."));
