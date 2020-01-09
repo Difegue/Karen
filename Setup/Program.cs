@@ -120,7 +120,7 @@ namespace Setup
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "cmd",
-                        Arguments = "/K " + lxRunLocation + @"\LxRunOffline.exe i -n lanraragi -d " + distroLocation + " -f " + packageLocation + " && pause && exit"
+                        Arguments = "/K '" + lxRunLocation + @"\LxRunOffline.exe' i -n lanraragi -d '" + distroLocation + "' -f '" + packageLocation + "' && pause && exit"
                     }
                 };
 
