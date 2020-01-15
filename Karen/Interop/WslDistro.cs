@@ -151,10 +151,15 @@ namespace Karen.Interop
             // Map the user's content folder to its WSL equivalent
             // This means lowercasing the drive letter, removing the : and replacing every \ by a /.
             string winPath = Properties.Settings.Default.ContentFolder;
-            string contentFolder = "/mnt/" + Char.ToLowerInvariant(winPath[0]) + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
+            string wslPath = "/mnt/" + Char.ToLowerInvariant(winPath[0]);
+            string contentFolder = wslPath + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
 
-            // The big bazooper. Export port and content folder, start redis with directory override, and start server.
-            string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
+            // Check if the drive letter is a network drive, and create the mountpoint in WSL if it is.
+            string driveLetter = winPath.Split('\\')[0]; 
+
+            // The big bazooper. Export port and content folder and start supervisord.
+            string command = (!IsLocalDrive(driveLetter) ? $"mkdir -p {wslPath} && mount -t drvfs {driveLetter} {wslPath} && " : "") +
+                             "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
                              "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
                              (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
                              "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
@@ -227,6 +232,37 @@ namespace Karen.Interop
 
         [DllImport("kernel32.dll", EntryPoint = "GetStdHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         private static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [DllImport("mpr.dll")]
+        static extern uint WNetGetConnection(string lpLocalName, StringBuilder lpRemoteName, ref int lpnLength);
+
+        internal static bool IsLocalDrive(String driveName)
+        {
+            bool isLocal = true;  // assume local until disproved
+
+            // strip trailing backslashes from driveName
+            driveName = driveName.Substring(0, 2);
+
+            int length = 256; // to be on safe side 
+            StringBuilder networkShare = new StringBuilder(length);
+            uint status = WNetGetConnection(driveName, networkShare, ref length);
+
+            // does a network share exist for this drive?
+            if (networkShare.Length != 0)
+            {
+                // now networkShare contains a UNC path in format \\MachineName\ShareName
+                // retrieve the MachineName portion
+                String shareName = networkShare.ToString();
+                string[] splitShares = shareName.Split('\\');
+                // the 3rd array element now contains the machine name
+                if (Environment.MachineName == splitShares[2])
+                    isLocal = true;
+                else
+                    isLocal = false;
+            }
+
+            return isLocal;
+        }
 
         private const int STD_INPUT_HANDLE = -10;
         private const int STD_OUTPUT_HANDLE = -11;
