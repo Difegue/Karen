@@ -163,7 +163,7 @@ namespace Karen.Interop
                              "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
                              (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
                              "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
-                             "&& mkdir -p log && mkdir -p content && sysctl vm.overcommit_memory=1 " +
+                             "&& mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1 " +
                              "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '"+contentFolder+"'/ --daemonize yes " +
                              "&& perl ./script/launcher.pl -f ./script/lanraragi";
 
