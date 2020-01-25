@@ -61,7 +61,7 @@ namespace Setup
                 project.Version = Version.Parse(version);
             } catch
             {
-                Console.WriteLine("Couldn't get version from te environment variable "+version);
+                Console.WriteLine("Couldn't get version from the environment variable "+version);
                 project.Version = Version.Parse("0.0.1");
             }
 
@@ -95,7 +95,7 @@ namespace Setup
 #if DEBUG
             System.Diagnostics.Debugger.Launch();
 #endif
-            MessageBox.Show("The WSL Distro will now be installed on your system. You should see one or two cmd windows.");
+            MessageBox.Show(session.GetMainWindow(), "The WSL Distro will now be installed on your system. You should see one or two cmd windows.");
 
             var result = UnRegisterWslDistro(session);
 
@@ -115,12 +115,17 @@ namespace Setup
                 session.Log("LxRunOffline location: " + lxRunLocation);
                 session.Log("package.tar location: " + packageLocation);
 
+                // The extra quote after the /K flag is needed.
+                // "If command starts with a quote, the first and last quote chars in command will be removed, whether /s is specified or not."
+                var procArgs = "/S /K \"\"" + lxRunLocation + "\\LxRunOffline.exe\" i -n lanraragi -d " + distroLocation + " -f \"" + packageLocation + "\" && pause && exit\"";
+                session.Log("Launching cmd.exe with arguments " + procArgs);
+
                 var lxProc = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "cmd",
-                        Arguments = "/K '" + lxRunLocation + @"\LxRunOffline.exe' i -n lanraragi -d '" + distroLocation + "' -f '" + packageLocation + "' && pause && exit"
+                        Arguments = procArgs
                     }
                 };
 
