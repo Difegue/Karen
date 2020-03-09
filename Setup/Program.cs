@@ -24,7 +24,7 @@ namespace Setup
             var uninstallerShortcut = new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]");
 
             var project = new Project("LANraragi",
-                             new Dir(@"%AppData%\LANraragi", 
+                             new Dir(@"%AppData%\LANraragi",
                                  new Files(@"..\Karen\bin\x64\Release\*.*"),
                                             new File(@"..\External\package.tar"),
                                              new Dir("LxRunOffline",
@@ -49,7 +49,11 @@ namespace Setup
 
             project.GUID = new Guid("6fe30b47-2577-43ad-1337-1861ba25889b");
             project.Platform = Platform.x64;
-            project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
+            project.MajorUpgrade = new MajorUpgrade
+            {
+                Schedule = UpgradeSchedule.afterInstallValidate, // Remove previous version entirely before reinstalling, so that the WSL distro isn't uninstall on upgrade.
+                DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
+            };
 
             // Version number is based on the LRR_VERSION_NUM env variable
             var version = "0.0.1";
@@ -59,14 +63,15 @@ namespace Setup
             try
             {
                 project.Version = Version.Parse(version);
-            } catch
+            }
+            catch
             {
-                Console.WriteLine("Couldn't get version from the environment variable "+version);
+                Console.WriteLine("Couldn't get version from the environment variable " + version);
                 project.Version = Version.Parse("0.0.1");
             }
 
             // Check for x64 Windows 10
-            project.LaunchConditions.Add(new LaunchCondition("VersionNT64","LANraragi for Windows can only be installed on a 64-bit Windows."));
+            project.LaunchConditions.Add(new LaunchCondition("VersionNT64", "LANraragi for Windows can only be installed on a 64-bit Windows."));
             project.LaunchConditions.Add(new LaunchCondition("VersionNT>=\"603\"", "LANraragi for Windows can only be installed on Windows 10 and up."));
 
             //Schedule custom dialog between WelcomeDlg and InstallDirDlg standard MSI dialogs.
