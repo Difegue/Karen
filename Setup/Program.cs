@@ -62,7 +62,7 @@ namespace Setup
 
             try
             {
-                project.Version = Version.Parse(version);
+                project.Version = Version.Parse(version.Replace("-EX",".38")); //dotnet versions don't accept text or dashes but I ain't about to fuck up my versioning schema dagnabit
             }
             catch
             {
