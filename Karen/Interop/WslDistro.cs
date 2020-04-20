@@ -132,7 +132,8 @@ namespace Karen.Interop
             {
                 Version = "Content Folder doesn't exist!";
                 return false;
-            }
+            } else 
+                Version = GetVersion(); //Show the version anew if the content folder is now set
 
             Status = AppStatus.Starting;
 

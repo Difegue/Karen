@@ -26,7 +26,7 @@
 
             <TextBlock FontSize="14">
                 You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper,
-                <LineBreak/> Version 1.6. <emoji:TextBlock Text="🐝"/>
+                <LineBreak/> Version 1.7. <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
                 <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/Difegue/LANraragi</Hyperlink>
                 <LineBreak/>
