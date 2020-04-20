@@ -123,7 +123,7 @@ namespace Setup
                 // The extra quote after the /K flag is needed.
                 // "If command starts with a quote, the first and last quote chars in command will be removed, whether /s is specified or not."
                 var procArgs = "/S /K \"\"" + lxRunLocation + "\\LxRunOffline.exe\" i -n lanraragi -d " + distroLocation 
-                                + " -f \"" + packageLocation + "\" && del \"" + distroLocation +"\\etc\\resolv.conf\" && pause && exit\"";
+                                + " -f \"" + packageLocation + "\" && del \"" + distroLocation +"\\rootfs\\etc\\resolv.conf\" && pause && exit\"";
                 // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
                 // Deleting it in Linux would be too late as WSL already started!
                 session.Log("Launching cmd.exe with arguments " + procArgs);
