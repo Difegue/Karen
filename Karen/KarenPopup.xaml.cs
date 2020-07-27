@@ -82,8 +82,6 @@ namespace Karen
 
         void KarenPopup_ContentRendered(object sender, EventArgs e)
         {
-            this.Resources.MergedDictionaries.Clear();
-
             try
             {
                 //Get Light/Dark theme from registry
@@ -94,18 +92,15 @@ namespace Karen
                 if (lightThemeOn != "0")
                 {
                     _blurBackgroundColor = 0x99FFFFFF;
-                    this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Themes/Light.xaml", UriKind.Relative) });
                 }
                 else
                 {
                     _blurBackgroundColor = 0xAA000000;
-                    this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Themes/Dark.xaml", UriKind.Relative) });
                 }
                 this.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             } catch (Exception)
             {
                 //eh 
-                this.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Themes/Light.xaml", UriKind.Relative) });
             }
 
             //Display the popup...with cool acrylic!

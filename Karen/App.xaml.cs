@@ -66,9 +66,14 @@ namespace Karen
         protected override void OnExit(ExitEventArgs e)
         {
             notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
-            Distro.StopApp();
-            WslDistro.FreeConsole(); //clean up the console to ensure it's closed alongside the app
-            base.OnExit(e);
+            try
+            {
+                Distro.StopApp();
+            } finally
+            {
+                WslDistro.FreeConsole(); //clean up the console to ensure it's closed alongside the app
+                base.OnExit(e);
+            }
         }
     }
 }
