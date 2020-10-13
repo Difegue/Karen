@@ -77,6 +77,38 @@ namespace Karen.Interop
             return false;
         }
 
+        private bool SetWSLVersion(int wslVer)
+        {
+            Console.WriteLine($"Making sure the WSL distro is using specified WSL mode: {wslVer}.");
+            var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Environment.SystemDirectory + "\\wsl.exe",
+                    Arguments = $"--set-version {Properties.Resources.DISTRO_NAME} {wslVer}",
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                }
+            };
+            try
+            {
+                proc.Start();
+                while (!proc.StandardOutput.EndOfStream)
+                {
+                    Console.WriteLine(proc.StandardOutput.ReadLine());
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error while setting WSL version: {e}");
+                return false;
+            }
+        }
+
         private string GetVersion()
         {
             // Perl one-liner to execute on the distro to get the version number+name
@@ -87,7 +119,7 @@ namespace Karen.Interop
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Environment.SystemDirectory + "\\wsl.exe",
-                    Arguments = "-d "+ Properties.Resources.DISTRO_NAME + " --exec " + oneLiner,
+                    Arguments = $"-d {Properties.Resources.DISTRO_NAME} --exec {oneLiner}",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
@@ -148,6 +180,10 @@ namespace Karen.Interop
             var stdIn = GetStdHandle(STD_INPUT_HANDLE);
             var stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
             var stdError = GetStdHandle(STD_ERROR_HANDLE);
+
+            // Switch the distro to the specified WSL version
+            // (Does nothing if we're already using the proper one)
+            _ = Properties.Settings.Default.UseWSL2 ? SetWSLVersion(2) : SetWSLVersion(1);
 
             // Map the user's content folder to its WSL equivalent
             // This means lowercasing the drive letter, removing the : and replacing every \ by a /.

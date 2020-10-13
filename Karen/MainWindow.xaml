@@ -17,7 +17,7 @@
                 <Button Height="30" Content="Browse" Click="PickFolder" Width="65" Style="{StaticResource AccentButtonStyle}"/>
             </StackPanel>
             <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🌐 Network Port" Margin="0,12,0,5"/>
-            <TextBlock FontSize="10">Port of your machine the server will run on.</TextBlock>
+            <TextBlock Style="{StaticResource CaptionTextBlockStyle}">Port of your machine the server will run on.</TextBlock>
             <ui:NumberBox HorizontalAlignment="Left" Width="245" SpinButtonPlacementMode="Compact" Maximum="65535" Minimum="0" Padding="0,6,0,0"  Margin="0,0,10,0" Text="{Binding Source={x:Static p:Settings.Default}, Path=NetworkPort, Mode=TwoWay}"  PreviewTextInput="NumberValidationTextBox"/>
             <Separator Height="11.5" Margin="0"/>
             <CheckBox Content="Start server automatically" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartServerAutomatically, Mode=TwoWay}" />
@@ -25,9 +25,16 @@
             <CheckBox Content="Force Debug Mode" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=ForceDebugMode, Mode=TwoWay}"/>
             <Separator Height="11.5" Margin="0"/>
 
+            <CheckBox Content="Use WSL2" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=UseWSL2, Mode=TwoWay}"/>
+            <TextBlock Style="{StaticResource CaptionTextBlockStyle}">
+            LANraragi defaults to using WSL1 for wider compatibility and better performance for filesystem access between the Distro and Windows.<LineBreak/>
+            You can however try switching the distro to use WSL2 if you're encountering issues in WSL1, as it has better compatibility.
+            </TextBlock>
+
+            <Separator Height="11.5" Margin="0"/>
             <TextBlock Style="{StaticResource BodyTextBlockStyle}">
                 You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper,
-                <LineBreak/> Version 1.8. <emoji:TextBlock Text="🐝"/>
+                <LineBreak/> Version 1.9. <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
                 <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/Difegue/LANraragi</Hyperlink>
                 <LineBreak/>
