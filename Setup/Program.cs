@@ -5,9 +5,10 @@ using Microsoft.Deployment.WindowsInstaller;
 using WixSharp;
 using WixSharp.CommonTasks;
 using WixSharp.Controls;
-using System.Linq;
+using CliWrap;
 using System.Windows.Forms;
 using File = WixSharp.File;
+using System.Threading.Tasks;
 
 namespace Setup
 {
@@ -56,13 +57,13 @@ namespace Setup
             };
 
             // Version number is based on the LRR_VERSION_NUM env variable
-            var version = "0.0.1";
+            var version = "0.7.4";
             if (Environment.GetEnvironmentVariable("LRR_VERSION_NUM") != null)
                 version = Environment.GetEnvironmentVariable("LRR_VERSION_NUM");
 
             try
             {
-                project.Version = Version.Parse(version.Replace("-EX",".38")); //dotnet versions don't accept text or dashes but I ain't about to fuck up my versioning schema dagnabit
+                project.Version = Version.Parse(version.Replace("-EX", ".38")); //dotnet versions don't accept text or dashes but I ain't about to fuck up my versioning schema dagnabit
             }
             catch
             {
@@ -100,57 +101,29 @@ namespace Setup
 #if DEBUG
             System.Diagnostics.Debugger.Launch();
 #endif
-            MessageBox.Show(session.GetMainWindow(), "The WSL Distro will now be installed on your system. You should see one or two cmd windows.");
+            //MessageBox.Show(session.GetMainWindow(), "The WSL Distro will now be installed on your system. You should see one or two cmd windows.");
 
             var result = UnRegisterWslDistro(session);
 
             if (session.IsUninstalling())
                 return result;
 
-            var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
-            var lxRunLocation = session.Property("INSTALLDIR") + @"LxRunOffline";
-            var distroLocation = @"%AppData%\LANraragi\Distro";
-
-            Directory.CreateDirectory(distroLocation);
-
             return session.HandleErrors(() =>
             {
-                // Use LxRunOffline to either install or uninstall the WSL distro.
-                session.Log("Installing WSL Distro from package.tar");
-                session.Log("LxRunOffline location: " + lxRunLocation);
-                session.Log("package.tar location: " + packageLocation);
-
-                // The extra quote after the /K flag is needed.
-                // "If command starts with a quote, the first and last quote chars in command will be removed, whether /s is specified or not."
-                var procArgs = "/S /K \"\"" + lxRunLocation + "\\LxRunOffline.exe\" i -n lanraragi -d " + distroLocation 
-                                + " -f \"" + packageLocation + "\" && del \"" + distroLocation +"\\rootfs\\etc\\resolv.conf\" && pause && exit\"";
-                // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
-                // Deleting it in Linux would be too late as WSL already started!
-                session.Log("Launching cmd.exe with arguments " + procArgs);
-
-                var lxProc = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "cmd",
-                        Arguments = procArgs
-                    }
-                };
-
-                lxProc.Start();
-                lxProc.WaitForExit();
-                session.Log("Exit code of LxRunOffline is " + lxProc.ExitCode);
+                new InstallDistroDialog(session).Show(session.GetMainWindow());
             });
         }
 
         [CustomAction]
         public static ActionResult UnRegisterWslDistro(Session session)
         {
-            return session.HandleErrors(() =>
+            return session.HandleErrors(async () =>
             {
                 session.Log("Removing previous WSL Distro");
-                var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
-                wslProc.WaitForExit();
+
+                await Cli.Wrap("wslconfig.exe")
+                    .WithArguments("/unregister lanraragi")
+                    .ExecuteAsync();
             });
         }
 
