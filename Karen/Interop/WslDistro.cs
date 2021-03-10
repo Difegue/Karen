@@ -35,6 +35,116 @@ namespace Karen.Interop
                 Version = GetVersion();
         }
 
+        public void ShowConsole()
+        {
+            ShowWindow(GetConsoleWindow(), SW_SHOW);
+            ShowWindow(GetConsoleWindow(), SW_RESTORE);
+        }
+
+        public void HideConsole()
+        {
+            ShowWindow(GetConsoleWindow(), SW_HIDE);
+        }
+
+        private string GetWSLPath(string winPath)
+        {
+            string wslPath = "/mnt/" + Char.ToLowerInvariant(winPath[0]);
+            return wslPath + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
+        }
+
+        public bool? StartApp()
+        {
+            if (!Directory.Exists(Properties.Settings.Default.ContentFolder))
+            {
+                Version = "Content Folder doesn't exist!";
+                return false;
+            } else 
+                Version = GetVersion(); //Show the version anew if the content folder is now set
+
+            Status = AppStatus.Starting;
+
+            // Spawn a new console 
+            AllocConsole();
+
+            // Hide it 
+            HideConsole();
+            HideConsoleOnClose.Enable();
+
+            // Get its handles
+            var stdIn = GetStdHandle(STD_INPUT_HANDLE);
+            var stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+            var stdError = GetStdHandle(STD_ERROR_HANDLE);
+
+            // Switch the distro to the specified WSL version
+            // (Does nothing if we're already using the proper one)
+            _ = Properties.Settings.Default.UseWSL2 ? SetWSLVersion(2) : SetWSLVersion(1);
+
+            // Map the user's content folder to its WSL equivalent
+            // This means lowercasing the drive letter, removing the : and replacing every \ by a /.
+            string winPath = Properties.Settings.Default.ContentFolder;
+            string thumbPath = Properties.Settings.Default.ThumbnailFolder;
+
+            MountIfNetworkDrive(winPath);
+            MountIfNetworkDrive(thumbPath);
+
+            string contentFolder = GetWSLPath(winPath);
+            string thumbnailFolder = string.IsNullOrWhiteSpace(thumbPath) ? contentFolder + "/thumb" : GetWSLPath(thumbPath);
+
+            // The big bazooper. Export port, folders and start both redis and the server.
+            string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
+                             "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
+                             "&& export LRR_THUMB_DIRECTORY='"+thumbnailFolder+"' " +
+                             (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
+                             "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
+                             "&& mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1 " +
+                             "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '"+contentFolder+"'/ --daemonize yes " +
+                             "&& perl ./script/launcher.pl -f ./script/lanraragi";
+
+            Console.WriteLine("Executing the following command on WSL: " + command);
+
+            // Start process in WSL and hook up handles 
+            // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.
+            // See https://stackoverflow.com/questions/15604014/no-console-output-when-using-allocconsole-and-target-architecture-x86
+            WslApi.WslLaunch(Properties.Resources.DISTRO_NAME, command, false, stdIn,stdOut,stdError, out _lrrHandle);
+
+            // Get Process ID of the returned procHandle
+            int lrrId = GetProcessId(_lrrHandle);
+            _lrrProc = Process.GetProcessById(lrrId);
+
+            // Check that the returned process is still alive
+            if (_lrrProc != null && !_lrrProc.HasExited)
+                Status = AppStatus.Started;
+
+            return !_lrrProc?.HasExited;
+        }
+
+        public bool? StopApp()
+        {  
+            // Kill WSL Process
+            if (_lrrProc != null && !_lrrProc.HasExited)
+            {
+                _lrrProc.Kill();
+
+                // Ensure child unix processes are killed as well by killing the distro. This is only possible on 1809 and up.
+                new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "wslconfig.exe",
+                        Arguments = "/terminate " + Properties.Resources.DISTRO_NAME,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true,
+                    }
+                }.Start();
+            }
+
+            // No need to remove the attached console here in case the app is restarted later down
+            Status = AppStatus.Stopped;
+            return _lrrProc?.HasExited;
+        }
+
+        #region Various ProcessStartInfo calls to WSL
         private bool CheckDistro()
         {
             //return WslApi.WslIsDistributionRegistered(DISTRO_NAME);
@@ -61,7 +171,7 @@ namespace Karen.Interop
                 while (!proc.StandardOutput.EndOfStream)
                 {
                     string line = proc.StandardOutput.ReadLine();
-                    if (line.Replace("\0","").Contains(Properties.Resources.DISTRO_NAME))
+                    if (line.Replace("\0", "").Contains(Properties.Resources.DISTRO_NAME))
                     {
                         return true;
                     }
@@ -144,109 +254,52 @@ namespace Karen.Interop
             // Distro exists but the one-liner returns nothing
             Status = AppStatus.NotInstalled;
             return "WSL Distro doesn't function properly. Consider updating Windows 10.";
-
         }
 
-        public void ShowConsole()
-        {
-            ShowWindow(GetConsoleWindow(), SW_SHOW);
-            ShowWindow(GetConsoleWindow(), SW_RESTORE);
-        }
 
-        public void HideConsole()
+        /// <summary>
+        /// Check if the drive letter of the given path is a network drive, and create the mountpoint in WSL if it is.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private void MountIfNetworkDrive(string path)
         {
-            ShowWindow(GetConsoleWindow(), SW_HIDE);
-        }
+            if (string.IsNullOrWhiteSpace(path))
+                return;
 
-        public bool? StartApp()
-        {
-            if (!Directory.Exists(Properties.Settings.Default.ContentFolder))
+            var driveLetter = path.Split('\\')[0];
+            var wslMountPoint = "/mnt/" + driveLetter.ToLowerInvariant();
+
+            if (!IsLocalDrive(driveLetter))
             {
-                Version = "Content Folder doesn't exist!";
-                return false;
-            } else 
-                Version = GetVersion(); //Show the version anew if the content folder is now set
+                var oneLiner = $"mkdir -p {wslMountPoint} && mount -t drvfs {driveLetter} {wslMountPoint}";
 
-            Status = AppStatus.Starting;
-
-            // Spawn a new console 
-            AllocConsole();
-
-            // Hide it 
-            HideConsole();
-            HideConsoleOnClose.Enable();
-
-            // Get its handles
-            var stdIn = GetStdHandle(STD_INPUT_HANDLE);
-            var stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-            var stdError = GetStdHandle(STD_ERROR_HANDLE);
-
-            // Switch the distro to the specified WSL version
-            // (Does nothing if we're already using the proper one)
-            _ = Properties.Settings.Default.UseWSL2 ? SetWSLVersion(2) : SetWSLVersion(1);
-
-            // Map the user's content folder to its WSL equivalent
-            // This means lowercasing the drive letter, removing the : and replacing every \ by a /.
-            string winPath = Properties.Settings.Default.ContentFolder;
-            string wslPath = "/mnt/" + Char.ToLowerInvariant(winPath[0]);
-            string contentFolder = wslPath + winPath.Substring(1).Replace(":", "").Replace("\\", "/");
-
-            // Check if the drive letter is a network drive, and create the mountpoint in WSL if it is.
-            string driveLetter = winPath.Split('\\')[0]; 
-
-            // The big bazooper. Export port and content folder and start supervisord.
-            string command = (!IsLocalDrive(driveLetter) ? $"mkdir -p {wslPath} && mount -t drvfs {driveLetter} {wslPath} && " : "") +
-                             "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
-                             "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
-                             (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
-                             "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
-                             "&& mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1 " +
-                             "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '"+contentFolder+"'/ --daemonize yes " +
-                             "&& perl ./script/launcher.pl -f ./script/lanraragi";
-
-            Console.WriteLine("Executing the following command on WSL: " + command);
-
-            // Start process in WSL and hook up handles 
-            // This will direct WSL output to the new console window, or to Visual Studio if running with the debugger attached.
-            // See https://stackoverflow.com/questions/15604014/no-console-output-when-using-allocconsole-and-target-architecture-x86
-            WslApi.WslLaunch(Properties.Resources.DISTRO_NAME, command, false, stdIn,stdOut,stdError, out _lrrHandle);
-
-            // Get Process ID of the returned procHandle
-            int lrrId = GetProcessId(_lrrHandle);
-            _lrrProc = Process.GetProcessById(lrrId);
-
-            // Check that the returned process is still alive
-            if (_lrrProc != null && !_lrrProc.HasExited)
-                Status = AppStatus.Started;
-
-            return !_lrrProc?.HasExited;
-        }
-
-        public bool? StopApp()
-        {  
-            // Kill WSL Process
-            if (_lrrProc != null && !_lrrProc.HasExited)
-            {
-                _lrrProc.Kill();
-
-                // Ensure child unix processes are killed as well by killing the distro. This is only possible on 1809 and up.
-                new Process
+                var proc = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = "wslconfig.exe",
-                        Arguments = "/terminate " + Properties.Resources.DISTRO_NAME,
+                        FileName = Environment.SystemDirectory + "\\wsl.exe",
+                        Arguments = $"-d {Properties.Resources.DISTRO_NAME} --exec {oneLiner}",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true,
                     }
-                }.Start();
+                };
+                try
+                {
+                    proc.Start();
+                    while (!proc.StandardOutput.EndOfStream)
+                    {
+                        Console.WriteLine(proc.StandardOutput.ReadLine());
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error while mounting Network Drive in WSL: {e}");
+                }
             }
-
-            // No need to remove the attached console here in case the app is restarted later down
-            Status = AppStatus.Stopped;
-            return _lrrProc?.HasExited;
         }
+        #endregion
 
         #region Your friendly neighborhood P/Invokes for console host wizardry
 

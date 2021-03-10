@@ -6,15 +6,27 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         x:Class="Karen.MainWindow"
         xmlns:p="clr-namespace:Karen.Properties" 
-        Title="LANraragi Windows Settings" MinHeight="600" MinWidth="350" Width="350"
+        ResizeMode="CanResizeWithGrip"
+        Title="LANraragi Windows Settings" 
+        MinWidth="500" MinHeight="480"
+        Width="500" Height="680"
         Closing="OnClosing">
-    <DockPanel LastChildFill="False" Margin="10">
-        <ui:SimpleStackPanel VerticalAlignment="Top"  DockPanel.Dock="Top" >
+    <ScrollViewer Margin="0,0,0,16">
+        <ui:SimpleStackPanel VerticalAlignment="Top" Margin="16">
             <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🗃 Content Folder Location" Margin="0,0,0,5"/>
             <TextBlock Style="{StaticResource CaptionTextBlockStyle}">Where LANraragi looks for archives on your machine.</TextBlock>
             <StackPanel Orientation="Horizontal">
-                <TextBox Width="245" Padding="6,6,6,0" Margin="0,0,10,0" IsReadOnly="True" Text="{Binding Source={x:Static p:Settings.Default}, Path=ContentFolder, Mode=TwoWay}"/>
+                <TextBox Width="370" Padding="6,6,6,0" Margin="0,0,10,0" IsReadOnly="True" Text="{Binding Source={x:Static p:Settings.Default}, Path=ContentFolder, Mode=TwoWay}"/>
                 <Button Height="30" Content="Browse" Click="PickFolder" Width="65" Style="{StaticResource AccentButtonStyle}"/>
+            </StackPanel>
+            <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🖼 Thumbnail Folder Location" Margin="0,12,0,5"/>
+            <TextBlock Style="{StaticResource CaptionTextBlockStyle}">
+                Where LANraragi stores thumbnails for your content. <LineBreak/>
+                Defaults to a subfolder in the content folder if not set.
+            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="370" Padding="6,6,6,0" Margin="0,0,10,0" IsReadOnly="True" Text="{Binding Source={x:Static p:Settings.Default}, Path=ThumbnailFolder, Mode=TwoWay}"/>
+                <Button Height="30" Content="Browse" Click="PickThumbFolder" Width="65" Style="{StaticResource AccentButtonStyle}"/>
             </StackPanel>
             <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🌐 Network Port" Margin="0,12,0,5"/>
             <TextBlock Style="{StaticResource CaptionTextBlockStyle}">Port of your machine the server will run on.</TextBlock>
@@ -33,25 +45,27 @@
 
             <Separator Height="11.5" Margin="0"/>
             <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper,
-                <LineBreak/> Version 1.9. <emoji:TextBlock Text="🐝"/>
+                You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">LANraragi</Hyperlink>,
+                <LineBreak/> Version 2.0 <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
-                <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">https://github.com/Difegue/LANraragi</Hyperlink>
+                <emoji:TextBlock Text="✨"/> Consider installing <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH" RequestNavigate="Hyperlink_RequestNavigate">LRReader</Hyperlink> from the Microsoft Store! <emoji:TextBlock Text="✨"/>
                 <LineBreak/>
             </TextBlock>
+
+            <Expander Header="License">
+                <TextBlock DockPanel.Dock="Bottom" TextWrapping="Wrap">
+                <Run FontSize="10">
+                    Copyright 2020-2021 Difegue</Run>
+                <LineBreak/>
+                <Run FontSize="9">
+                    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+                </Run>
+                <LineBreak/>
+                </TextBlock>
+            </Expander>
             
         </ui:SimpleStackPanel>
 
-        <TextBlock DockPanel.Dock="Bottom" TextWrapping="Wrap">
-            <Run FontSize="10">
-                Copyright 2020 Difegue</Run>
-            <LineBreak/>
-            <Run FontSize="9">
-                Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-            </Run>
-                <LineBreak/>
-        </TextBlock>
-        
-    </DockPanel>
+    </ScrollViewer>
 
 </Window>

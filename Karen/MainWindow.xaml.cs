@@ -31,6 +31,17 @@ namespace Karen
             }
         }
 
+        private void PickThumbFolder(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+            dlg.Description = "Select your LANraragi Thumbnail Folder.";
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                Properties.Settings.Default.ThumbnailFolder = dlg.SelectedPath;
+            }
+        }
+
         private void OnClosing(object sender, CancelEventArgs e)
         {
             // Set first launch to false
