@@ -84,22 +84,39 @@ namespace Karen.Interop
             string winPath = Properties.Settings.Default.ContentFolder;
             string thumbPath = Properties.Settings.Default.ThumbnailFolder;
 
-            MountIfNetworkDrive(winPath);
-            MountIfNetworkDrive(thumbPath);
-
             string contentFolder = GetWSLPath(winPath);
             string thumbnailFolder = string.IsNullOrWhiteSpace(thumbPath) ? contentFolder + "/thumb" : GetWSLPath(thumbPath);
 
-            // The big bazooper. Export port, folders and start both redis and the server.
-            string command = "export LRR_NETWORK=http://*:"+ Properties.Settings.Default.NetworkPort + " " +
-                             "&& export LRR_DATA_DIRECTORY='"+contentFolder+"' " +
-                             "&& export LRR_THUMB_DIRECTORY='"+thumbnailFolder+"' " +
-                             (Properties.Settings.Default.ForceDebugMode ? "&& export LRR_FORCE_DEBUG=1 " : "") +
-                             "&& cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid " +
-                             "&& mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1 " +
-                             "&& redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '"+contentFolder+"'/ --daemonize yes " +
-                             "&& perl ./script/launcher.pl -f ./script/lanraragi";
+            var wslCommands = new List<string>();
 
+            // The big bazooper. Export port, folders and start both redis and the server.
+            var driveLetter = winPath.Split('\\')[0];
+            if (!IsLocalDrive(driveLetter))
+            {
+                wslCommands.Add($"mkdir -p '{contentFolder}' && mount -t drvfs {driveLetter} '{contentFolder}'");
+            }
+
+            driveLetter = thumbPath.Split('\\')[0];
+            if (!string.IsNullOrWhiteSpace(thumbPath) && !IsLocalDrive(driveLetter))
+            {
+                wslCommands.Add($"mkdir -p '{thumbnailFolder}' && mount -t drvfs {driveLetter} '{thumbnailFolder}'");
+            }
+
+            if (Properties.Settings.Default.ForceDebugMode)
+            {
+                wslCommands.Add($"export LRR_FORCE_DEBUG=1");
+            }
+
+            wslCommands.Add($"export LRR_NETWORK=http://*:{Properties.Settings.Default.NetworkPort}");
+            wslCommands.Add($"export LRR_DATA_DIRECTORY='{contentFolder}'");
+            wslCommands.Add($"export LRR_THUMB_DIRECTORY='{thumbnailFolder}'");
+            wslCommands.Add($"cd /home/koyomi/lanraragi && rm -f script/hypnotoad.pid");
+            wslCommands.Add($"mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1");
+            wslCommands.Add($"redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '{contentFolder}/' --daemonize yes");
+            wslCommands.Add($"perl ./script/launcher.pl -f ./script/lanraragi");
+
+            // Concat all commands into one string we'll throw at WSL
+            var command = string.Join(" && ", wslCommands);
             Console.WriteLine("Executing the following command on WSL: " + command);
 
             // Start process in WSL and hook up handles 
@@ -256,49 +273,6 @@ namespace Karen.Interop
             return "WSL Distro doesn't function properly. Consider updating Windows 10.";
         }
 
-
-        /// <summary>
-        /// Check if the drive letter of the given path is a network drive, and create the mountpoint in WSL if it is.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private void MountIfNetworkDrive(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                return;
-
-            var driveLetter = path.Split('\\')[0];
-            var wslMountPoint = "/mnt/" + driveLetter.ToLowerInvariant();
-
-            if (!IsLocalDrive(driveLetter))
-            {
-                var oneLiner = $"mkdir -p {wslMountPoint} && mount -t drvfs {driveLetter} {wslMountPoint}";
-
-                var proc = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = Environment.SystemDirectory + "\\wsl.exe",
-                        Arguments = $"-d {Properties.Resources.DISTRO_NAME} --exec {oneLiner}",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true,
-                    }
-                };
-                try
-                {
-                    proc.Start();
-                    while (!proc.StandardOutput.EndOfStream)
-                    {
-                        Console.WriteLine(proc.StandardOutput.ReadLine());
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Error while mounting Network Drive in WSL: {e}");
-                }
-            }
-        }
         #endregion
 
         #region Your friendly neighborhood P/Invokes for console host wizardry

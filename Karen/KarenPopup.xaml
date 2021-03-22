@@ -9,15 +9,11 @@
         Loaded="KarenPopup_Loaded"
         mc:Ignorable="d"
         BorderThickness="1"
-        Height="500" Width="250">
+        Height="512" Width="250">
 
     <ui:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" >
-        
-        <ContentControl Style="{StaticResource LogoIcon}"
-                        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-                        Width="125" Height="125" Margin="0,25,0,0"/>
 
-        <Separator Height="10" Visibility="Hidden"/>
+        <Image Source="logo.png" Width="192" Height="192" Margin="0,0,0,-8"/>
 
         <emoji:TextBlock Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="-16,0,0,0"
                          FontSize="16" FontWeight="Bold" Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
