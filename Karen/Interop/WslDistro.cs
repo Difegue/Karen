@@ -89,17 +89,19 @@ namespace Karen.Interop
 
             var wslCommands = new List<string>();
 
-            // The big bazooper. Export port, folders and start both redis and the server.
+           
             var driveLetter = winPath.Split('\\')[0];
             if (!IsLocalDrive(driveLetter))
             {
-                wslCommands.Add($"mkdir -p '{contentFolder}' && mount -t drvfs {driveLetter} '{contentFolder}'");
+                var mountpoint = "/mnt/" + Char.ToLowerInvariant(driveLetter.First());
+                wslCommands.Add($"mkdir -p '{mountpoint}' && mount -t drvfs {driveLetter} '{mountpoint}'");
             }
 
             driveLetter = thumbPath.Split('\\')[0];
             if (!string.IsNullOrWhiteSpace(thumbPath) && !IsLocalDrive(driveLetter))
             {
-                wslCommands.Add($"mkdir -p '{thumbnailFolder}' && mount -t drvfs {driveLetter} '{thumbnailFolder}'");
+                var mountpoint = "/mnt/" + Char.ToLowerInvariant(driveLetter.First());
+                wslCommands.Add($"mkdir -p '{mountpoint}' && mount -t drvfs {driveLetter} '{mountpoint}'");
             }
 
             if (Properties.Settings.Default.ForceDebugMode)
@@ -107,6 +109,7 @@ namespace Karen.Interop
                 wslCommands.Add($"export LRR_FORCE_DEBUG=1");
             }
 
+            // The big bazooper. Export port, folders and start both redis and the server.
             wslCommands.Add($"export LRR_NETWORK=http://*:{Properties.Settings.Default.NetworkPort}");
             wslCommands.Add($"export LRR_DATA_DIRECTORY='{contentFolder}'");
             wslCommands.Add($"export LRR_THUMB_DIRECTORY='{thumbnailFolder}'");
