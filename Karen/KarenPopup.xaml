@@ -13,7 +13,7 @@
 
     <ui:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center" >
 
-        <Image Source="logo.png" Width="192" Height="192" Margin="0,0,0,-8"/>
+        <Image Source="logo.png" Width="192" Height="192" Margin="0,0,0,-8" RenderOptions.BitmapScalingMode="HighQuality"/>
 
         <emoji:TextBlock Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="-16,0,0,0"
                          FontSize="16" FontWeight="Bold" Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
