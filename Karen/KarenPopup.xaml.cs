@@ -158,6 +158,9 @@ namespace Karen
         {
             ((App)Application.Current).Distro.StartApp();
             UpdateProperties();
+
+            // Prevent the popup from closing
+            ((Popup)this.Parent).IsOpen = true;
         }
 
         private void Stop_Distro(object sender, RoutedEventArgs e)

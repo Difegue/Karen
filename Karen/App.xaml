@@ -1,38 +1,40 @@
-﻿<Application x:Class="Karen.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:tb="http://www.hardcodet.net/taskbar"
-             xmlns:ui="http://schemas.modernwpf.com/2019"
-             xmlns:local="clr-namespace:Karen"
-             ShutdownMode="OnExplicitShutdown">
+﻿<Application
+    x:Class="Karen.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Karen"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
 
         <!--
             Note that this application does not have a StartupUri declared, so no Window is automatically loaded.
             Also, the ShutdownMode was set to explicit, so we have to close the application programmatically
         -->
-        
-        <!-- Light theme by default -->
+
+        <!--  Light theme by default  -->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources />
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
 
-            <tb:TaskbarIcon x:Key="NotifyIcon"
-                    IconSource="/favicon.ico"
-                    ToolTipText="LANraragi for Windows"
-                    PopupActivation="All">
+            <tb:TaskbarIcon
+                x:Key="NotifyIcon"
+                IconSource="/favicon.ico"
+                PopupActivation="All"
+                ToolTipText="LANraragi for Windows">
 
                 <tb:TaskbarIcon.TrayPopup>
-                    <!-- the control will be put into a popup with an explicit DataContext -->
-                    <local:KarenPopup/>
+                    <!--  the control will be put into a popup with an explicit DataContext  -->
+                    <local:KarenPopup />
                 </tb:TaskbarIcon.TrayPopup>
 
             </tb:TaskbarIcon>
 
             <local:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         </ResourceDictionary>
 

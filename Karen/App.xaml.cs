@@ -15,7 +15,7 @@ namespace Karen
 
         public void ToastNotification(string text)
         {
-            notifyIcon.ShowBalloonTip("LANraragi", text, notifyIcon.Icon);
+            notifyIcon.ShowBalloonTip("LANraragi", text, notifyIcon.Icon, true);
         }
 
         public void ShowConfigWindow()
