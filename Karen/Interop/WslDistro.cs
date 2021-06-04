@@ -251,6 +251,7 @@ namespace Karen.Interop
                     FileName = Environment.SystemDirectory + "\\wsl.exe",
                     Arguments = $"-d {Properties.Resources.DISTRO_NAME} --exec {oneLiner}",
                     UseShellExecute = false,
+                    StandardOutputEncoding = Encoding.UTF8,
                     RedirectStandardOutput = true,
                     CreateNoWindow = true,
                 }
