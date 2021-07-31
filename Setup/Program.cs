@@ -23,28 +23,31 @@ namespace Setup
 
             var uninstallerShortcut = new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]");
 
+            var registerAction = new ManagedAction(RegisterWslDistro,
+                                 Return.check,
+                                 When.After,
+                                 Step.InstallFinalize,
+                                 Condition.NOT_BeingRemoved);
+            registerAction.ProgressText = "Installing the LANraragi WSL Distro... (This will show a cmd window)";
+
+            var unregisterAction = new ManagedAction(UnRegisterWslDistro,
+                                 Return.check,
+                                 When.Before,
+                                 Step.RemoveFiles,
+                                 Condition.BeingUninstalled);
+            unregisterAction.ProgressText = "Removing the previous LANraragi WSL Distro (This will show a cmd window)";
+
             var project = new Project("LANraragi",
                              new Dir(@"%AppData%\LANraragi",
                                  new Files(@"..\Karen\bin\x64\Release\*.*"),
                                             new File(@"..\External\package.tar"),
-                                             //new Dir("LxRunOffline",
-                                              //   new Files(@"..\External\LxRunOffline\*.*")),
                                             uninstallerShortcut
                                     ),
                              new Dir(@"%ProgramMenu%\LANraragi for Windows",
                                  new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", "")),
-                                 //new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]")),
                              new RegValue(RegistryHive.LocalMachineOrUsers, @"Software\Microsoft\Windows\CurrentVersion\Run", "Karen", "[INSTALLDIR]Karen.exe"),
-                             new ManagedAction(RegisterWslDistro,
-                                 Return.check,
-                                 When.After,
-                                 Step.InstallFinalize,
-                                 Condition.NOT_BeingRemoved),
-                             new ManagedAction(UnRegisterWslDistro,
-                                 Return.check,
-                                 When.Before,
-                                 Step.RemoveFiles,
-                                 Condition.BeingUninstalled)
+                             registerAction,
+                             unregisterAction
                             );
 
             project.GUID = new Guid("6fe30b47-2577-43ad-1337-1861ba25889b");
@@ -100,8 +103,6 @@ namespace Setup
 #if DEBUG
             System.Diagnostics.Debugger.Launch();
 #endif
-            MessageBox.Show(session.GetMainWindow(), "The WSL Distro will now be installed on your system. You should see one or two cmd windows.");
-
             var result = UnRegisterWslDistro(session);
 
             if (session.IsUninstalling())
@@ -118,26 +119,14 @@ namespace Setup
                 session.Log("Installing WSL Distro from package.tar");
                 session.Log("package.tar location: " + packageLocation);
 
-                // The extra quote after the /K flag is needed.
-                // "If command starts with a quote, the first and last quote chars in command will be removed, whether /s is specified or not."
-                var procArgs = "/S /K \"wsl.exe --import lanraragi \"" + distroLocation 
-                                + "\" \"" + packageLocation + "\" && del \"" + distroLocation +"\\rootfs\\etc\\resolv.conf\"\"";
+                var wslProc = Process.Start("wsl.exe", $"--import lanraragi \"{distroLocation}\" \"{packageLocation}\"");
+                wslProc.WaitForExit();
+
+                session.Log("Exit code of wsl.exe is " + wslProc.ExitCode);
+
                 // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
                 // Deleting it in Linux would be too late as WSL already started!
-                session.Log("Launching cmd.exe with arguments " + procArgs);
-
-                var lxProc = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "cmd",
-                        Arguments = procArgs
-                    }
-                };
-
-                lxProc.Start();
-                lxProc.WaitForExit();
-                session.Log("Exit code of wsl.exe is " + lxProc.ExitCode);
+                System.IO.File.Delete(Path.Combine(new[] { distroLocation, "rootfs", "etc", "resolv.conf" }));
             });
         }
 
