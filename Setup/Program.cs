@@ -27,13 +27,13 @@ namespace Setup
                              new Dir(@"%AppData%\LANraragi",
                                  new Files(@"..\Karen\bin\x64\Release\*.*"),
                                             new File(@"..\External\package.tar"),
-                                             new Dir("LxRunOffline",
-                                                 new Files(@"..\External\LxRunOffline\*.*")),
+                                             //new Dir("LxRunOffline",
+                                              //   new Files(@"..\External\LxRunOffline\*.*")),
                                             uninstallerShortcut
                                     ),
                              new Dir(@"%ProgramMenu%\LANraragi for Windows",
-                                 new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", ""),
-                                 new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]")),
+                                 new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", "")),
+                                 //new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]")),
                              new RegValue(RegistryHive.LocalMachineOrUsers, @"Software\Microsoft\Windows\CurrentVersion\Run", "Karen", "[INSTALLDIR]Karen.exe"),
                              new ManagedAction(RegisterWslDistro,
                                  Return.check,
@@ -51,7 +51,7 @@ namespace Setup
             project.Platform = Platform.x64;
             project.MajorUpgrade = new MajorUpgrade
             {
-                Schedule = UpgradeSchedule.afterInstallValidate, // Remove previous version entirely before reinstalling, so that the WSL distro isn't uninstall on upgrade.
+                Schedule = UpgradeSchedule.afterInstallValidate, // Remove previous version entirely before reinstalling, so that the WSL distro isn't uninstalled on upgrade.
                 DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
             };
 
@@ -62,7 +62,7 @@ namespace Setup
 
             try
             {
-                project.Version = Version.Parse(version.Replace("-EX",".38")); //dotnet versions don't accept text or dashes but I ain't about to fuck up my versioning schema dagnabit
+                project.Version = Version.Parse(version); 
             }
             catch
             {
@@ -108,22 +108,20 @@ namespace Setup
                 return result;
 
             var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
-            var lxRunLocation = session.Property("INSTALLDIR") + @"LxRunOffline";
             var distroLocation = @"%AppData%\LANraragi\Distro";
 
             Directory.CreateDirectory(distroLocation);
 
             return session.HandleErrors(() =>
             {
-                // Use LxRunOffline to either install or uninstall the WSL distro.
+                // Use wsl.exe to either install or uninstall the WSL distro.
                 session.Log("Installing WSL Distro from package.tar");
-                session.Log("LxRunOffline location: " + lxRunLocation);
                 session.Log("package.tar location: " + packageLocation);
 
                 // The extra quote after the /K flag is needed.
                 // "If command starts with a quote, the first and last quote chars in command will be removed, whether /s is specified or not."
-                var procArgs = "/S /K \"\"" + lxRunLocation + "\\LxRunOffline.exe\" i -n lanraragi -d \"" + distroLocation 
-                                + "\" -f \"" + packageLocation + "\" && del \"" + distroLocation +"\\rootfs\\etc\\resolv.conf\" && pause && exit\"";
+                var procArgs = "/S /K \"wsl.exe --import lanraragi \"" + distroLocation 
+                                + "\" \"" + packageLocation + "\" && del \"" + distroLocation +"\\rootfs\\etc\\resolv.conf\"\"";
                 // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
                 // Deleting it in Linux would be too late as WSL already started!
                 session.Log("Launching cmd.exe with arguments " + procArgs);
@@ -139,7 +137,7 @@ namespace Setup
 
                 lxProc.Start();
                 lxProc.WaitForExit();
-                session.Log("Exit code of LxRunOffline is " + lxProc.ExitCode);
+                session.Log("Exit code of wsl.exe is " + lxProc.ExitCode);
             });
         }
 
@@ -149,7 +147,7 @@ namespace Setup
             return session.HandleErrors(() =>
             {
                 session.Log("Removing previous WSL Distro");
-                var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
+                var wslProc = Process.Start("wsl.exe", "--unregister lanraragi");
                 wslProc.WaitForExit();
             });
         }
