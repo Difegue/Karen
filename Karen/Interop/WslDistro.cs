@@ -188,13 +188,24 @@ namespace Karen.Interop
             try
             {
                 proc.Start();
-                while (!proc.StandardOutput.EndOfStream)
+                proc.WaitForExit(3000);
+
+                if (proc.HasExited)
                 {
-                    string line = proc.StandardOutput.ReadLine();
-                    if (line.Replace("\0", "").Contains(Properties.Resources.DISTRO_NAME))
+                    while (!proc.StandardOutput.EndOfStream)
                     {
-                        return true;
+                        string line = proc.StandardOutput.ReadLine();
+                        if (line.Replace("\0", "").Contains(Properties.Resources.DISTRO_NAME))
+                        {
+                            return true;
+                        }
                     }
+                    return false;
+                } 
+                else
+                {
+                    proc.Kill();
+                    throw new Exception("Timed out getting WSL info. \n(Try a reboot before reinstalling)");
                 }
             }
             catch (Exception e)
@@ -203,8 +214,6 @@ namespace Karen.Interop
                 Version = e.Message;
                 return false;
             }
-
-            return false;
         }
 
         private bool SetWSLVersion(int wslVer)
