@@ -109,7 +109,7 @@ namespace Setup
                 return result;
 
             var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
-            var distroLocation = @"%AppData%\LANraragi\Distro";
+            var distroLocation = session.Property("INSTALLDIR") + @"Distro";
 
             Directory.CreateDirectory(distroLocation);
 
@@ -126,9 +126,7 @@ namespace Setup
 
                 // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
                 // Deleting it in Linux would be too late as WSL already started!
-                var cmd = $"/S /K \"del \"{distroLocation}\\rootfs\\etc\\resolv.conf\"\" && exit";
-                session.Log("Running cmd.exe with arguments" + cmd);
-                Process.Start("cmd.exe", cmd).WaitForExit();
+                System.IO.File.Delete(Path.Combine(new[] { distroLocation, "rootfs", "etc", "resolv.conf" }));
             });
         }
 
