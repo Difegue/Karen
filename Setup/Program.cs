@@ -119,14 +119,14 @@ namespace Setup
                 session.Log("Installing WSL Distro from package.tar");
                 session.Log("package.tar location: " + packageLocation);
 
-                var wslProc = Process.Start("wsl.exe", $"--import lanraragi \"{distroLocation}\" \"{packageLocation}\"");
+                var wslProc = Process.Start("wsl.exe", $"--import lanraragi \"{distroLocation}\" \"{packageLocation}\" --version 1");
                 wslProc.WaitForExit();
 
                 session.Log("Exit code of wsl.exe is " + wslProc.ExitCode);
 
                 // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
                 // Deleting it in Linux would be too late as WSL already started!
-                var cmd = $"/S /K \"del \"{distroLocation}\\rootfs\\etc\\resolv.conf\"\"";
+                var cmd = $"/S /K \"del \"{distroLocation}\\rootfs\\etc\\resolv.conf\"\" && exit";
                 session.Log("Running cmd.exe with arguments" + cmd);
                 Process.Start("cmd.exe", cmd).WaitForExit();
             });
