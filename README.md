@@ -2,7 +2,7 @@
 # 🐝 Karen
 
 Windows Bootstrapper for LANraragi using WSL.  
-Works on Windows 10 1809 and up. (1803 works but isn't recommended due to poor control on terminating Linux processes.)  
+Works on Windows 10 1903 and up. 
 **64-bit OSes only!**  
 
 * Start/Stop LRR from a Windows-based UI
