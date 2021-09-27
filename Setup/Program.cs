@@ -126,7 +126,9 @@ namespace Setup
 
                 // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
                 // Deleting it in Linux would be too late as WSL already started!
-                System.IO.File.Delete(Path.Combine(new[] { distroLocation, "rootfs", "etc", "resolv.conf" }));
+                var cmd = $"/S /K \"del \"{distroLocation}\\rootfs\\etc\\resolv.conf\"\"";
+                session.Log("Running cmd.exe with arguments" + cmd);
+                Process.Start("cmd.exe", cmd).WaitForExit();
             });
         }
 
