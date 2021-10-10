@@ -1,5 +1,6 @@
 ﻿using Karen.Interop;
 using Microsoft.Win32;
+using ModernWpf;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -9,52 +10,13 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using static Karen.Interop.WCAUtils;
 
 namespace Karen
 {
 
-    #region Some more Win32 to ask the DWM for acrylic
-    internal enum AccentState
-    {
-        ACCENT_DISABLED = 0,
-        ACCENT_ENABLE_GRADIENT = 1,
-        ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
-        ACCENT_ENABLE_BLURBEHIND = 3,
-        ACCENT_ENABLE_ACRYLIC = 4,
-        ACCENT_INVALID_STATE = 5
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct AccentPolicy
-    {
-        public AccentState AccentState;
-        public uint AccentFlags;
-        public uint GradientColor;
-        public uint AnimationId;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct WindowCompositionAttributeData
-    {
-        public WindowCompositionAttribute Attribute;
-        public IntPtr Data;
-        public int SizeOfData;
-    }
-
-    internal enum WindowCompositionAttribute
-    {
-        // ...
-        WCA_ACCENT_POLICY = 19
-        // ...
-    }
-    #endregion
-
     public partial class KarenPopup : UserControl, INotifyPropertyChanged
     {
-        [DllImport("user32.dll")]
-        internal static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
-        private uint _blurBackgroundColor = 0x99FFFFFF;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Version => ((App)Application.Current).Distro.Version;
@@ -82,51 +44,22 @@ namespace Karen
 
         void KarenPopup_ContentRendered(object sender, EventArgs e)
         {
-            try
-            {
-                //Get Light/Dark theme from registry
-                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize");
-                RegistryValueKind kind = registryKey.GetValueKind("AppsUseLightTheme");
-                string lightThemeOn = registryKey.GetValue("AppsUseLightTheme").ToString();
+            UpdateStyleAttributes((HwndSource)sender, false);
 
-                if (lightThemeOn != "0")
-                {
-                    _blurBackgroundColor = 0x99FFFFFF;
-                }
+            // Round off corners for the popup
+            int value = 0x02;
+            DwmSetWindowAttribute(((HwndSource)sender).Handle, DwmWindowAttribute.DWMWA_WINDOW_CORNER_PREFERENCE, ref value, Marshal.SizeOf(typeof(int)));
+
+            ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) =>
+            {
+                UpdateStyleAttributes((HwndSource)sender, false);
+
+                // Update theme manually since we're not in a window
+                if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
+                    ThemeManager.SetRequestedTheme(this, ElementTheme.Dark);
                 else
-                {
-                    _blurBackgroundColor = 0xAA000000;
-                }
-                this.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
-            } catch (Exception)
-            {
-                //eh 
-            }
-
-            //Display the popup...with cool acrylic!
-            EnableBlur((HwndSource)sender);
-        }
-
-        //Enable Acrylic on the Popup's HWND.
-        internal void EnableBlur(HwndSource source)
-        {
-            var accent = new AccentPolicy();
-            accent.AccentState = AccentState.ACCENT_ENABLE_ACRYLIC;
-            accent.GradientColor = _blurBackgroundColor;
-
-            var accentStructSize = Marshal.SizeOf(accent);
-
-            var accentPtr = Marshal.AllocHGlobal(accentStructSize);
-            Marshal.StructureToPtr(accent, accentPtr, false);
-
-            var data = new WindowCompositionAttributeData();
-            data.Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY;
-            data.SizeOfData = accentStructSize;
-            data.Data = accentPtr;
-
-            SetWindowCompositionAttribute(source.Handle, ref data);
-
-            Marshal.FreeHGlobal(accentPtr);
+                    ThemeManager.SetRequestedTheme(this, ElementTheme.Light);
+            };
         }
 
         private void Show_Config(object sender, RoutedEventArgs e)

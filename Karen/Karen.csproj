@@ -105,6 +105,7 @@
     </ApplicationDefinition>
     <Compile Include="EnumDescriptionConverter.cs" />
     <Compile Include="Interop\AppStatus.cs" />
+    <Compile Include="Interop\WCAUtils.cs" />
     <Compile Include="Interop\WslDistro.cs" />
     <Compile Include="Interop\WslApi.cs" />
     <Page Include="MainWindow.xaml">

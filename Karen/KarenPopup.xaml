@@ -9,10 +9,10 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Width="250"
     Height="512"
-    BorderThickness="1"
     Loaded="KarenPopup_Loaded"
     mc:Ignorable="d">
 
+    <Border CornerRadius="6" BorderThickness="1" BorderBrush="{ui:ThemeResource SystemControlForegroundBaseLowBrush}">
     <ui:SimpleStackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
         <Image
@@ -106,4 +106,5 @@
             Click="Shutdown_App"
             Content="Quit" />
     </ui:SimpleStackPanel>
+    </Border>
 </UserControl>

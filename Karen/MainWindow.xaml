@@ -10,6 +10,8 @@
         Title="LANraragi Windows Settings" 
         MinWidth="500" MinHeight="480"
         Width="500" Height="680"
+        Loaded="Window_Loaded"
+        Background="Transparent"
         Closing="OnClosing">
     <ScrollViewer Margin="0,0,0,16">
         <ui:SimpleStackPanel VerticalAlignment="Top" Margin="16">

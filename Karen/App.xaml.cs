@@ -20,13 +20,15 @@ namespace Karen
 
         public void ShowConfigWindow()
         {
-            if (Application.Current.MainWindow == null)
-                Application.Current.MainWindow = new MainWindow();
+            var mainWindow = Application.Current.MainWindow;
 
-            Application.Current.MainWindow.Show();
+            if (mainWindow == null || mainWindow.GetType() != typeof(MainWindow) )
+                mainWindow = new MainWindow();
 
-            if (Application.Current.MainWindow.WindowState == WindowState.Minimized)
-                Application.Current.MainWindow.WindowState = WindowState.Normal;
+            mainWindow.Show();
+
+            if (mainWindow.WindowState == WindowState.Minimized)
+                mainWindow.WindowState = WindowState.Normal;
         }
 
         protected override void OnStartup(StartupEventArgs e)

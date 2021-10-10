@@ -5,6 +5,10 @@ using System.Windows.Forms;
 using System.Windows.Navigation;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System;
+using Karen.Interop;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace Karen
 {
@@ -85,5 +89,19 @@ namespace Karen
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        private void Window_ContentRendered(object sender, System.EventArgs e)
+        {
+            WCAUtils.UpdateStyleAttributes((HwndSource)sender, true);
+            ModernWpf.ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => WCAUtils.UpdateStyleAttributes((HwndSource)sender, true);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Get PresentationSource
+            PresentationSource presentationSource = PresentationSource.FromVisual((Visual)sender);
+
+            // Subscribe to PresentationSource's ContentRendered event
+            presentationSource.ContentRendered += Window_ContentRendered;
+        }
     }
 }
