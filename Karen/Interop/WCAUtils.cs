@@ -19,6 +19,8 @@ namespace Karen.Interop
         [DllImport("dwmapi.dll")]
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, DwmWindowAttribute dwAttribute, ref int pvAttribute, int cbAttribute);
 
+        private static bool IsWin11 = Environment.OSVersion.Version >= new Version(10, 0, 22000, 0);
+
         [Flags]
         public enum DwmWindowAttribute : uint
         {
@@ -54,31 +56,31 @@ namespace Karen.Interop
         {
             int trueValue = 0x01;
             int falseValue = 0x00;
-            DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_MICA_EFFECT, ref trueValue, Marshal.SizeOf(typeof(int)));
 
+            // Set dark mode before applying the material, otherwise you'll get an ugly flash when displaying the window.
             if (darkThemeEnabled) 
                 DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE, ref trueValue, Marshal.SizeOf(typeof(int)));
             else
                 DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE, ref falseValue, Marshal.SizeOf(typeof(int)));
+
+            var hr = DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_MICA_EFFECT, ref trueValue, Marshal.SizeOf(typeof(int)));
+
         }
 
-        public static void UpdateStyleAttributes(HwndSource hwnd, bool enableAcrylic)
+        public static void UpdateStyleAttributes(HwndSource hwnd)
         {
-            var _blurBackgroundColor = 0x99FFFFFF;
             var darkThemeEnabled = ModernWpf.ThemeManager.Current.ActualApplicationTheme == ModernWpf.ApplicationTheme.Dark;
-            if (darkThemeEnabled)
-            {
-                _blurBackgroundColor = 0xAA000000;
-            }
+
+            if (IsWin11)
+                EnableMica(hwnd, darkThemeEnabled);
             else
             {
-                _blurBackgroundColor = 0x99FFFFFF;
+                if (darkThemeEnabled)
+                    EnableBlur(hwnd, 0xFF202020);
+                else
+                    EnableBlur(hwnd, 0xFFF3F3F3);
             }
-
-            if (enableAcrylic)
-                EnableBlur(hwnd, _blurBackgroundColor);
-
-            EnableMica(hwnd, darkThemeEnabled);
+            
         }
     }
 

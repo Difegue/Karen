@@ -44,7 +44,7 @@ namespace Karen
 
         void KarenPopup_ContentRendered(object sender, EventArgs e)
         {
-            UpdateStyleAttributes((HwndSource)sender, false);
+            UpdateStyleAttributes((HwndSource)sender);
 
             // Round off corners for the popup
             int value = 0x02;
@@ -52,7 +52,7 @@ namespace Karen
 
             ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) =>
             {
-                UpdateStyleAttributes((HwndSource)sender, false);
+                UpdateStyleAttributes((HwndSource)sender);
 
                 // Update theme manually since we're not in a window
                 if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)

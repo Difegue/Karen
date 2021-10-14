@@ -3,17 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        ui:WindowHelper.UseModernWindowStyle="True"
         x:Class="Karen.MainWindow"
         xmlns:p="clr-namespace:Karen.Properties" 
         ResizeMode="CanResizeWithGrip"
-        Title="LANraragi Windows Settings" 
         MinWidth="500" MinHeight="480"
         Width="500" Height="680"
         Loaded="Window_Loaded"
         Background="Transparent"
+        Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+        ui:ThemeManager.IsThemeAware="True"
         Closing="OnClosing">
-    <ScrollViewer Margin="0,0,0,16">
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+        CaptionHeight="32"
+        ResizeBorderThickness="8"
+        CornerRadius="0"
+        GlassFrameThickness="-1"
+        NonClientFrameEdges="Right"
+        UseAeroCaptionButtons="True" />
+    </WindowChrome.WindowChrome>
+    <Grid>
+
+        <TextBlock Text="LANraragi Windows Settings" Margin="12"/>
+
+        <ScrollViewer Margin="0,40,0,16">
         <ui:SimpleStackPanel VerticalAlignment="Top" Margin="16">
             <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🗃 Content Folder Location" Margin="0,0,0,5"/>
             <TextBlock Style="{StaticResource CaptionTextBlockStyle}">Where LANraragi looks for archives on your machine.</TextBlock>
@@ -69,5 +82,5 @@
         </ui:SimpleStackPanel>
 
     </ScrollViewer>
-
+    </Grid>
 </Window>

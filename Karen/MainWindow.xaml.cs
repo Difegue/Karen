@@ -91,8 +91,8 @@ namespace Karen
 
         private void Window_ContentRendered(object sender, System.EventArgs e)
         {
-            WCAUtils.UpdateStyleAttributes((HwndSource)sender, true);
-            ModernWpf.ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => WCAUtils.UpdateStyleAttributes((HwndSource)sender, true);
+            WCAUtils.UpdateStyleAttributes((HwndSource)sender);
+            ModernWpf.ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => WCAUtils.UpdateStyleAttributes((HwndSource)sender);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
