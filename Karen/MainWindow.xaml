@@ -63,7 +63,7 @@
             <Separator Height="11.5" Margin="0"/>
             <TextBlock Style="{StaticResource BodyTextBlockStyle}">
                 You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">LANraragi</Hyperlink>,
-                <LineBreak/> Version 2.1 <emoji:TextBlock Text="🐝"/>
+                <LineBreak/> Version 2.2 <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
                 <emoji:TextBlock Text="✨"/> Consider installing <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH" RequestNavigate="Hyperlink_RequestNavigate">LRReader</Hyperlink> from the Microsoft Store! <emoji:TextBlock Text="✨"/>
                 <LineBreak/>
