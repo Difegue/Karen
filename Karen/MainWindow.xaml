@@ -9,10 +9,12 @@
         MinWidth="500" MinHeight="480"
         Width="500" Height="680"
         Loaded="Window_Loaded"
-        Background="Transparent"
+        Title="LANraragi Windows Settings"
         Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         ui:ThemeManager.IsThemeAware="True"
         Closing="OnClosing">
+
     <WindowChrome.WindowChrome>
         <WindowChrome
         CaptionHeight="32"

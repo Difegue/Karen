@@ -9,6 +9,7 @@ using System;
 using Karen.Interop;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shell;
 
 namespace Karen
 {
@@ -91,8 +92,18 @@ namespace Karen
 
         private void Window_ContentRendered(object sender, System.EventArgs e)
         {
-            WCAUtils.UpdateStyleAttributes((HwndSource)sender);
-            ModernWpf.ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => WCAUtils.UpdateStyleAttributes((HwndSource)sender);
+            if (WCAUtils.IsWin11)
+            {
+                // Set a transparent background to let the mica brush come through
+                Background = new SolidColorBrush(Color.FromArgb(0, 255, 255, 255));
+
+                WCAUtils.UpdateStyleAttributes((HwndSource)sender);
+                ModernWpf.ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => WCAUtils.UpdateStyleAttributes((HwndSource)sender);
+            } 
+            else
+            {
+                WindowChrome.SetWindowChrome(this, null);
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

@@ -47,8 +47,13 @@ namespace Karen
             UpdateStyleAttributes((HwndSource)sender);
 
             // Round off corners for the popup
-            int value = 0x02;
-            DwmSetWindowAttribute(((HwndSource)sender).Handle, DwmWindowAttribute.DWMWA_WINDOW_CORNER_PREFERENCE, ref value, Marshal.SizeOf(typeof(int)));
+            if (IsWin11)
+            {
+                Brd.CornerRadius = new CornerRadius(6);
+
+                int value = 0x02;
+                DwmSetWindowAttribute(((HwndSource)sender).Handle, DwmWindowAttribute.DWMWA_WINDOW_CORNER_PREFERENCE, ref value, Marshal.SizeOf(typeof(int)));
+            } 
 
             ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) =>
             {

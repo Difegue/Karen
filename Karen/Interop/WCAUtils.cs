@@ -19,7 +19,7 @@ namespace Karen.Interop
         [DllImport("dwmapi.dll")]
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, DwmWindowAttribute dwAttribute, ref int pvAttribute, int cbAttribute);
 
-        private static bool IsWin11 = Environment.OSVersion.Version >= new Version(10, 0, 22000, 0);
+        public static bool IsWin11 = Environment.OSVersion.Version >= new Version(10, 0, 22000, 0);
 
         [Flags]
         public enum DwmWindowAttribute : uint
@@ -76,9 +76,9 @@ namespace Karen.Interop
             else
             {
                 if (darkThemeEnabled)
-                    EnableBlur(hwnd, 0xFF202020);
+                    EnableBlur(hwnd, 0xAA000000);
                 else
-                    EnableBlur(hwnd, 0xFFF3F3F3);
+                    EnableBlur(hwnd, 0x99FFFFFF);
             }
             
         }
