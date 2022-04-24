@@ -39,7 +39,8 @@ namespace Setup
 
             var project = new Project("LANraragi",
                              new Dir(@"%AppData%\LANraragi",
-                                 new Files(@"..\Karen\bin\x64\Release\*.*"),
+                                 new Files(@"..\Karen\bin\Release\net472\*.*"),
+                                 new Files(@"..\DistroInstaller\bin\Release\net472\*.*"),
                                             new File(@"..\External\package.tar"),
                                             uninstallerShortcut
                                     ),
@@ -109,9 +110,7 @@ namespace Setup
                 return result;
 
             var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
-            var distroLocation = session.Property("INSTALLDIR") + @"Distro";
-
-            Directory.CreateDirectory(distroLocation);
+            var distroInstaller = session.Property("INSTALLDIR") + @"DistroInstaller.exe";
 
             return session.HandleErrors(() =>
             {
@@ -119,24 +118,21 @@ namespace Setup
                 session.Log("Installing WSL Distro from package.tar");
                 session.Log("package.tar location: " + packageLocation);
 
-                var wslProc = Process.Start("wsl.exe", $"--import lanraragi \"{distroLocation}\" \"{packageLocation}\" --version 1");
+                var wslProc = Process.Start(distroInstaller, $"-upgrade");
                 wslProc.WaitForExit();
 
-                session.Log("Exit code of wsl.exe is " + wslProc.ExitCode);
-
-                // We delete /etc/resolv.conf here as it's a leftover from the package's origins as a Docker image.
-                // Deleting it in Linux would be too late as WSL already started!
-                System.IO.File.Delete(Path.Combine(new[] { distroLocation, "rootfs", "etc", "resolv.conf" }));
+                session.Log("Exit code of DistroInstaller is " + wslProc.ExitCode);
             });
         }
 
         [CustomAction]
         public static ActionResult UnRegisterWslDistro(Session session)
         {
+            var distroInstaller = session.Property("INSTALLDIR") + @"DistroInstaller.exe";
             return session.HandleErrors(() =>
             {
                 session.Log("Removing previous WSL Distro");
-                var wslProc = Process.Start("wsl.exe", "--unregister lanraragi");
+                var wslProc = Process.Start("distroInstaller", "-remove");
                 wslProc.WaitForExit();
             });
         }
