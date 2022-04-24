@@ -1,7 +1,5 @@
-﻿using Microsoft.Win32;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Navigation;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -10,6 +8,9 @@ using Karen.Interop;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shell;
+using Windows.ApplicationModel;
+using Windows.Storage.Pickers;
+using Microsoft.Win32;
 
 namespace Karen
 {
@@ -19,60 +20,100 @@ namespace Karen
     public partial class MainWindow : Window
     {
 
+        private IntPtr Handle;
+
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
+            var helper = new WindowInteropHelper(this);
+            helper.EnsureHandle();
+            Handle = helper.Handle;
         }
 
         private void PickFolder(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Select your LANraragi Content Folder.";
+            var picker = new FolderPicker();
+            ((IInitializeWithWindow)(object)picker).Initialize(Handle);
+            picker.FileTypeFilter.Add("*");
+            picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            picker.CommitButtonText = "Set as LRR Content Folder";
 
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Properties.Settings.Default.ContentFolder = dlg.SelectedPath;
-            }
+            var folder = picker.PickSingleFolderAsync().GetAwaiter().GetResult();
+
+            if (folder != null)
+                Settings.Default.ContentFolder = folder.Path;
         }
 
         private void PickThumbFolder(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.Description = "Select your LANraragi Thumbnail Folder.";
+            var picker = new FolderPicker();
+            ((IInitializeWithWindow)(object)picker).Initialize(Handle);
+            picker.FileTypeFilter.Add("*");
+            picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            picker.CommitButtonText = "Set as LRR Thumbnail Folder";
 
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Properties.Settings.Default.ThumbnailFolder = dlg.SelectedPath;
-            }
+            var folder = picker.PickSingleFolderAsync().GetAwaiter().GetResult();
+
+            if (folder != null)
+                Settings.Default.ThumbnailFolder = folder.Path;
         }
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
             // Set first launch to false
-            Properties.Settings.Default.FirstLaunch = false;
+            Settings.Default.FirstLaunch = false;
 
-            Properties.Settings.Default.Save();
-
-            //Update registry according to the StartWithWindows pref
-            if (Properties.Settings.Default.StartWithWindows)
-                AddApplicationToStartup();
+            if (Settings.Default.StartWithWindows)
+            {
+                if (!AddApplicationToStartup())
+                {
+                    e.Cancel = true;
+                }
+            }
             else
                 RemoveApplicationFromStartup();
-
         }
 
-        public static void AddApplicationToStartup()
+        public bool AddApplicationToStartup()
         {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            if (new DesktopBridge.Helpers().IsRunningAsUwp())
             {
+                var startupTask = StartupTask.GetAsync("Karen").GetAwaiter().GetResult();
+                switch (startupTask.State)
+                {
+                    case StartupTaskState.Disabled:
+                        return startupTask.RequestEnableAsync().GetAwaiter().GetResult() == StartupTaskState.Enabled;
+                    case StartupTaskState.DisabledByUser:
+                        App.ShowMessageDialog("Auto startup disabled in Task Manager", "Close", Handle);
+                        return false;
+                    case StartupTaskState.Enabled:
+                        return true;
+                    case StartupTaskState.DisabledByPolicy:
+                        App.ShowMessageDialog("Auto startup disabled by policy", "Close", Handle);
+                        return false;
+                    case StartupTaskState.EnabledByPolicy:
+                        return true;
+                }
+            } 
+            else using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                // Old-fashioned way -- WASDK would help here
                 key.SetValue("Karen", "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+                return true;
             }
+
+            return false;
         }
 
-        public static void RemoveApplicationFromStartup()
+        public void RemoveApplicationFromStartup()
         {
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            if (new DesktopBridge.Helpers().IsRunningAsUwp())
+            {
+                var startupTask = StartupTask.GetAsync("Karen").GetAwaiter().GetResult();
+                startupTask.Disable();
+            }
+            else using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
                 key.DeleteValue("Karen", false);
             }
@@ -99,7 +140,7 @@ namespace Karen
 
                 WCAUtils.UpdateStyleAttributes((HwndSource)sender);
                 ModernWpf.ThemeManager.Current.ActualApplicationThemeChanged += (s, ev) => WCAUtils.UpdateStyleAttributes((HwndSource)sender);
-            } 
+            }
             else
             {
                 WindowChrome.SetWindowChrome(this, null);

@@ -4,7 +4,7 @@
         xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         x:Class="Karen.MainWindow"
-        xmlns:p="clr-namespace:Karen.Properties" 
+        xmlns:p="clr-namespace:Karen"
         ResizeMode="CanResizeWithGrip"
         MinWidth="500" MinHeight="480"
         Width="500" Height="680"

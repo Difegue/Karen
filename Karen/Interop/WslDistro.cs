@@ -54,7 +54,7 @@ namespace Karen.Interop
 
         public bool? StartApp()
         {
-            if (!Directory.Exists(Properties.Settings.Default.ContentFolder))
+            if (!Directory.Exists(Settings.Default.ContentFolder))
             {
                 Version = "Content Folder doesn't exist!";
                 return false;
@@ -77,12 +77,12 @@ namespace Karen.Interop
 
             // Switch the distro to the specified WSL version
             // (Does nothing if we're already using the proper one)
-            _ = Properties.Settings.Default.UseWSL2 ? SetWSLVersion(2) : SetWSLVersion(1);
+            _ = Settings.Default.UseWSL2 ? SetWSLVersion(2) : SetWSLVersion(1);
 
             // Map the user's content folder to its WSL equivalent
             // This means lowercasing the drive letter, removing the : and replacing every \ by a /.
-            string winPath = Properties.Settings.Default.ContentFolder;
-            string thumbPath = Properties.Settings.Default.ThumbnailFolder;
+            string winPath = Settings.Default.ContentFolder;
+            string thumbPath = Settings.Default.ThumbnailFolder;
 
             string contentFolder = GetWSLPath(winPath);
             string thumbnailFolder = string.IsNullOrWhiteSpace(thumbPath) ? contentFolder + "/thumb" : GetWSLPath(thumbPath);
@@ -104,13 +104,13 @@ namespace Karen.Interop
                 wslCommands.Add($"mkdir -p '{mountpoint}' && mount -t drvfs {driveLetter} '{mountpoint}'");
             }
 
-            if (Properties.Settings.Default.ForceDebugMode)
+            if (Settings.Default.ForceDebugMode)
             {
                 wslCommands.Add($"export LRR_FORCE_DEBUG=1");
             }
 
             // The big bazooper. Export port, folders and start both redis and the server.
-            wslCommands.Add($"export LRR_NETWORK=http://*:{Properties.Settings.Default.NetworkPort}");
+            wslCommands.Add($"export LRR_NETWORK=http://*:{Settings.Default.NetworkPort}");
             wslCommands.Add($"export LRR_DATA_DIRECTORY='{contentFolder}'");
             wslCommands.Add($"export LRR_THUMB_DIRECTORY='{thumbnailFolder}'");
             wslCommands.Add($"cd /home/koyomi/lanraragi && rm -f public/temp/server.pid");
@@ -165,13 +165,13 @@ namespace Karen.Interop
         }
 
         #region Various ProcessStartInfo calls to WSL
-        private bool CheckDistro()
+        public bool CheckDistro()
         {
-            //return WslApi.WslIsDistributionRegistered(DISTRO_NAME);
+            // return WslApi.WslIsDistributionRegistered(Properties.Resources.DISTRO_NAME);
             // ^ This WSL API call is currently broken from WPF applications.
             // See https://stackoverflow.com/questions/55681500/why-did-wslapi-suddenly-stop-working-in-wpf-applications.
             // Stuck doing a manual wsl.exe call for now...
-
+            
             var proc = new Process
             {
                 StartInfo = new ProcessStartInfo

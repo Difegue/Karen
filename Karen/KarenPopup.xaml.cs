@@ -1,5 +1,4 @@
 ﻿using Karen.Interop;
-using Microsoft.Win32;
 using ModernWpf;
 using System;
 using System.ComponentModel;
@@ -7,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using static Karen.Interop.WCAUtils;
@@ -109,7 +107,7 @@ namespace Karen
 
         private void Open_Webclient(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://localhost:"+ Properties.Settings.Default.NetworkPort);
+            System.Diagnostics.Process.Start("http://localhost:"+ Settings.Default.NetworkPort);
         }
 
         private void Open_Distro(object sender, RoutedEventArgs e)
