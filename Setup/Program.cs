@@ -39,8 +39,8 @@ namespace Setup
 
             var project = new Project("LANraragi",
                              new Dir(@"%AppData%\LANraragi",
-                                 new Files(@"..\Karen\bin\Release\net472\*.*"),
-                                 new Files(@"..\DistroInstaller\bin\Release\net472\*.*"),
+                                 new Files(@"..\Karen\bin\Release\net472\win7-x64\*.*"),
+                                 new Files(@"..\DistroInstaller\bin\Release\net472\win7-x64\*.*"),
                                             new File(@"..\External\package.tar"),
                                             uninstallerShortcut
                                     ),

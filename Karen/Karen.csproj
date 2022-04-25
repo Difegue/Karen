@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net472</TargetFramework>
+	<RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
