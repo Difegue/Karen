@@ -42,7 +42,7 @@ namespace LANraragi.DistroInstaller
             // Otherwise, just refer to the CLI argument
             bool needsUpgrade = new DesktopBridge.Helpers().IsRunningAsUwp() ? NeedsUpgradeMSIX() : NeedsUpgradeCLI(args);
             
-            // TODO no uninstall mechanism on MSIX?
+            // Unused by the actual MSI setup, but might as well leave the functionality in
             bool needsUninstall = args.Length > 0 && args[0] == "-remove";
 
             if (!WslApi.WslIsDistributionRegistered(distro) || needsUpgrade)

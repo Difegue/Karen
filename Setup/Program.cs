@@ -128,11 +128,11 @@ namespace Setup
         [CustomAction]
         public static ActionResult UnRegisterWslDistro(Session session)
         {
-            var distroInstaller = session.Property("INSTALLDIR") + @"DistroInstaller.exe";
+            // We don't use distroInstaller here since INSTALLDIR isn't set when uninstalling.
             return session.HandleErrors(() =>
             {
                 session.Log("Removing previous WSL Distro");
-                var wslProc = Process.Start("distroInstaller", "-remove");
+                var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
                 wslProc.WaitForExit();
             });
         }
