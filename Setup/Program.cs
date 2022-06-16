@@ -102,7 +102,7 @@ namespace Setup
         public static ActionResult RegisterWslDistro(Session session)
         {
 #if DEBUG
-            System.Diagnostics.Debugger.Launch();
+            Debugger.Launch();
 #endif
             var result = UnRegisterWslDistro(session);
 
@@ -114,7 +114,7 @@ namespace Setup
 
             return session.HandleErrors(() =>
             {
-                // Use wsl.exe to either install or uninstall the WSL distro.
+                // Use distroinstaller to either install or uninstall the WSL distro.
                 session.Log("Installing WSL Distro from package.tar");
                 session.Log("package.tar location: " + packageLocation);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Windows.ApplicationModel;
@@ -104,26 +105,71 @@ namespace LANraragi.DistroInstaller
 
         private static void Install(string distro)
         {
-            WslApi.WslRegisterDistribution(distro, "package.tar");
-            WslApi.WslLaunchInteractive(distro, "/bin/rm /etc/resolv.conf", true, out uint code);
-            new Process
+            // Check for package.tar file first
+            if (!File.Exists("package.tar"))
             {
-                StartInfo = new ProcessStartInfo
+                Console.WriteLine("package.tar not found. Please run this program from the LANraragi folder.");
+                Console.ReadKey();
+                return;
+            }
+
+            // If Windows build number > 18362, just use wsl.exe --import which is more reliable
+            var buildNumber = Environment.OSVersion.Version.Build;
+            if (buildNumber >= 18362) // 1903
+            {
+                Console.WriteLine("\nUsing WSL CLI");
+                var wslProc = new Process
                 {
-                    FileName = "wslconfig.exe",
-                    Arguments = "/terminate " + distro,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true,
-                }
-            }.Start();
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "wsl.exe",
+                        Arguments = $"--import {distro} \"Distro\" \"package.tar\"",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true,
+                    }
+                };
+                wslProc.Start();
+                wslProc.WaitForExit();
+                
+                Console.WriteLine("Exit code of wsl.exe is " + wslProc.ExitCode);
+            }
+            else
+            {
+                // Use legacy WSL API
+                Console.WriteLine("\nUsing WSL API");
+                WslApi.WslRegisterDistribution(distro, "package.tar");
+            }
+            
             if (Settings != null)
                 Settings.Values["Version"] = GetVersion().ToString();
         }
         
         private static void UnInstall(string distro)
         {
-            WslApi.WslUnregisterDistribution(distro);
+            var buildNumber = Environment.OSVersion.Version.Build;
+            if (buildNumber >= 18362) // 1903
+            {
+                Console.WriteLine("\nUsing WSL CLI");
+                var wslProc = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "wsl.exe",
+                        Arguments = $"--unregister {distro}",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true,
+                    }
+                };
+                wslProc.Start();
+                wslProc.WaitForExit();
+            }
+            else
+            {
+                Console.WriteLine("\nUsing WSL API");
+                WslApi.WslUnregisterDistribution(distro);
+            }
             Settings?.Values.Remove("Version");
         }
 

@@ -25,7 +25,8 @@ namespace Karen.Interop
         public enum DwmWindowAttribute : uint
         {
             DWMWA_USE_IMMERSIVE_DARK_MODE = 20,
-            DWMWA_WINDOW_CORNER_PREFERENCE = 33, 
+            DWMWA_WINDOW_CORNER_PREFERENCE = 33,
+            DWMWA_SYSTEMBACKDROP_TYPE = 38,
             DWMWA_MICA_EFFECT = 1029
         }
 
@@ -57,13 +58,23 @@ namespace Karen.Interop
             int trueValue = 0x01;
             int falseValue = 0x00;
 
+            int micaValue = 0x02;
+
             // Set dark mode before applying the material, otherwise you'll get an ugly flash when displaying the window.
             if (darkThemeEnabled) 
                 DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE, ref trueValue, Marshal.SizeOf(typeof(int)));
             else
                 DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE, ref falseValue, Marshal.SizeOf(typeof(int)));
 
-            var hr = DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_MICA_EFFECT, ref trueValue, Marshal.SizeOf(typeof(int)));
+            if (Environment.OSVersion.Version.Build >= 22523)
+            {
+                DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_SYSTEMBACKDROP_TYPE, ref micaValue, Marshal.SizeOf(typeof(int)));
+            }
+            else
+            {
+                // Old undocumented API
+                DwmSetWindowAttribute(source.Handle, DwmWindowAttribute.DWMWA_MICA_EFFECT, ref trueValue, Marshal.SizeOf(typeof(int)));
+            }
 
         }
 
