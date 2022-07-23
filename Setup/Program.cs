@@ -116,7 +116,8 @@ namespace Setup
             {
                 // Use distroinstaller to either install or uninstall the WSL distro.
                 session.Log("Installing WSL Distro from package.tar");
-                session.Log("package.tar location: " + packageLocation);
+                session.Log($"DistroInstaller location: {distroInstaller}");
+                session.Log($"package.tar location: {packageLocation}");
 
                 var wslProc = Process.Start(distroInstaller, $"-upgrade");
                 wslProc.WaitForExit();

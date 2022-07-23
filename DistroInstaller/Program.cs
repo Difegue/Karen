@@ -23,6 +23,7 @@ namespace LANraragi.DistroInstaller
             {
                 Console.WriteLine("Windows Subsystem for Linux is not installed on this machine and is required by this program.");
                 Console.WriteLine("Please install it by following the instructions in this link: https://docs.microsoft.com/en-us/windows/wsl/install");
+                Console.WriteLine("Press any key to exit");
                 Console.ReadKey();
                 return 0;
             }
@@ -109,6 +110,7 @@ namespace LANraragi.DistroInstaller
             if (!File.Exists("package.tar"))
             {
                 Console.WriteLine("package.tar not found. Please run this program from the LANraragi folder.");
+                Console.WriteLine("Press any key to exit");
                 Console.ReadKey();
                 return;
             }

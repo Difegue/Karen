@@ -48,8 +48,9 @@
             Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
             TextWrapping="Wrap"
             Visibility="{Binding IsNotInstalled, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Run>The WSL distro couldn't be detected on your system. Please re-run the installer.</Run>
-        </TextBlock>
+            <Run>The WSL distro couldn't be detected.</Run> <LineBreak/>
+            <Run>You can try reinstalling it using the button below. </Run>
+            </TextBlock>
 
         <Button
             Width="125"
@@ -91,7 +92,15 @@
             Click="Show_Console"
             Content="Log Console"
             Visibility="{Binding IsStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Button
+            <Button
+            Width="125"
+            Height="30"
+            Margin="10"
+            HorizontalAlignment="Center"
+            Click="Install_Distro"
+            Content="Repair Install"
+            Visibility="{Binding IsNotInstalled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button
             Width="125"
             Height="30"
             Margin="10"

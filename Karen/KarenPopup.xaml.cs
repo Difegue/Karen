@@ -2,6 +2,7 @@
 using ModernWpf;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -107,12 +108,20 @@ namespace Karen
 
         private void Open_Webclient(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://localhost:"+ Settings.Default.NetworkPort);
+            Process.Start("http://localhost:"+ Settings.Default.NetworkPort);
         }
 
         private void Open_Distro(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(@"\\wsl$\lanraragi\home\koyomi\lanraragi");
+            Process.Start(@"\\wsl$\lanraragi\home\koyomi\lanraragi");
+        }
+
+        private void Install_Distro(object sender, RoutedEventArgs e)
+        {
+            var pid = Process.GetCurrentProcess().Id;
+            // Run a piece of script that closes us, runs distroinstaller and then restarts the application
+            Process.Start("cmd.exe", $"/c \"echo Repairing... & taskkill /f /pid {pid} & .\\DistroInstaller.exe & echo Relaunching... & .\\Karen.exe\"");
+
         }
     }
 }
