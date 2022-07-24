@@ -107,7 +107,7 @@ namespace LANraragi.DistroInstaller
         private static void Install(string distro, string[] args)
         {
             // Check for package.tar file first
-            var packageFile = Path.Combine(Directory.GetCurrentDirectory(), "package.tar");
+            var packageFile = "\"" + Path.Combine(Directory.GetCurrentDirectory(), "package.tar") + "\"";
             if (args.Length > 0 && args[0] == "-upgrade")
             {
                 packageFile = args[1];
@@ -132,7 +132,7 @@ namespace LANraragi.DistroInstaller
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "wsl.exe",
-                        Arguments = $"--import {distro} \"Distro\" \"package.tar\"",
+                        Arguments = $"--import {distro} \"Distro\" {packageFile}",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         CreateNoWindow = true,
