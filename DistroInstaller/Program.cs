@@ -58,7 +58,7 @@ namespace LANraragi.DistroInstaller
                 {
                     Console.WriteLine("Installing distro...");
                 }
-                Install(distro);
+                Install(distro, args);
             }
             else if (needsUninstall)
             {
@@ -76,7 +76,7 @@ namespace LANraragi.DistroInstaller
                 {
                     case ConsoleKey.R:
                         UnInstall(distro);
-                        Install(distro);
+                        Install(distro, args);
                         return 0;
                     case ConsoleKey.U:
                         UnInstall(distro);
@@ -104,12 +104,19 @@ namespace LANraragi.DistroInstaller
             return Version.TryParse(Settings?.Values["Version"]?.ToString() ?? "", out var oldVersion) && oldVersion < GetVersion();
         }
 
-        private static void Install(string distro)
+        private static void Install(string distro, string[] args)
         {
             // Check for package.tar file first
-            if (!File.Exists("package.tar"))
+            var packageFile = Path.Combine(Directory.GetCurrentDirectory(), "package.tar");
+            if (args.Length > 0 && args[0] == "-upgrade")
+            {
+                packageFile = args[1];
+            }
+            
+            if (!File.Exists(packageFile))
             {
                 Console.WriteLine("package.tar not found. Please run this program from the LANraragi folder.");
+                Console.WriteLine("(You are running this program from: " + Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..")) + ")");
                 Console.WriteLine("Press any key to exit");
                 Console.ReadKey();
                 return;

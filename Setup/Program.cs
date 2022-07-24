@@ -119,7 +119,7 @@ namespace Setup
                 session.Log($"DistroInstaller location: {distroInstaller}");
                 session.Log($"package.tar location: {packageLocation}");
 
-                var wslProc = Process.Start(distroInstaller, $"-upgrade");
+                var wslProc = Process.Start(distroInstaller, $"-upgrade \"{packageLocation}\"");
                 wslProc.WaitForExit();
 
                 session.Log("Exit code of DistroInstaller is " + wslProc.ExitCode);
