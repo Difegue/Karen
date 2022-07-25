@@ -65,7 +65,7 @@
                 You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">LANraragi</Hyperlink>,
                 <LineBreak/> Version 2.5 <emoji:TextBlock Text="🐝"/>
                 <LineBreak/>
-                <emoji:TextBlock Text="✨"/> Consider installing <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH" RequestNavigate="Hyperlink_RequestNavigate">LRReader</Hyperlink> from the Microsoft Store! <emoji:TextBlock Text="✨"/>
+                <emoji:TextBlock Text="✨"/> Consider installing <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH&amp;mode=mini" RequestNavigate="Hyperlink_RequestNavigate">LRReader</Hyperlink> from the Microsoft Store! <emoji:TextBlock Text="✨"/>
                 <LineBreak/>
             </TextBlock>
 
