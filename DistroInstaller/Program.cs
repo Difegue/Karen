@@ -18,6 +18,10 @@ namespace LANraragi.DistroInstaller
             Console.Title = "LANraragi Installer";
             string distro = "lanraragi";
 
+#if DEBUG
+            Debugger.Launch();
+#endif
+
             StringBuilder wsl = new StringBuilder("wsl.exe", 260);
             if (!Win32.PathFindOnPath(wsl, null))
             {
@@ -107,7 +111,7 @@ namespace LANraragi.DistroInstaller
         private static void Install(string distro, string[] args)
         {
             // Check for package.tar file first
-            var packageFile = "\"" + Path.Combine(Directory.GetCurrentDirectory(), "package.tar") + "\"";
+            var packageFile = Path.Combine(Directory.GetCurrentDirectory(), "package.tar");
             if (args.Length > 0 && args[0] == "-upgrade")
             {
                 packageFile = args[1];
@@ -116,7 +120,7 @@ namespace LANraragi.DistroInstaller
             if (!File.Exists(packageFile))
             {
                 Console.WriteLine("package.tar not found. Please run this program from the LANraragi folder.");
-                Console.WriteLine("(You are running this program from: " + Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..")) + ")");
+                Console.WriteLine("(You are running this program from: " + Path.GetFullPath(Directory.GetCurrentDirectory()) + ")");
                 Console.WriteLine("Press any key to exit");
                 Console.ReadKey();
                 return;
