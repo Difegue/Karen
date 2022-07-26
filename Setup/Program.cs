@@ -104,10 +104,10 @@ namespace Setup
 #if DEBUG
             Debugger.Launch();
 #endif
-            var result = UnRegisterWslDistro(session);
-
             if (session.IsUninstalling())
-                return result;
+            {
+                return UnRegisterWslDistro(session);
+            }
 
             var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
             var distroInstaller = session.Property("INSTALLDIR") + @"DistroInstaller.exe";
