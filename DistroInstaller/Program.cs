@@ -130,20 +130,21 @@ namespace LANraragi.DistroInstaller
             var buildNumber = Environment.OSVersion.Version.Build;
             if (buildNumber >= 18362) // 1903
             {
-                Console.WriteLine("\nUsing WSL CLI");
+                var arguments = $"--import {distro} \"Distro\" \"{packageFile}\"";
+                Console.WriteLine("\nUsing WSL CLI: wsl.exe " + arguments);
                 var wslProc = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "wsl.exe",
-                        Arguments = $"--import {distro} \"Distro\" {packageFile}",
+                        Arguments = arguments,
                         UseShellExecute = false,
-                        RedirectStandardOutput = true,
+                        RedirectStandardOutput = false,
                         CreateNoWindow = true,
                     }
                 };
                 wslProc.Start();
-                wslProc.WaitForExit();
+                wslProc.WaitForExit((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
                 
                 Console.WriteLine("Exit code of wsl.exe is " + wslProc.ExitCode);
             }
@@ -163,20 +164,21 @@ namespace LANraragi.DistroInstaller
             var buildNumber = Environment.OSVersion.Version.Build;
             if (buildNumber >= 18362) // 1903
             {
-                Console.WriteLine("\nUsing WSL CLI");
+                var arguments = $"--unregister {distro}";
+                Console.WriteLine("\nUsing WSL CLI: wsl.exe " + arguments);
                 var wslProc = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = "wsl.exe",
-                        Arguments = $"--unregister {distro}",
+                        Arguments = arguments,
                         UseShellExecute = false,
-                        RedirectStandardOutput = true,
+                        RedirectStandardOutput = false,
                         CreateNoWindow = true,
                     }
                 };
                 wslProc.Start();
-                wslProc.WaitForExit();
+                wslProc.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds);
             }
             else
             {

@@ -19,17 +19,36 @@ public partial class WslCheckDialog : WixCLRDialog
     {
         InitializeComponent();
 
-        using (var powerShellInstance = PowerShell.Create())
+        // Check if the output of "wsl.exe --status" returns anything.
+        // wsl.exe is now preinstalled on most recent Windows setups so we can't simply check if it exists or not..
+        // If it doesn't, we'll just assume that WSL is not installed and display the error message.
+        var wsl = new Process
         {
-            powerShellInstance.AddScript(@"Get-Command wsl"); // This command fails if wsl.exe doesn't exist
-            var psOutput = powerShellInstance.Invoke();
-
-            if (powerShellInstance.Streams.Error.Count > 0)
+            StartInfo = new ProcessStartInfo
             {
-                foreach (var err in powerShellInstance.Streams.Error)
-                    obj += err.ToString();
+                FileName = "wsl.exe",
+                Arguments = "--status",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
             }
+        };
+        try
+        {
+            wsl.Start();
+            var output = wsl.StandardOutput.ReadToEnd();
+            wsl.WaitForExit(1000);
+
+            if (!output.ToLower().Contains("version")) {
+                obj += "wsl.exe --status returned no information. \n(output was: " + output + ")";
+            }
+        } 
+        catch (Exception e)
+        {
+            // wsl.exe probably doesn't exist
+            obj += e.ToString();
         }
+       
     }
 
     void backBtn_Click(object sender, EventArgs e)

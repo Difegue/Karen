@@ -250,8 +250,9 @@ namespace Karen.Interop
 
         private string GetVersion()
         {
-            // Perl one-liner to execute on the distro to get the version number+name
-            string oneLiner = "perl -Mojo -E \"my $conf = j(f(qw(/home/koyomi/lanraragi/package.json))->slurp); say %$conf{version}.q/ - '/.%$conf{version_name}.q/'/\"";
+            // Use the included get-version script in LRR to get the version of the distro
+            // wsl.exe -d lanraragi --exec ash -c "cd /home/koyomi/lanraragi && npm run --silent get-version"
+            string oneLiner = "ash -c \"cd /home/koyomi/lanraragi && npm run --silent get-version\" ";
 
             var proc = new Process
             {
@@ -283,7 +284,7 @@ namespace Karen.Interop
 
             // Distro exists but the one-liner returns nothing
             Status = AppStatus.NotInstalled;
-            return "WSL Distro doesn't function properly. Consider updating Windows 10.";
+            return "WSL Distro doesn't function properly. Consider updating Windows or WSL.";
         }
 
         #endregion
