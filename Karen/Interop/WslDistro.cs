@@ -229,6 +229,8 @@ namespace Karen.Interop
                     RedirectStandardInput = true,
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
+                    StandardOutputEncoding = Encoding.Unicode,
+                    StandardErrorEncoding = Encoding.Unicode,
                     CreateNoWindow = true,
                 }
             };

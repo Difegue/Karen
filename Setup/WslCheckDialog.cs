@@ -30,6 +30,7 @@ public partial class WslCheckDialog : WixCLRDialog
                 Arguments = "--status",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
+                StandardOutputEncoding = System.Text.Encoding.Unicode,
                 CreateNoWindow = true
             }
         };
