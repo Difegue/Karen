@@ -40,6 +40,8 @@ public partial class WslCheckDialog : WixCLRDialog
             var output = wsl.StandardOutput.ReadToEnd();
             wsl.WaitForExit(1000);
 
+            session.Log("WSL --status output: " + output);
+
             if (!output.ToLower().Contains("version")) {
                 obj += "wsl.exe --status returned no information. \n(output was: " + output + ")";
             }
