@@ -139,14 +139,21 @@ namespace LANraragi.DistroInstaller
                         FileName = "wsl.exe",
                         Arguments = arguments,
                         UseShellExecute = false,
-                        RedirectStandardOutput = false,
+                        RedirectStandardOutput = true,
+                        StandardOutputEncoding = Encoding.Unicode,
                         CreateNoWindow = true,
                     }
                 };
+                // Write stdout of process to our own
+                wslProc.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
+
                 wslProc.Start();
                 wslProc.WaitForExit((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
                 
-                Console.WriteLine("Exit code of wsl.exe is " + wslProc.ExitCode);
+                if (wslProc.HasExited)
+                    Console.WriteLine("Exit code of wsl.exe is " + wslProc.ExitCode);
+                else
+                    Console.WriteLine("wsl.exe did not exit within 5 minutes, moving on.");
             }
             else
             {
@@ -173,10 +180,14 @@ namespace LANraragi.DistroInstaller
                         FileName = "wsl.exe",
                         Arguments = arguments,
                         UseShellExecute = false,
-                        RedirectStandardOutput = false,
+                        RedirectStandardOutput = true,
+                        StandardOutputEncoding = Encoding.Unicode,
                         CreateNoWindow = true,
                     }
                 };
+                // Write stdout of process to our own
+                wslProc.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
+                
                 wslProc.Start();
                 wslProc.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds);
             }
