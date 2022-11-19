@@ -155,5 +155,10 @@ namespace Karen
             // Subscribe to PresentationSource's ContentRendered event
             presentationSource.ContentRendered += Window_ContentRendered;
         }
+
+        private void Fast_Repair(object sender, RoutedEventArgs e)
+        {
+            ((App)Application.Current).Distro.Repair();
+        }
     }
 }

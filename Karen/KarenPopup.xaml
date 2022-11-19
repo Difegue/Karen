@@ -32,14 +32,17 @@
             Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
             Text="{Binding DistroStatus, Converter={StaticResource EnumDescriptionConverter}}" />
 
-        <TextBlock
-            Padding="10"
-            HorizontalAlignment="Center"
-            FontSize="13"
-            Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-            TextWrapping="Wrap">
-            <Run Text="{Binding Version, Mode=OneWay}" />
-        </TextBlock>
+            <ScrollViewer MaxHeight="64">
+                <TextBlock
+                Padding="10"
+                HorizontalAlignment="Center"
+                FontSize="13"
+                Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+                TextWrapping="Wrap">
+                    <Run Text="{Binding Version, Mode=OneWay}" />
+                </TextBlock>
+            </ScrollViewer>
+        
 
         <TextBlock
             Padding="10"

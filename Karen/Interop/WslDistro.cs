@@ -164,6 +164,14 @@ namespace Karen.Interop
             return _lrrProc?.HasExited;
         }
 
+        internal void Repair()
+        {
+            var pid = Process.GetCurrentProcess().Id;
+            
+            // Run a piece of script that closes us, runs distroinstaller twice and then restarts the application
+            Process.Start("cmd.exe", $"/c \"echo Repairing... & taskkill /f /pid {pid} & .\\DistroInstaller.exe -remove & .\\DistroInstaller.exe & echo Relaunching... & .\\Karen.exe\"");
+        }
+
         #region Various ProcessStartInfo calls to WSL
         public bool CheckDistro()
         {
@@ -271,10 +279,20 @@ namespace Karen.Interop
             try
             {
                 proc.Start();
-                while (!proc.StandardOutput.EndOfStream)
+
+                // Read the output of the command
+                string output = proc.StandardOutput.ReadToEnd();
+                proc.WaitForExit();
+                
+                if (proc.ExitCode == 0 && output != "")
                 {
-                    string line = proc.StandardOutput.ReadLine();
-                    return "Version " + line;
+                    return "Version " + output;
+                }
+                else
+                {
+                    // Distro exists but the one-liner returns nothing
+                    Status = AppStatus.NotInstalled;
+                    return output;
                 }
             }
             catch (Exception e)
@@ -283,10 +301,6 @@ namespace Karen.Interop
                 Status = AppStatus.NotInstalled;
                 return e.Message;
             }
-
-            // Distro exists but the one-liner returns nothing
-            Status = AppStatus.NotInstalled;
-            return "WSL Distro doesn't function properly. Consider updating Windows or WSL.";
         }
 
         #endregion

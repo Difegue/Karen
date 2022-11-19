@@ -118,10 +118,7 @@ namespace Karen
 
         private void Install_Distro(object sender, RoutedEventArgs e)
         {
-            var pid = Process.GetCurrentProcess().Id;
-            // Run a piece of script that closes us, runs distroinstaller and then restarts the application
-            Process.Start("cmd.exe", $"/c \"echo Repairing... & taskkill /f /pid {pid} & .\\DistroInstaller.exe & echo Relaunching... & .\\Karen.exe\"");
-
+            ((App)Application.Current).Distro.Repair();
         }
     }
 }
