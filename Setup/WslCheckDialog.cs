@@ -42,14 +42,14 @@ public partial class WslCheckDialog : WixCLRDialog
 
             session.Log("WSL --status output: " + output);
 
-            if (!output.ToLower().Contains("version")) {
-                obj += "wsl.exe --status returned no information. \n(output was: " + output + ")";
+            if (wsl.ExitCode != 0) {
+                obj += "wsl.exe --status failed. \n(output was: " + output + ")";
             }
         } 
         catch (Exception e)
         {
             // wsl.exe probably doesn't exist
-            obj += e.ToString();
+            obj += "Error running wsl.exe: " + e.ToString();
         }
        
     }
