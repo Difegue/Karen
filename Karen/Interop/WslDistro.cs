@@ -261,8 +261,8 @@ namespace Karen.Interop
         private string GetVersion()
         {
             // Use the included get-version script in LRR to get the version of the distro
-            // wsl.exe -d lanraragi --exec ash -c "cd /home/koyomi/lanraragi && npm run --silent get-version"
-            string oneLiner = "ash -c \"cd /home/koyomi/lanraragi && npm run --silent get-version\" ";
+            // wsl.exe -d lanraragi --exec ash -c "cd /home/koyomi/lanraragi && perl script/get_version"
+            string oneLiner = "ash -c \"cd /home/koyomi/lanraragi && perl script/get_version\" ";
 
             var proc = new Process
             {
