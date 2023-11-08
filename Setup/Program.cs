@@ -42,7 +42,9 @@ namespace Setup
                                  new Files(@"..\Karen\bin\Release\net472\win7-x64\*.*"),
                                  new File(@"..\DistroInstaller\bin\Release\net472\win7-x64\DistroInstaller.exe"), //DesktopBridge.Helpers.dll already in the global Files match above
                                  new File(@"..\External\package.tar"),
-                                 new Dir(@"..\External\Redis"),
+                                 new Dir(@"Redis",
+                                     new Files(@"..\External\Redis\*.*")
+                                 ),
                                  uninstallerShortcut
                                 ),
                              new Dir(@"%ProgramMenu%\LANraragi for Windows",
