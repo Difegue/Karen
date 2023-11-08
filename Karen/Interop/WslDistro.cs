@@ -87,8 +87,10 @@ namespace Karen.Interop
             string contentFolder = GetWSLPath(winPath);
             string thumbnailFolder = string.IsNullOrWhiteSpace(thumbPath) ? contentFolder + "/thumb" : GetWSLPath(thumbPath);
 
-            var wslCommands = new List<string>();
+            // Start native Redis server
+            RedisServer.Start(winPath);
 
+            var wslCommands = new List<string>();
            
             var driveLetter = winPath.Split('\\')[0];
             if (!IsLocalDrive(driveLetter))
@@ -114,8 +116,7 @@ namespace Karen.Interop
             wslCommands.Add($"export LRR_DATA_DIRECTORY='{contentFolder}'");
             wslCommands.Add($"export LRR_THUMB_DIRECTORY='{thumbnailFolder}'");
             wslCommands.Add($"cd /home/koyomi/lanraragi && rm -f public/temp/server.pid");
-            wslCommands.Add($"mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1");
-            wslCommands.Add($"redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '{contentFolder}/' --daemonize yes");
+            wslCommands.Add($"mkdir -p log && mkdir -p content && mkdir -p database");
             wslCommands.Add($"perl ./script/launcher.pl -f ./script/lanraragi");
 
             // Concat all commands into one string we'll throw at WSL
@@ -139,7 +140,9 @@ namespace Karen.Interop
         }
 
         public bool? StopApp()
-        {  
+        {
+            RedisServer.Stop();
+
             // Kill WSL Process
             if (_lrrProc != null && !_lrrProc.HasExited)
             {

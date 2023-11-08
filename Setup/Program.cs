@@ -40,9 +40,9 @@ namespace Setup
             var project = new Project("LANraragi",
                              new Dir(@"%AppData%\LANraragi",
                                  new Files(@"..\Karen\bin\Release\net472\win7-x64\*.*"),
-                                 new Files(@"..\External\Redis\*.*"),
                                  new File(@"..\DistroInstaller\bin\Release\net472\win7-x64\DistroInstaller.exe"), //DesktopBridge.Helpers.dll already in the global Files match above
                                  new File(@"..\External\package.tar"),
+                                 new Dir(@"..\External\Redis"),
                                  uninstallerShortcut
                                 ),
                              new Dir(@"%ProgramMenu%\LANraragi for Windows",
