@@ -40,13 +40,10 @@ namespace Setup
             var project = new Project("LANraragi",
                              new Dir(@"%AppData%\LANraragi",
                                  new Files(@"..\Karen\bin\Release\net472\win7-x64\*.*"),
-                                 new File(@"..\DistroInstaller\bin\Release\net472\win7-x64\DistroInstaller.exe"), //DesktopBridge.Helpers.dll already in the global Files match above
-                                 new File(@"..\External\package.tar"),
-                                 new Dir(@"Redis",
-                                     new Files(@"..\External\Redis\*.*")
-                                 ),
-                                 uninstallerShortcut
-                                ),
+                                            new File(@"..\DistroInstaller\bin\Release\net472\win7-x64\DistroInstaller.exe"), //DesktopBridge.Helpers.dll already in the global Files match above
+                                            new File(@"..\External\package.tar"),
+                                            uninstallerShortcut
+                                    ),
                              new Dir(@"%ProgramMenu%\LANraragi for Windows",
                                  new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", "")),
                              new RegValue(RegistryHive.LocalMachineOrUsers, @"Software\Microsoft\Windows\CurrentVersion\Run", "Karen", "[INSTALLDIR]Karen.exe"),

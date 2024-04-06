@@ -13,6 +13,6 @@ Works on Windows 10 1903 and up.
 
 ## Building
 
-Add the WSL Distro package.tar in External/, alongside an unpacked build of [Redis for Windows](https://github.com/redis-windows/redis-windows) in a "Redis" directory.
+Add the WSL Distro package.tar in External/, alongside a LxRunOffline folder containing a version of LxRunOffline: https://github.com/DDoSolitary/LxRunOffline/releases
 
 Then simply build the solution.  
