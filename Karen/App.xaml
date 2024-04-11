@@ -35,7 +35,8 @@
             <tb:TaskbarIcon
                 x:Key="NotifyIcon"
                 IconSource="/favicon.ico"
-                PopupActivation="All"
+                PopupActivation="LeftOrRightClick"
+                NoLeftClickDelay="true"
                 ToolTipText="LANraragi for Windows">
 
                 <tb:TaskbarIcon.TrayPopup>
