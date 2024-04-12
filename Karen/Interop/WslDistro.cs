@@ -77,7 +77,11 @@ namespace Karen.Interop
 
             // Switch the distro to the specified WSL version
             // (Does nothing if we're already using the proper one)
-            _ = Settings.Default.UseWSL2 ? SetWSLVersion(2) : SetWSLVersion(1);
+#if WSL1_LEGACY
+            SetWSLVersion(1);
+#else
+            SetWSLVersion(2);
+#endif
 
             // Map the user's content folder to its WSL equivalent
             // This means lowercasing the drive letter, removing the : and replacing every \ by a /.

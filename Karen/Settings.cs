@@ -82,11 +82,6 @@ namespace Karen
             get => GetObjectLocal(false);
             set => StoreObjectLocal(value);
         }
-        public bool UseWSL2
-        {
-            get => GetObjectLocal(false);
-            set => StoreObjectLocal(value);
-        }
         public string Version
         {
             get => GetObjectLocal("");
@@ -143,9 +138,6 @@ namespace Karen
                         break;
                     case "ForceDebugMode":
                         _instance.ForceDebugMode = bool.Parse(value);
-                        break;
-                    case "UseWSL2":
-                        _instance.UseWSL2 = bool.Parse(value);
                         break;
                     case "ThumbnailFolder":
                         _instance.ThumbnailFolder = value;

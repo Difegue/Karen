@@ -29,6 +29,10 @@ namespace Karen
             var helper = new WindowInteropHelper(this);
             helper.EnsureHandle();
             Handle = helper.Handle;
+
+#if WSL1_LEGACY
+            WSLIndicator.Text = "This is a WSL1-only build.";
+#endif
         }
 
         private void PickFolder(object sender, RoutedEventArgs e)

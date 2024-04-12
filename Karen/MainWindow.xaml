@@ -52,17 +52,9 @@
             <CheckBox Content="Start server automatically" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartServerAutomatically, Mode=TwoWay}" />
             <CheckBox Content="Start on Windows boot" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=StartWithWindows, Mode=TwoWay}"/>
             <CheckBox Content="Force Debug Mode" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=ForceDebugMode, Mode=TwoWay}"/>
-            <Separator Height="11.5" Margin="0"/>
+                <Separator Height="11.5" Margin="0"/>
 
-            <CheckBox Content="Use WSL2" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=UseWSL2, Mode=TwoWay}"/>
-            <TextBlock Style="{StaticResource CaptionTextBlockStyle}">
-            LANraragi defaults to using WSL1 for wider compatibility and better performance for filesystem access between the Distro and Windows.<LineBreak/>
-            You can however try switching the distro to use WSL2 if you're encountering issues in WSL1, as it has better compatibility.
-            </TextBlock>
-
-            <Separator Height="11.5" Margin="0"/>
-
-            <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🔧 Repair Install" Margin="0,0,0,5"/>
+                <emoji:TextBlock Style="{StaticResource BaseTextBlockStyle}" Text="🔧 Repair Install" Margin="0,0,0,5"/>
             <TextBlock Style="{StaticResource CaptionTextBlockStyle}">If LANraragi fails to launch due to a broken WSL distro, <LineBreak/>
                 you can click the button below to try repairing it. (This will restart the app)</TextBlock>
             <Button Height="30" Content="Repair" Click="Fast_Repair" Width="65" Margin="0,8" />
@@ -70,7 +62,7 @@
             <Separator Height="12" Margin="0"/>
             <TextBlock Style="{StaticResource BodyTextBlockStyle}">
                 You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen" RequestNavigate="Hyperlink_RequestNavigate">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi" RequestNavigate="Hyperlink_RequestNavigate">LANraragi</Hyperlink>,
-                <LineBreak/> Version 2.7 <emoji:TextBlock Text="🐝"/>
+                <LineBreak/> Version 2.8<emoji:TextBlock Text=".🐝"/> <emoji:TextBlock x:Name="WSLIndicator" Text="This is a WSL2-only build." />
                 <LineBreak/>
                 <emoji:TextBlock Text="✨"/> Consider installing <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH&amp;mode=mini" RequestNavigate="Hyperlink_RequestNavigate">LRReader</Hyperlink> from the Microsoft Store! <emoji:TextBlock Text="✨"/>
                 <LineBreak/>

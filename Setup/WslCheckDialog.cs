@@ -72,7 +72,7 @@ public partial class WslCheckDialog : WixCLRDialog
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        Process.Start("https://docs.microsoft.com/en-us/windows/wsl/install-win10");
+        Process.Start("https://learn.microsoft.com/en-us/windows/wsl/install");
     }
 
     private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
