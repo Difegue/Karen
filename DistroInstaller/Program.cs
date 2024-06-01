@@ -140,14 +140,18 @@ namespace LANraragi.DistroInstaller
                         Arguments = arguments,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                         StandardOutputEncoding = Encoding.Unicode,
                         CreateNoWindow = true,
                     }
                 };
                 // Write stdout of process to our own
                 wslProc.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
+                wslProc.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data);
 
                 wslProc.Start();
+                wslProc.BeginOutputReadLine();
+                wslProc.BeginErrorReadLine();
                 wslProc.WaitForExit((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
                 
                 if (wslProc.HasExited)
@@ -181,14 +185,18 @@ namespace LANraragi.DistroInstaller
                         Arguments = arguments,
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                         StandardOutputEncoding = Encoding.Unicode,
                         CreateNoWindow = true,
                     }
                 };
                 // Write stdout of process to our own
                 wslProc.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
-                
+                wslProc.ErrorDataReceived += (sender, e) => Console.WriteLine(e.Data);
+
                 wslProc.Start();
+                wslProc.BeginOutputReadLine();
+                wslProc.BeginErrorReadLine();
                 wslProc.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds);
             }
             else
