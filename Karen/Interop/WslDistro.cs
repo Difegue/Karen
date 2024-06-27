@@ -188,7 +188,7 @@ namespace Karen.Interop
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Environment.SystemDirectory + "\\wslconfig.exe",
+                    FileName = "wslconfig.exe",
                     Arguments = "/l",
                     UseShellExecute = false,
                     RedirectStandardInput = true,
@@ -223,7 +223,7 @@ namespace Karen.Interop
             catch (Exception e)
             {
                 //WSL might not be enabled ?
-                Version = e.Message;
+                Version = "Error calling wslconfig.exe: " + e.Message;
                 return false;
             }
         }
