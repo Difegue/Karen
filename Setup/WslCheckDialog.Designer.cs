@@ -115,7 +115,7 @@
             this.linkLabel1.Size = new System.Drawing.Size(354, 20);
             this.linkLabel1.TabIndex = 13;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "https://docs.microsoft.com/en-us/windows/wsl/install-win10";
+            this.linkLabel1.Text = "https://learn.microsoft.com/en-us/windows/wsl/install";
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
