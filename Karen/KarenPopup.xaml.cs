@@ -88,7 +88,7 @@ namespace Karen
 
         private void Shutdown_App(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            Environment.Exit(0);
         }
 
         private void Start_Distro(object sender, RoutedEventArgs e)
