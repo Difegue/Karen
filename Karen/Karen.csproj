@@ -42,7 +42,7 @@
   <ItemGroup>
     <PackageReference Include="DesktopBridge.Helpers" Version="1.2.2" />
     <PackageReference Include="Emoji.Wpf" Version="0.3.3" />
-    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.0.131" />
     <PackageReference Include="HideConsoleOnClose" Version="1.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22000.196" />
     <PackageReference Include="ModernWpfUI" Version="0.9.4" />

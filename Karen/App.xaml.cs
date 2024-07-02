@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using Hardcodet.Wpf.TaskbarNotification;
+using H.NotifyIcon;
 using Karen.Interop;
 using Windows.ApplicationModel;
 using Windows.UI.Popups;
@@ -18,7 +18,10 @@ namespace Karen
 
         public void ToastNotification(string text)
         {
-            notifyIcon.ShowBalloonTip("LANraragi", text, notifyIcon.Icon, true);
+            if (!notifyIcon.IsCreated)
+                notifyIcon.ForceCreate();
+            
+            notifyIcon.ShowNotification("LANraragi", text);
         }
 
         public void ShowConfigWindow()
