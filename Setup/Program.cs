@@ -133,8 +133,15 @@ namespace Setup
             return session.HandleErrors(() =>
             {
                 session.Log("Removing previous WSL Distro");
-                var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
-                wslProc.WaitForExit();
+                try {
+                    var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
+                    wslProc.WaitForExit();
+                } catch (Exception e) 
+                {
+                    // Just log the error. We don't want to crash the uninstaller because of this.
+                    session.Log("Error while removing WSL Distro: " + e.Message);
+                }
+                
             });
         }
 
