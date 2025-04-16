@@ -117,7 +117,7 @@ namespace Karen.Interop
             wslCommands.Add($"export LRR_NETWORK=http://*:{Settings.Default.NetworkPort}");
             wslCommands.Add($"export LRR_DATA_DIRECTORY='{contentFolder}'");
             wslCommands.Add($"export LRR_THUMB_DIRECTORY='{thumbnailFolder}'");
-            wslCommands.Add($"cd /home/koyomi/lanraragi && rm -f public/temp/server.pid");
+            wslCommands.Add($"cd /home/koyomi/lanraragi && rm -f temp/server.pid");
             wslCommands.Add($"mkdir -p log && mkdir -p content && mkdir -p database && sysctl vm.overcommit_memory=1");
             wslCommands.Add($"redis-server /home/koyomi/lanraragi/tools/build/docker/redis.conf --dir '{contentFolder}/' --daemonize yes");
             wslCommands.Add($"perl ./script/launcher.pl -f ./script/lanraragi");
