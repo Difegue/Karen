@@ -1,121 +1,111 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
+﻿using CommunityToolkit.Mvvm.Input;
 using H.NotifyIcon;
-using Karen.Interop;
-using Windows.ApplicationModel;
+using Karen.Services;
+using Karen.Views;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Windows.AppLifecycle;
+using System;
+using Windows.Graphics;
 using Windows.UI.Popups;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using WinRT;
+using WinRT.Interop;
 
 namespace Karen
 {
-    /// <summary>
-    /// Simple application. Check the XAML for comments.
-    /// </summary>
+
     public partial class App : Application
     {
-        private TaskbarIcon notifyIcon;
-        public WslDistro Distro { get; set; }
+        private Window _window = null!;
+        private TaskbarIcon TrayIcon = null!;
 
-        public void ToastNotification(string text)
+        public App()
         {
-            if (!notifyIcon.IsCreated)
-                notifyIcon.ForceCreate();
-            
-            notifyIcon.ShowNotification("LANraragi", text);
+            InitializeComponent();
+            Service.BuildServices();
         }
 
-        public void ShowConfigWindow()
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            var mainWindow = Application.Current.MainWindow;
-
-            if (mainWindow == null || mainWindow.GetType() != typeof(MainWindow))
-                mainWindow = new MainWindow();
-
-            mainWindow.Show();
-
-            if (mainWindow.WindowState == WindowState.Minimized)
-                mainWindow.WindowState = WindowState.Normal;
-        }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            // Only one instance of the bootloader allowed at a time
-            var exists = System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Count() > 1;
-            if (exists)
+            var instance = AppInstance.FindOrRegisterForKey("Karen");
+            if (!instance.IsCurrent)
             {
                 ShowMessageDialog("Another instance of the application is already running.", "Close");
-                Current.Shutdown();
+                Exit();
+                return;
             }
 
-            Settings.Default.MigrateUserConfigToMSIX();
+            TrayIcon = Resources["TrayIcon"].As<TaskbarIcon>();
+            TrayIcon.LeftClickCommand = OpenPopupCommand;
+            TrayIcon.RightClickCommand = OpenPopupCommand;
+            TrayIcon.IconSource = new BitmapImage(new Uri("ms-appx:///Assets/favicon.ico"));
+            TrayIcon.ForceCreate();
 
-            Distro = new WslDistro();
-
-            // If the currently installed version is more recent than the one saved in settings, run the installer to update the distro
-            // This is only required in MSIX mode/Package Identity, as the MSI installer updates the distro automatically.
-            if (new DesktopBridge.Helpers().IsRunningAsUwp())
+            if (Service.Settings.StartServerAutomatically)
             {
-                bool needsUpgrade = Version.TryParse(Settings.Default.Version, out var oldVersion) && oldVersion < GetVersion();
-                if (!Distro.CheckDistro() || needsUpgrade)
-                {
-                    Settings.Default.Karen = true;
-                    Package.Current.GetAppListEntriesAsync().GetAwaiter().GetResult()
-                        .First(app => app.AppUserModelId == Package.Current.Id.FamilyName + "!Installer").LaunchAsync().GetAwaiter().GetResult();
-                    Current.Shutdown();
-                    return;
-                }
-            }
-
-            // First time ?
-            if (Settings.Default.FirstLaunch)
-            {
-                ShowMessageDialog("Looks like this is your first time running the app! Please setup your Content Folder in the Settings.", "Ok");
-                ShowConfigWindow();
-            }
-
-            // Create the Taskbar Icon now so it appears in the tray
-            notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
-
-            // Check if server starts with app 
-            if (Settings.Default.StartServerAutomatically && Distro.Status == AppStatus.Stopped)
-            {
-                ToastNotification("LANraragi is starting automagically...");
-                Distro.StartApp();
+                TrayIcon.ShowNotification("LANraragi", "LANraragi is starting automagically...");
+                Service.Server.Start();
             }
             else
-                ToastNotification("The Launcher is now running! Please click the icon in your Taskbar.");
-        }
-
-        protected override void OnExit(ExitEventArgs e)
-        {
-            if (notifyIcon != null)
-                notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
-            try
             {
-                Distro.StopApp();
+                TrayIcon.ShowNotification("LANraragi", "The Launcher is now running! Please click the icon in your Taskbar.");
             }
-            finally
+
+            _window = new KarenPopup();
+            _window.Closed += (sender, args) =>
             {
-                WslDistro.FreeConsole(); //clean up the console to ensure it's closed alongside the app
-                base.OnExit(e);
+                TrayIcon.Dispose();
+            };
+
+            if (Service.Settings.FirstLaunch)
+            {
+                ShowMessageDialog("Looks like this is your first time running the app! Please setup your Content Folder in the Settings.", "Ok");
+                new MainWindow().Activate();
+                Service.Settings.FirstLaunch = false;
             }
         }
 
-        private static Version GetVersion()
+        [RelayCommand]
+        private void OpenPopup()
         {
-            var version = new DesktopBridge.Helpers().IsRunningAsUwp() ? Package.Current.Id.Version : new PackageVersion();
-            return new Version(version.Major, version.Minor, version.Build, version.Revision);
+            unsafe
+            {
+                var hwnd = new HWND((void*)WindowNative.GetWindowHandle(_window));
+                var area = DisplayArea.GetFromWindowId(_window.AppWindow.Id, DisplayAreaFallback.Primary);
+                PInvoke.GetCursorPos(out var point);
+
+                var dpi = (float)(PInvoke.GetDpiForWindow(hwnd) / 96f);
+
+                _window.AppWindow.Resize(new SizeInt32((int)(266 * dpi), (int)(448 * dpi)));
+                var size = _window.AppWindow.Size;
+
+                int xPosition = point.X - size.Width / 2;
+                int yPosition = point.Y - size.Height;
+
+                int distanceToEdgeX = xPosition + size.Width - area.WorkArea.Width + area.WorkArea.X;
+                int distanceToEdgeY = yPosition + size.Height - area.WorkArea.Height + area.WorkArea.Y;
+
+                if (distanceToEdgeX > 0)
+                    xPosition -= distanceToEdgeX;
+                if (distanceToEdgeY > 0)
+                    yPosition -= distanceToEdgeY;
+
+                _window.AppWindow.Move(new PointInt32(xPosition, yPosition));
+                _window.Show();
+                _window.Activate();
+
+                PInvoke.SetForegroundWindow(hwnd);
+            }
         }
 
-        public static void ShowMessageDialog(string content, string button, IntPtr window = new IntPtr())
+        private void ShowMessageDialog(string content, string button, IntPtr window = new IntPtr())
         {
             var msg = new MessageDialog(content, "LANraragi");
             msg.Commands.Add(new UICommand(button));
-            if (window == IntPtr.Zero)
-                window = User32.GetDesktopWindow();
-            ((IInitializeWithWindow)(object)msg).Initialize(window);
+            InitializeWithWindow.Initialize(msg, PInvoke.GetDesktopWindow());
             msg.ShowAsync().GetAwaiter().GetResult();
         }
     }
