@@ -74,6 +74,7 @@ namespace Karen.Services
                     var procInfo = CreateProcInfo(workDir);
                     procInfo.Environment["LRR_DATA_DIRECTORY"] = Settings.ContentFolder;
                     procInfo.Environment["LRR_THUMB_DIRECTORY"] = string.IsNullOrWhiteSpace(Settings.ThumbnailFolder) ? Path.Combine(Settings.ContentFolder, "thumb") : Settings.ThumbnailFolder;
+                    procInfo.Environment["LRR_NETWORK"] = $"http://*:{Settings.NetworkPort}";
 
                     procInfo.ArgumentList.Add("script\\launcher.pl");
                     procInfo.ArgumentList.Add("-d");
