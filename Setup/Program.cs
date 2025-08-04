@@ -115,7 +115,7 @@ namespace Setup
 
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile("https://aka.ms/windowsappsdk/1.7/1.7.250513003/windowsappruntimeinstall-x64.exe", exe);
+                    client.DownloadFile("https://aka.ms/windowsappsdk/1.7/1.7.250606001/windowsappruntimeinstall-x64.exe", exe);
                 }
                 IncrementProgressBar(session, 1);
 

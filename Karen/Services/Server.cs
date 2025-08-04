@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using HideConsoleOnCloseManaged;
+﻿using HideConsoleOnCloseManaged;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
