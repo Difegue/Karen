@@ -10,7 +10,7 @@
     Title="KarenPopup">
 
 	<Window.SystemBackdrop>
-		<DesktopAcrylicBackdrop />
+		<MicaBackdrop />
 	</Window.SystemBackdrop>
 
 	<StackPanel Orientation="Vertical" Spacing="8" Margin="0,1,0,0">
