@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using H.NotifyIcon;
 using Karen.Services;
+using Karen.Util;
 using Karen.Views;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -33,7 +34,7 @@ namespace Karen
             var instance = AppInstance.FindOrRegisterForKey("Karen");
             if (!instance.IsCurrent)
             {
-                ShowMessageDialog("Another instance of the application is already running.", "Close");
+                PopupUtils.ShowMessageDialog("LANraragi", "Another instance of the application is already running.", "Close");
                 Exit();
                 return;
             }
@@ -62,7 +63,7 @@ namespace Karen
 
             if (Service.Settings.FirstLaunch)
             {
-                ShowMessageDialog("Looks like this is your first time running the app! Please setup your Content Folder in the Settings.", "Ok");
+                PopupUtils.ShowMessageDialog("LANraragi", "Looks like this is your first time running the app! Please setup your Content Folder in the Settings.", "OK");
                 new MainWindow().Activate();
                 Service.Settings.FirstLaunch = false;
             }
@@ -101,12 +102,6 @@ namespace Karen
             }
         }
 
-        private void ShowMessageDialog(string content, string button, IntPtr window = new IntPtr())
-        {
-            var msg = new MessageDialog(content, "LANraragi");
-            msg.Commands.Add(new UICommand(button));
-            InitializeWithWindow.Initialize(msg, PInvoke.GetDesktopWindow());
-            msg.ShowAsync().GetAwaiter().GetResult();
-        }
+
     }
 }
