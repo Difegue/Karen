@@ -19,20 +19,26 @@ namespace Karen.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(AppTitleBar);
+
             Data = Service.Services.GetRequiredService<MainWindowViewModel>();
 
             AppWindow.SetIcon("Assets/favicon.ico");
             var presenter = AppWindow.Presenter.As<OverlappedPresenter>();
             presenter.PreferredMinimumWidth = 800;
             presenter.PreferredMinimumHeight = 480;
-            AppWindow.Resize(new SizeInt32(900, 680));
+            AppWindow.Resize(new SizeInt32(900, 980));
             hWnd = WindowNative.GetWindowHandle(this);
         }
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
-            if (string.IsNullOrWhiteSpace(Data.ContentFolder))
-                args.Handled = true;
+            // TODO Doing this prevents the window from closing but also makes it impossible to ever close properly afterwards.
+            // Doesn't look like WinUI implements Closing, so we might just need to block server startup if a content folder isn't set. 
+            //if (string.IsNullOrWhiteSpace(Data.ContentFolder))
+                //args.Handled = true;
 
             Service.Settings.Save();
         }
