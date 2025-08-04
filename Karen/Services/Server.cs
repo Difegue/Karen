@@ -1,4 +1,5 @@
 ﻿using HideConsoleOnCloseManaged;
+using Karen.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,66 +28,75 @@ namespace Karen.Services
             logsDir = Path.Combine(workDir, "log");
             PInvoke.AllocConsole();
             PInvoke.SetConsoleOutputCP(65001u);
-            PInvoke.SetConsoleTitle("LANraragi server");
+            PInvoke.SetConsoleTitle("LANraragi Log Console");
             HideConsole();
             HideConsoleOnClose.EnableForWindow(PInvoke.GetConsoleWindow());
         }
 
         public void Start()
         {
-            // Ensure this exist, otherwise we are in trouble
-            Directory.CreateDirectory(tempDir);
-            Directory.CreateDirectory(logsDir);
-
-            if (redis == null)
+            try
             {
-                var redisPid = Path.Combine(tempDir, "redis.pid");
-
-                redis = GetProcess(redisPid, "redis-server.exe");
+                // Ensure this exist, otherwise we are in trouble
+                Directory.CreateDirectory(tempDir);
+                Directory.CreateDirectory(logsDir);
 
                 if (redis == null)
                 {
-                    var procInfo = CreateProcInfo(workDir);
-                    // redis on windows has broken absolute paths to config files so define it as relative instead
-                    procInfo.ArgumentList.Add("./runtime/redis/redis.conf");
-                    procInfo.ArgumentList.Add("--dir");
-                    procInfo.ArgumentList.Add(Settings.ContentFolder);
-                    procInfo.ArgumentList.Add("--logfile");
-                    procInfo.ArgumentList.Add(Path.Combine(logsDir, "redis.log"));
+                    var redisPid = Path.Combine(tempDir, "redis.pid");
 
-                    procInfo.FileName = Path.Combine(workDir, "runtime", "redis", "redis-server.exe");
+                    redis = GetProcess(redisPid, "redis-server.exe");
 
-                    redis = Process.Start(procInfo);
+                    if (redis == null)
+                    {
+                        var procInfo = CreateProcInfo(workDir);
+                        // redis on windows has broken absolute paths to config files so define it as relative instead
+                        procInfo.ArgumentList.Add("./runtime/redis/redis.conf");
+                        procInfo.ArgumentList.Add("--dir");
+                        procInfo.ArgumentList.Add(Settings.ContentFolder);
+                        procInfo.ArgumentList.Add("--logfile");
+                        procInfo.ArgumentList.Add(Path.Combine(logsDir, "redis.log"));
 
-                    File.WriteAllText(redisPid, redis!.Id.ToString());
+                        procInfo.FileName = Path.Combine(workDir, "runtime", "redis", "redis-server.exe");
+
+                        redis = Process.Start(procInfo);
+
+                        File.WriteAllText(redisPid, redis!.Id.ToString());
+                    }
                 }
-            }
-
-            if (server == null)
-            {
-                var serverPid = Path.Combine(tempDir, "server.pid");
-
-                server = GetProcess(serverPid, "perl.exe");
 
                 if (server == null)
                 {
-                    var procInfo = CreateProcInfo(workDir);
-                    procInfo.Environment["LRR_DATA_DIRECTORY"] = Settings.ContentFolder;
-                    procInfo.Environment["LRR_THUMB_DIRECTORY"] = string.IsNullOrWhiteSpace(Settings.ThumbnailFolder) ? Path.Combine(Settings.ContentFolder, "thumb") : Settings.ThumbnailFolder;
-                    procInfo.Environment["LRR_NETWORK"] = $"http://*:{Settings.NetworkPort}";
+                    var serverPid = Path.Combine(tempDir, "server.pid");
 
-                    procInfo.ArgumentList.Add("script\\launcher.pl");
-                    procInfo.ArgumentList.Add("-d");
-                    procInfo.ArgumentList.Add("script\\lanraragi");
+                    server = GetProcess(serverPid, "perl.exe");
 
-                    procInfo.FileName = Path.Combine(workDir, "runtime", "bin", "perl.exe");
+                    if (server == null)
+                    {
+                        var procInfo = CreateProcInfo(workDir);
+                        procInfo.Environment["LRR_DATA_DIRECTORY"] = Settings.ContentFolder;
+                        procInfo.Environment["LRR_THUMB_DIRECTORY"] = string.IsNullOrWhiteSpace(Settings.ThumbnailFolder) ? Path.Combine(Settings.ContentFolder, "thumb") : Settings.ThumbnailFolder;
+                        procInfo.Environment["LRR_NETWORK"] = $"http://*:{Settings.NetworkPort}";
 
-                    server = Process.Start(procInfo);
+                        procInfo.ArgumentList.Add("script\\launcher.pl");
+                        procInfo.ArgumentList.Add("-d");
+                        procInfo.ArgumentList.Add("script\\lanraragi");
 
-                    File.WriteAllText(serverPid, server!.Id.ToString());
+                        procInfo.FileName = Path.Combine(workDir, "runtime", "bin", "perl.exe");
+
+                        server = Process.Start(procInfo);
+
+                        File.WriteAllText(serverPid, server!.Id.ToString());
+                    }
                 }
+                IsRunning = true;
+            } 
+            catch (Exception e)
+            {
+                PopupUtils.ShowMessageDialog($"Unable to start server", e.ToString(), "OK");
+                IsRunning = false;
             }
-            IsRunning = true;
+            
         }
 
         public Task Stop()
@@ -94,75 +104,81 @@ namespace Karen.Services
             IsRunning = false;
             return Task.Run(() =>
             {
-                if (server != null && !server.HasExited)
+                try
                 {
-                    var toWait = new List<Process>();
-
-                    foreach (var process in Process.GetProcessesByName("perl"))
+                    if (server != null && !server.HasExited)
                     {
-                        if (process.MainModule!.FileName.Equals(server.MainModule!.FileName))
-                            toWait.Add(process);
-                        else
-                            process.Dispose();
-                    }
-                    PInvoke.SetConsoleCtrlHandler(null, true);
-                    PInvoke.GenerateConsoleCtrlEvent(0, 0);
+                        var toWait = new List<Process>();
 
-                    foreach (var process in toWait)
-                    {
-                        process.WaitForExit(5000);
-                        if (!process.HasExited)
+                        foreach (var process in Process.GetProcessesByName("perl"))
                         {
-                            try
-                            {
-                                process.Kill();
-                            }
-                            catch { }
+                            if (process.MainModule!.FileName.Equals(server.MainModule!.FileName))
+                                toWait.Add(process);
+                            else
+                                process.Dispose();
                         }
-                        process.Dispose();
+                        PInvoke.SetConsoleCtrlHandler(null, true);
+                        PInvoke.GenerateConsoleCtrlEvent(0, 0);
+
+                        foreach (var process in toWait)
+                        {
+                            process.WaitForExit(5000);
+                            if (!process.HasExited)
+                            {
+                                try
+                                {
+                                    process.Kill();
+                                }
+                                catch { }
+                            }
+                            process.Dispose();
+                        }
+
+                        PInvoke.SetConsoleCtrlHandler(null, false);
                     }
 
-                    PInvoke.SetConsoleCtrlHandler(null, false);
-                }
+                    if (redis != null && !redis.HasExited)
+                    {
+                        var procInfo = CreateProcInfo(workDir);
 
-                if (redis != null && !redis.HasExited)
+                        procInfo.FileName = Path.Combine(workDir, "runtime", "redis", "redis-cli.exe");
+                        procInfo.Arguments = "shutdown";
+
+                        using var tmp = Process.Start(procInfo);
+
+                        tmp!.WaitForExit();
+                        redis.WaitForExit();
+                    }
+
+                    redis?.Dispose();
+                    server?.Dispose();
+                    redis = null;
+                    server = null;
+                }
+                catch (Exception e)
                 {
-                    var procInfo = CreateProcInfo(workDir);
-
-                    procInfo.FileName = Path.Combine(workDir, "runtime", "redis", "redis-cli.exe");
-                    procInfo.Arguments = "shutdown";
-
-                    using var tmp = Process.Start(procInfo);
-
-                    tmp!.WaitForExit();
-                    redis.WaitForExit();
+                    PopupUtils.ShowMessageDialog("Error while stopping server", e.ToString(), "OK");
                 }
-
-                redis?.Dispose();
-                server?.Dispose();
-                redis = null;
-                server = null;
             });
         }
 
-        public void ShowConsole()
+        public static void ShowConsole()
         {
             PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_SHOW);
             PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_RESTORE);
         }
 
-        public void HideConsole()
+        public static void HideConsole()
         {
             PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_HIDE);
         }
 
-        private ProcessStartInfo CreateProcInfo(string lrr)
+        private ProcessStartInfo CreateProcInfo(string lrrDirectory)
         {
             var procInfo = new ProcessStartInfo();
 
-            procInfo.Environment["Path"] = $"{Path.Combine(lrr, "runtime", "bin")};{Path.Combine(lrr, "runtime", "redis")};{Environment.GetEnvironmentVariable("Path")}";
-
-            procInfo.WorkingDirectory = lrr;
+            procInfo.Environment["Path"] = $"{Path.Combine(lrrDirectory, "runtime", "bin")};{Path.Combine(lrrDirectory, "runtime", "redis")};{Environment.GetEnvironmentVariable("Path")}";
+            procInfo.WorkingDirectory = lrrDirectory;
 
             return procInfo;
         }
