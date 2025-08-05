@@ -77,7 +77,7 @@ namespace Karen
                 var area = DisplayArea.GetFromWindowId(_window.AppWindow.Id, DisplayAreaFallback.Primary);
                 PInvoke.GetCursorPos(out var point);
 
-                var dpi = (float)(PInvoke.GetDpiForWindow(hwnd) / 96f);
+                var dpi = (float)(PInvoke.GetDpiForWindow(hwnd) / (float)PInvoke.USER_DEFAULT_SCREEN_DPI);
 
                 _window.AppWindow.Resize(new SizeInt32((int)(266 * dpi), (int)(498 * dpi)));
                 var size = _window.AppWindow.Size;

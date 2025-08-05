@@ -14,3 +14,5 @@ GetDesktopWindow
 SetConsoleOutputCP
 SetConsoleTitle
 WM_ACTIVATE
+WM_DPICHANGED
+USER_DEFAULT_SCREEN_DPI
