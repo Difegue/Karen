@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.Win32;
 using WinRT.Interop;
@@ -19,8 +15,6 @@ public static class PopupUtils
         InitializeWithWindow.Initialize(msg, hwnd ?? PInvoke.GetDesktopWindow());
         msg.ShowAsync().GetAwaiter().GetResult();
     }
-
-
 
 }
 

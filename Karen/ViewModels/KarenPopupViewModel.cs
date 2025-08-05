@@ -17,6 +17,9 @@ namespace Karen.ViewModels
         [ObservableProperty]
         public partial bool IsRunning { get; set; }
 
+        public string Version => Server.Version;
+        public bool CanRun => Server.CanRun;
+
         public KarenPopupViewModel(Settings settings, Server server)
         {
             Settings = settings;
@@ -28,7 +31,7 @@ namespace Karen.ViewModels
         public void Start()
         {
             Server.Start();
-            IsRunning = true;
+            IsRunning = Server.IsRunning;
         }
 
         [RelayCommand]

@@ -9,7 +9,6 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.AppLifecycle;
 using System;
 using Windows.Graphics;
-using Windows.UI.Popups;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using WinRT;
@@ -80,7 +79,7 @@ namespace Karen
 
                 var dpi = (float)(PInvoke.GetDpiForWindow(hwnd) / 96f);
 
-                _window.AppWindow.Resize(new SizeInt32((int)(266 * dpi), (int)(448 * dpi)));
+                _window.AppWindow.Resize(new SizeInt32((int)(266 * dpi), (int)(498 * dpi)));
                 var size = _window.AppWindow.Size;
 
                 int xPosition = point.X - size.Width / 2;

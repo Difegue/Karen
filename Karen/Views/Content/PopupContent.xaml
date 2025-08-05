@@ -18,12 +18,16 @@
 		<Image Width="192" Source="/Assets/logo.png" Margin="0,0,0,-12"/>
 		<TextBlock FontWeight="Bold" Text="✌️ LANraragi is running" HorizontalAlignment="Center" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 		<TextBlock FontWeight="Bold" Text="❌ LANraragi is stopped" HorizontalAlignment="Center" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource NegateBoolToVisibilityConverter}}" />
-		
-        <Button Margin="0,8,0,0" Content="Start" Command="{x:Bind Data.StartCommand}" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource NegateBoolToVisibilityConverter}}" />
+
+		<ScrollViewer MaxHeight="64">
+			<TextBlock FontSize="13" Padding="10,0" TextAlignment="Center" TextWrapping="Wrap" Text="{x:Bind Data.Version}" />
+		</ScrollViewer>
+
+		<Button Content="Start" Command="{x:Bind Data.StartCommand}" IsEnabled="{x:Bind Data.CanRun}" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource NegateBoolToVisibilityConverter}}" />
 		<Button Content="Open app folder" Command="{x:Bind Data.OpenAppFolderCommand}" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource NegateBoolToVisibilityConverter}}" />
 		<Button Content="Stop" Command="{x:Bind Data.StopCommand}" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 		<Button Content="Open client" Command="{x:Bind Data.OpenClientCommand}" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-		<Button Content="Log console" Command="{x:Bind Data.ShowConsoleCommand}" Visibility="{x:Bind Data.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+		<Button Content="Log console" Command="{x:Bind Data.ShowConsoleCommand}" />
 		<Button Content="Settings" Command="{x:Bind Data.OpenSettingsCommand}" />
 	</StackPanel>
 </UserControl>

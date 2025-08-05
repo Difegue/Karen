@@ -18,7 +18,9 @@ namespace Karen.Services
 
         private string workDir, tempDir, logsDir;
 
+        public bool CanRun { get; private set; }
         public bool IsRunning { get; private set; }
+        public string Version { get; private set; } = "";
 
         public Server(Settings settings)
         {
@@ -31,10 +33,53 @@ namespace Karen.Services
             PInvoke.SetConsoleTitle("LANraragi Log Console");
             HideConsole();
             HideConsoleOnClose.EnableForWindow(PInvoke.GetConsoleWindow());
+
+            // Try to load version name (and check if the runtime is actually ok)
+            try
+            {
+                var procInfo = CreateProcInfo(workDir);
+                procInfo.Arguments = "script\\get_version";
+                procInfo.FileName = Path.Combine(workDir, "runtime", "bin", "perl.exe");
+                procInfo.RedirectStandardOutput = true;
+
+                using var verProc = Process.Start(procInfo);
+
+                if (verProc != null)
+                {
+                    var output = verProc.StandardOutput.ReadToEnd();
+                    verProc.WaitForExit();
+
+                    if (verProc.ExitCode == 0)
+                    {
+                        Version = $"Version {output}";
+                        CanRun = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine(output);
+                        Version = "An error occurred when testing the server runtime.\nPlease check the console";
+                    }
+                }
+                else
+                {
+                    Version = "An unknown error occurred when testing the server runtime.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Version = "Something went wrong with the server runtime.\nPlease check the console.";
+            }
         }
 
         public void Start()
         {
+            if (string.IsNullOrEmpty(Settings.ContentFolder))
+            {
+                PopupUtils.ShowMessageDialog("LANraragi", "Please setup your Content Folder in the Settings before starting the server!", "OK");
+                return;
+            }
+
             try
             {
                 // Ensure this exist, otherwise we are in trouble
@@ -90,13 +135,14 @@ namespace Karen.Services
                     }
                 }
                 IsRunning = true;
-            } 
+            }
             catch (Exception e)
             {
-                PopupUtils.ShowMessageDialog($"Unable to start server", e.ToString(), "OK");
+                Console.WriteLine(e.ToString());
+                PopupUtils.ShowMessageDialog("Unable to start server", e.Message, "OK");
                 IsRunning = false;
             }
-            
+
         }
 
         public Task Stop()
@@ -157,7 +203,8 @@ namespace Karen.Services
                 }
                 catch (Exception e)
                 {
-                    PopupUtils.ShowMessageDialog("Error while stopping server", e.ToString(), "OK");
+                    Console.WriteLine(e.ToString());
+                    PopupUtils.ShowMessageDialog("Error while stopping server", e.Message, "OK");
                 }
             });
         }
