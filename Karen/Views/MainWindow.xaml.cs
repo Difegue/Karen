@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Windows.Graphics;
+using Windows.Win32;
+using Windows.Win32.Foundation;
 using WinRT;
 using WinRT.Interop;
 
@@ -26,11 +28,18 @@ namespace Karen.Views
             Data = Service.Services.GetRequiredService<MainWindowViewModel>();
 
             AppWindow.SetIcon("Assets/favicon.ico");
-            var presenter = AppWindow.Presenter.As<OverlappedPresenter>();
-            presenter.PreferredMinimumWidth = 800;
-            presenter.PreferredMinimumHeight = 480;
-            AppWindow.Resize(new SizeInt32(900, 980));
-            hWnd = WindowNative.GetWindowHandle(this);
+
+            unsafe
+            {
+                hWnd = WindowNative.GetWindowHandle(this);
+                HWND hwnd = new HWND((void*)hWnd);
+                var dpi = (float)(PInvoke.GetDpiForWindow(hwnd) / 96f);
+
+                var presenter = AppWindow.Presenter.As<OverlappedPresenter>();
+                presenter.PreferredMinimumWidth = (int)(800 * dpi);
+                presenter.PreferredMinimumHeight = (int)(480 * dpi);
+                AppWindow.Resize(new SizeInt32((int)(900 * dpi), (int)(680 * dpi)));
+            }
         }
 
         private void Window_Closed(object sender, WindowEventArgs args)
