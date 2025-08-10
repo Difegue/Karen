@@ -3,7 +3,10 @@ using Karen.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Documents;
+using System;
 using Windows.Graphics;
+using Windows.System;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.Shell;
@@ -67,6 +70,11 @@ namespace Karen.Views
                 //args.Handled = true;
 
             Service.Settings.Save();
+        }
+
+        private async void Hyperlink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
+        {
+            await Launcher.LaunchUriAsync(new Uri("ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH&amp;mode=mini"));
         }
     }
 }
