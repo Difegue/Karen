@@ -69,7 +69,7 @@
                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="10">
 			You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi">LANraragi</Hyperlink>, Version 3.0. 🐝
 			<LineBreak/>
-			✨ Consider installing <Hyperlink NavigateUri="ms-windows-store://pdp/?ProductId=9MZ6BWWVSWJH&amp;mode=mini">LRReader</Hyperlink> from the Microsoft Store! ✨
+			✨ Consider installing <Hyperlink Click="Hyperlink_Click">LRReader</Hyperlink> from the Microsoft Store! ✨
                 </TextBlock>
                 <Expander Header="License" HorizontalAlignment="Stretch">
                     <TextBlock TextWrapping="Wrap">
