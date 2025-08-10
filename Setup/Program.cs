@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Microsoft.Deployment.WindowsInstaller;
+using System;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Deployment.WindowsInstaller;
+using System.Net;
 using WixSharp;
 using WixSharp.CommonTasks;
 using WixSharp.Controls;
-using System.Linq;
-using System.Windows.Forms;
-using File = WixSharp.File;
 
 namespace Setup
 {
@@ -23,33 +21,20 @@ namespace Setup
 
             var uninstallerShortcut = new ExeFileShortcut("Uninstall LANraragi", "[System64Folder]msiexec.exe", "/x [ProductCode]");
 
-            var registerAction = new ManagedAction(RegisterWslDistro,
-                                 Return.check,
-                                 When.After,
-                                 Step.InstallFinalize,
-                                 Condition.NOT_BeingRemoved);
-            registerAction.ProgressText = "Installing the LANraragi WSL Distro... (This will show a cmd window)";
-
-            var unregisterAction = new ManagedAction(UnRegisterWslDistro,
-                                 Return.check,
-                                 When.Before,
-                                 Step.RemoveFiles,
-                                 Condition.BeingUninstalled);
-            unregisterAction.ProgressText = "Removing the previous LANraragi WSL Distro (This will show a cmd window)";
+            var installWinAppSdkAction = new ManagedAction(InstallWinAppSdk, Return.check, When.After, Step.InstallFinalize, Condition.NOT_BeingRemoved)
+            {
+                ProgressText = "Installing Windows App SDK Runtime..."
+            };
 
             var project = new Project("LANraragi",
-                             new Dir(@"%AppData%\LANraragi",
-                                 new Files(@"..\Karen\bin\Release\net472\win7-x64\*.*"),
-                                            new File(@"..\DistroInstaller\bin\Release\net472\win7-x64\DistroInstaller.exe"), //DesktopBridge.Helpers.dll already in the global Files match above
-                                            new File(@"..\External\package.tar"),
-                                            uninstallerShortcut
-                                    ),
-                             new Dir(@"%ProgramMenu%\LANraragi for Windows",
-                                 new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", "")),
-                             new RegValue(RegistryHive.LocalMachineOrUsers, @"Software\Microsoft\Windows\CurrentVersion\Run", "Karen", "[INSTALLDIR]Karen.exe"),
-                             registerAction,
-                             unregisterAction
-                            );
+                new Dir(@"%AppData%\LANraragi",
+                    new Files(@"..\Karen\bin\win-x64\publish\*.*", file => !file.EndsWith("pdb")),
+                    uninstallerShortcut
+                ),
+                new Dir(@"%ProgramMenu%\LANraragi for Windows",
+                    new ExeFileShortcut("LANraragi", "[INSTALLDIR]Karen.exe", "")),
+                installWinAppSdkAction
+            );
 
             project.GUID = new Guid("6fe30b47-2577-43ad-1337-1861ba25889b");
             project.Platform = Platform.x64;
@@ -58,6 +43,7 @@ namespace Setup
                 Schedule = UpgradeSchedule.afterInstallValidate, // Remove previous version entirely before reinstalling, so that the WSL distro isn't uninstalled on upgrade.
                 DowngradeErrorMessage = "A later version of [ProductName] is already installed. Setup will now exit."
             };
+            project.InstallScope = InstallScope.perUser;
 
             // Version number is based on the LRR_VERSION_NUM env variable
             var version = "0.0.1";
@@ -66,7 +52,7 @@ namespace Setup
 
             try
             {
-                project.Version = Version.Parse(version); 
+                project.Version = Version.Parse(version);
             }
             catch
             {
@@ -78,11 +64,11 @@ namespace Setup
             project.LaunchConditions.Add(new LaunchCondition("VersionNT64", "LANraragi for Windows can only be installed on a 64-bit Windows."));
             project.LaunchConditions.Add(new LaunchCondition("VersionNT>=\"603\"", "LANraragi for Windows can only be installed on Windows 10 and up."));
 
-            //Schedule custom dialog between WelcomeDlg and InstallDirDlg standard MSI dialogs.
-            project.InjectClrDialog(nameof(ShowDialogIfWslDisabled), NativeDialogs.WelcomeDlg, NativeDialogs.InstallDirDlg);
+            // https://stackoverflow.com/a/53525753
+            project.UI = WUI.WixUI_InstallDir;
 
             //remove LicenceDlg
-            project.RemoveDialogsBetween(NativeDialogs.InstallDirDlg, NativeDialogs.VerifyReadyDlg);
+            project.RemoveDialogsBetween(NativeDialogs.WelcomeDlg, NativeDialogs.InstallDirDlg);
 
             // Customize
             project.BackgroundImage = @"Images\dlgbmp.bmp";
@@ -94,61 +80,76 @@ namespace Setup
             project.ControlPanelInfo.Contact = "Difegue";
             project.ControlPanelInfo.Manufacturer = "Difegue";
 
+            // Fix some ids being the same as internal ones
+            project.CustomIdAlgorithm = entity =>
+            {
+                if (entity is Dir dir)
+                {
+                    var path = project.GetTargetPathOf(dir);
+                    var filename = path.PathGetFileName();
+                    if (filename.Equals("Time"))
+                        return $"{filename}_{Math.Abs(path.GetHashCode32())}";
+                }
+                return null;
+            };
+
             project.OutDir = "bin";
             project.BuildMsi();
         }
 
         [CustomAction]
-        public static ActionResult RegisterWslDistro(Session session)
+        public static ActionResult InstallWinAppSdk(Session session)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
-            if (session.IsUninstalling())
-            {
-                return UnRegisterWslDistro(session);
-            }
-
-            var packageLocation = session.Property("INSTALLDIR") + @"package.tar";
-            var distroInstaller = session.Property("INSTALLDIR") + @"DistroInstaller.exe";
-
             return session.HandleErrors(() =>
             {
-                // Use distroinstaller to either install or uninstall the WSL distro.
-                session.Log("Installing WSL Distro from package.tar");
-                session.Log($"DistroInstaller location: {distroInstaller}");
-                session.Log($"package.tar location: {packageLocation}");
+                ResetProgressBar(session, 2);
+                IncrementProgressBar(session, 1);
 
-                var wslProc = Process.Start(distroInstaller, $"-upgrade \"{packageLocation}\"");
-                wslProc.WaitForExit();
+                var temp = session.Property("TempFolder");
 
-                session.Log("Exit code of DistroInstaller is " + wslProc.ExitCode);
-            });
-        }
+                session.Log("Installing WinAppSDK Runtime");
 
-        [CustomAction]
-        public static ActionResult UnRegisterWslDistro(Session session)
-        {
-            // We don't use distroInstaller here since INSTALLDIR isn't set when uninstalling.
-            return session.HandleErrors(() =>
-            {
-                session.Log("Removing previous WSL Distro");
-                try {
-                    var wslProc = Process.Start("wslconfig.exe", "/unregister lanraragi");
-                    wslProc.WaitForExit();
-                } catch (Exception e) 
+                var exe = Path.Combine(temp, $"{Path.GetRandomFileName()}.exe");
+
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                using (var client = new WebClient())
                 {
-                    // Just log the error. We don't want to crash the uninstaller because of this.
-                    session.Log("Error while removing WSL Distro: " + e.Message);
+                    client.DownloadFile("https://aka.ms/windowsappsdk/1.7/1.7.250606001/windowsappruntimeinstall-x64.exe", exe);
                 }
-                
+                IncrementProgressBar(session, 1);
+
+                var procInfo = new ProcessStartInfo(exe, "--quiet")
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                };
+
+                var proc = Process.Start(procInfo);
+                proc.WaitForExit();
+                System.IO.File.Delete(exe);
+                IncrementProgressBar(session, 1);
+
+                session.Log("Exit code: " + proc.ExitCode);
             });
         }
 
-        [CustomAction]
-        public static ActionResult ShowDialogIfWslDisabled(Session session)
+        // https://www.advancedinstaller.com/forums/viewtopic.php?t=27535#p69452
+        public static MessageResult ResetProgressBar(Session session, int totalStatements)
         {
-            return WixCLRDialog.ShowAsMsiDialog(new WslCheckDialog(session));
+            var record = new Record(3);
+            record[1] = 0; // "Reset" message 
+            record[2] = totalStatements;  // total ticks 
+            record[3] = 0; // forward motion 
+            return session.Message(InstallMessage.Progress, record);
+        }
+
+        public static MessageResult IncrementProgressBar(Session session, int progressPercentage)
+        {
+            var record = new Record(3);
+            record[1] = 2; // "ProgressReport" message 
+            record[2] = progressPercentage; // ticks to increment 
+            record[3] = 0; // ignore 
+            return session.Message(InstallMessage.Progress, record);
         }
 
     }
