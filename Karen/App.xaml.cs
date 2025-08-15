@@ -85,13 +85,8 @@ namespace Karen
                 int xPosition = point.X - size.Width / 2;
                 int yPosition = point.Y - size.Height;
 
-                int distanceToEdgeX = xPosition + size.Width - area.WorkArea.Width + area.WorkArea.X;
-                int distanceToEdgeY = yPosition + size.Height - area.WorkArea.Height + area.WorkArea.Y;
-
-                if (distanceToEdgeX > 0)
-                    xPosition -= distanceToEdgeX;
-                if (distanceToEdgeY > 0)
-                    yPosition -= distanceToEdgeY;
+                yPosition = Math.Clamp(yPosition, area.WorkArea.Y, area.WorkArea.Y + area.WorkArea.Height - size.Height);
+                xPosition = Math.Clamp(xPosition, area.WorkArea.X, area.WorkArea.X + area.WorkArea.Width - size.Width);
 
                 _window.AppWindow.Move(new PointInt32(xPosition, yPosition));
                 _window.Show();
