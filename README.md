@@ -1,7 +1,7 @@
 
 # 🐝 Karen
 
-Windows Bootstrapper for LANraragi using WSL.  
+Windows Bootstrapper for LANraragi using MSYS2.  
 Works on Windows 10 1903 and up. 
 **64-bit OSes only!**  
 
