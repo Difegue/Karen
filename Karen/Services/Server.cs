@@ -123,6 +123,9 @@ namespace Karen.Services
                         procInfo.Environment["LRR_THUMB_DIRECTORY"] = string.IsNullOrWhiteSpace(Settings.ThumbnailFolder) ? Path.Combine(Settings.ContentFolder, "thumb") : Settings.ThumbnailFolder;
                         procInfo.Environment["LRR_NETWORK"] = $"http://*:{Settings.NetworkPort}";
 
+                        if (Settings.ForceDebugMode)
+                            procInfo.Environment["LRR_FORCE_DEBUG"] = "1";
+
                         procInfo.ArgumentList.Add("script\\launcher.pl");
                         procInfo.ArgumentList.Add("-d");
                         procInfo.ArgumentList.Add("script\\lanraragi");

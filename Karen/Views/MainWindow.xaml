@@ -64,7 +64,7 @@
                     <ToggleSwitch IsOn="{x:Bind Data.StartWithWindows, Mode=TwoWay}" />
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Force Debug Mode">
-                    <ToggleSwitch IsOn="{x:Bind Data.ForceDebugMode}" />
+                    <ToggleSwitch IsOn="{x:Bind Data.ForceDebugMode, Mode=TwoWay}" />
                 </controls:SettingsCard>
                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="10">
 			You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi">LANraragi</Hyperlink>, Version 3.0. 🐝
