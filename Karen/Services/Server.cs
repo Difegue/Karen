@@ -72,11 +72,11 @@ namespace Karen.Services
             }
         }
 
-        public void Start()
+        public async Task Start()
         {
             if (string.IsNullOrEmpty(Settings.ContentFolder))
             {
-                PopupUtils.ShowMessageDialog("LANraragi", "Please setup your Content Folder in the Settings before starting the server!", "OK");
+                await PopupUtils.ShowMessageDialog("LANraragi", "Please setup your Content Folder in the Settings before starting the server!", "OK");
                 return;
             }
 
@@ -142,16 +142,15 @@ namespace Karen.Services
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                PopupUtils.ShowMessageDialog("Unable to start server", e.Message, "OK");
+                await PopupUtils.ShowMessageDialog("Unable to start server", e.Message, "OK");
                 IsRunning = false;
             }
 
         }
 
-        public Task Stop()
+        public async Task Stop()
         {
-            IsRunning = false;
-            return Task.Run(() =>
+            var exception = await Task.Run(() =>
             {
                 try
                 {
@@ -203,13 +202,20 @@ namespace Karen.Services
                     server?.Dispose();
                     redis = null;
                     server = null;
+
+                    return null;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
-                    PopupUtils.ShowMessageDialog("Error while stopping server", e.Message, "OK");
+                    return e;
                 }
             });
+            if (exception != null)
+            {
+                await PopupUtils.ShowMessageDialog("Error while stopping server", exception.Message, "OK");
+            }
+            IsRunning = false;
         }
 
         public static void ShowConsole()

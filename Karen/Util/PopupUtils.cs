@@ -1,19 +1,14 @@
-﻿using System;
-using Windows.UI.Popups;
-using Windows.Win32;
-using WinRT.Interop;
+﻿using Karen.Views.Dialogs;
+using System.Threading.Tasks;
 
 namespace Karen.Util;
 
 public static class PopupUtils
 {
 
-    public static void ShowMessageDialog(string title, string content, string button, IntPtr? hwnd = null)
+    public static Task ShowMessageDialog(string title, string content, string button)
     {
-        var msg = new MessageDialog(content, title);
-        msg.Commands.Add(new UICommand(button));
-        InitializeWithWindow.Initialize(msg, hwnd ?? PInvoke.GetDesktopWindow());
-        msg.ShowAsync().GetAwaiter().GetResult();
+        return new GenericDialog(title, content, button).ShowAsync();
     }
 
 }
