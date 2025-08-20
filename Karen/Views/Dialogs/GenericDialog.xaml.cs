@@ -42,6 +42,9 @@ namespace Karen.Views.Dialogs
         private void BackgroundElement_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.CenterOnScreen(e.NewSize.Width + 16, e.NewSize.Height + 9);
+
+            AppWindow.TitleBar.SetDragRectangles([new(0, 0, (int)(e.NewSize.Width * Content.XamlRoot.RasterizationScale), (int)(63 * Content.XamlRoot.RasterizationScale))]);
+
             Activate();
         }
 
