@@ -72,7 +72,7 @@ namespace Karen.Services
             }
         }
 
-        public async Task Start()
+        public async Task StartAsync()
         {
             if (string.IsNullOrEmpty(Settings.ContentFolder))
             {
@@ -148,7 +148,7 @@ namespace Karen.Services
 
         }
 
-        public async Task Stop()
+        public async Task StopAsync()
         {
             var exception = await Task.Run(() =>
             {

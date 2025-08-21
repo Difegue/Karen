@@ -47,7 +47,7 @@ namespace Karen
             if (Service.Settings.StartServerAutomatically)
             {
                 TrayIcon.ShowNotification("LANraragi", "LANraragi is starting automagically...");
-                await Service.Server.Start();
+                await Service.Server.StartAsync();
             }
             else
             {
