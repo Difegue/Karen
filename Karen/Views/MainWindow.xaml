@@ -8,7 +8,7 @@
 	xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
 	Closed="Window_Closed"
-    >
+    Title="LANraragi Windows Settings">
 
     <Window.SystemBackdrop>
         <MicaBackdrop />

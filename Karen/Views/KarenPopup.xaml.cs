@@ -54,7 +54,7 @@ namespace Karen.Views
         private async void Button_Tapped(object sender, TappedRoutedEventArgs e)
         {
             sender.As<Button>().IsEnabled = false;
-            await Service.Server.Stop();
+            await Service.Server.StopAsync();
             Close();
         }
     }

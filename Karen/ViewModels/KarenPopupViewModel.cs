@@ -28,16 +28,16 @@ namespace Karen.ViewModels
         }
 
         [RelayCommand]
-        public void Start()
+        public async Task StartAsync()
         {
-            Server.Start();
+            await Server.StartAsync();
             IsRunning = Server.IsRunning;
         }
 
         [RelayCommand]
-        public async Task Stop()
+        public async Task StopAsync()
         {
-            await Server.Stop();
+            await Server.StopAsync();
             IsRunning = false;
         }
 
