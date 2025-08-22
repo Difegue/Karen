@@ -75,8 +75,8 @@ namespace Karen
                 unsafe
                 {
                     var hwnd = new HWND((void*)WindowNative.GetWindowHandle(Popup));
-                    var area = DisplayArea.GetFromWindowId(Popup.AppWindow.Id, DisplayAreaFallback.Primary);
                     var point = e.Point;
+                    var area = DisplayArea.GetFromPoint(new PointInt32(point.X, point.Y), DisplayAreaFallback.Primary);
 
                     var dpi = Popup.Content.XamlRoot?.RasterizationScale ?? (float)(PInvoke.GetDpiForWindow(hwnd) / (float)PInvoke.USER_DEFAULT_SCREEN_DPI);
 
