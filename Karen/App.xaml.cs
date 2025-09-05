@@ -38,6 +38,12 @@ namespace Karen
                 return;
             }
 
+            Popup = new KarenPopup();
+            Popup.Closed += (sender, args) =>
+            {
+                TrayIcon.Dispose();
+            };
+
             TrayIcon = Resources["TrayIcon"].As<TaskbarIcon>();
             TrayIcon.IconSource = new BitmapImage(new Uri("ms-appx:///Assets/favicon.ico"));
             TrayIcon.ForceCreate();
@@ -53,12 +59,6 @@ namespace Karen
             {
                 TrayIcon.ShowNotification("LANraragi", "The Launcher is now running! Please click the icon in your Taskbar.");
             }
-
-            Popup = new KarenPopup();
-            Popup.Closed += (sender, args) =>
-            {
-                TrayIcon.Dispose();
-            };
 
             if (Service.Settings.FirstLaunch)
             {
