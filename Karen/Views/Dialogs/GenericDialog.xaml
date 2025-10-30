@@ -6,10 +6,10 @@
     xmlns:local="using:Karen.Views.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Closed="Window_Closed"
+    Closed="Window_Closed"
     mc:Ignorable="d">
 
-	<Grid
+    <Grid
         Background="{ThemeResource ContentDialogBackground}"
         BorderBrush="{ThemeResource ContentDialogBorderBrush}"
         BackgroundSizing="InnerBorderEdge"	
@@ -17,23 +17,23 @@
         MaxWidth="{ThemeResource ContentDialogMaxWidth}"
         MinHeight="{ThemeResource ContentDialogMinHeight}"
         MaxHeight="{ThemeResource ContentDialogMaxHeight}"
-		VerticalAlignment="Top"
-		HorizontalAlignment="Center"
-		SizeChanged="BackgroundElement_SizeChanged">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid
+        VerticalAlignment="Top"
+        HorizontalAlignment="Center"
+        SizeChanged="BackgroundElement_SizeChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid
             Background="{ThemeResource ContentDialogTopOverlay}"
             Padding="{ThemeResource ContentDialogPadding}"
             BorderThickness="{ThemeResource ContentDialogSeparatorThickness}"
             BorderBrush="{ThemeResource ContentDialogSeparatorBorderBrush}">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<ContentControl
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ContentControl
                 Margin="{ThemeResource ContentDialogTitleMargin}"
                 Content="{x:Bind Title}"
                 FontSize="20"
@@ -43,9 +43,9 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 IsTabStop="False">
-				<ContentControl.Template>
-					<ControlTemplate TargetType="ContentControl">
-						<ContentPresenter
+                <ContentControl.Template>
+                    <ControlTemplate TargetType="ContentControl">
+                        <ContentPresenter
                             Content="{TemplateBinding Content}"
                             MaxLines="2"
                             TextWrapping="Wrap"
@@ -53,37 +53,37 @@
                             ContentTransitions="{TemplateBinding ContentTransitions}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-					</ControlTemplate>
-				</ContentControl.Template>
-			</ContentControl>
-			<ContentPresenter
+                    </ControlTemplate>
+                </ContentControl.Template>
+            </ContentControl>
+            <ContentPresenter
                 Content="{x:Bind DialogContent}"
                 FontSize="{StaticResource ControlContentThemeFontSize}"
                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                 Foreground="{ThemeResource ContentDialogForeground}"
                 Grid.Row="1"
                 TextWrapping="Wrap" />
-		</Grid>
-		<Grid
+        </Grid>
+        <Grid
             Grid.Row="1"
             XYFocusKeyboardNavigation="Enabled"
             Padding="{ThemeResource ContentDialogPadding}"
             Background="{ThemeResource ContentDialogBackground}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition x:Name="PrimaryColumn" Width="*" />
-				<ColumnDefinition x:Name="FirstSpacer" Width="0" />
-				<ColumnDefinition x:Name="SecondaryColumn" Width="0" />
-				<ColumnDefinition x:Name="SecondSpacer" Width="{ThemeResource ContentDialogButtonSpacing}" />
-				<ColumnDefinition x:Name="CloseColumn" Width="*" />
-			</Grid.ColumnDefinitions>
-			<Button
-				Grid.Column="4"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
+                <ColumnDefinition x:Name="FirstSpacer" Width="0" />
+                <ColumnDefinition x:Name="SecondaryColumn" Width="0" />
+                <ColumnDefinition x:Name="SecondSpacer" Width="{ThemeResource ContentDialogButtonSpacing}" />
+                <ColumnDefinition x:Name="CloseColumn" Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="4"
                 IsTabStop="False"
                 Content="{x:Bind PrimaryButtonText}"
                 Style="{ThemeResource AccentButtonStyle}"
                 ElementSoundMode="FocusOnly"
                 HorizontalAlignment="Stretch"
-				Click="PrimaryButton_Click" />
-		</Grid>
-	</Grid>
+                Click="PrimaryButton_Click" />
+        </Grid>
+    </Grid>
 </Window>
