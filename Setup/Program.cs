@@ -2,7 +2,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
+using Windows.ApplicationModel;
+using Windows.Management.Deployment;
 using WixSharp;
 using WixSharp.CommonTasks;
 using WixSharp.Controls;
@@ -102,10 +105,30 @@ namespace Setup
         {
             return session.HandleErrors(() =>
             {
-                ResetProgressBar(session, 2);
+                ResetProgressBar(session, 3);
                 IncrementProgressBar(session, 1);
 
                 var temp = session.Property("TempFolder");
+
+                session.Log("Checking WinAppSDK Runtime");
+
+                var pm = new PackageManager();
+
+                // Taken from the MSIX version field and it's the same across all packages
+                var targetVersion = new Version(8000, 642, 119, 0);
+
+                var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.1.8_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
+                var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.1.8_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
+                var foundSingleton = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
+                var foundDDLM = pm.FindPackagesForUser(string.Empty, "Microsoft.WinAppRuntime.DDLM.8000.642.119.0-x6_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
+
+                if (foundFramework && foundMain && foundSingleton && foundDDLM)
+                {
+                    session.Log("WinAppSDK already installed");
+                    return;
+                }
+
+                IncrementProgressBar(session, 1);
 
                 session.Log("Installing WinAppSDK Runtime");
 
@@ -115,7 +138,7 @@ namespace Setup
 
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile("https://aka.ms/windowsappsdk/1.7/1.7.250606001/windowsappruntimeinstall-x64.exe", exe);
+                    client.DownloadFile("https://aka.ms/windowsappsdk/1.8/1.8.251003001/windowsappruntimeinstall-x64.exe", exe);
                 }
                 IncrementProgressBar(session, 1);
 
@@ -127,6 +150,7 @@ namespace Setup
                 var proc = Process.Start(procInfo);
                 proc.WaitForExit();
                 System.IO.File.Delete(exe);
+
                 IncrementProgressBar(session, 1);
 
                 session.Log("Exit code: " + proc.ExitCode);
@@ -152,5 +176,10 @@ namespace Setup
             return session.Message(InstallMessage.Progress, record);
         }
 
+    }
+
+    public static class Extensions
+    {
+        public static Version ToVersion(this PackageVersion version) => new Version(version.Major, version.Minor, version.Build, version.Revision);
     }
 }
