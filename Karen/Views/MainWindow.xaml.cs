@@ -67,7 +67,7 @@ namespace Karen.Views
             // TODO Doing this prevents the window from closing but also makes it impossible to ever close properly afterwards.
             // Doesn't look like WinUI implements Closing, so we might just need to block server startup if a content folder isn't set. 
             //if (string.IsNullOrWhiteSpace(Data.ContentFolder))
-                //args.Handled = true;
+            //args.Handled = true;
 
             Service.Settings.Save();
         }

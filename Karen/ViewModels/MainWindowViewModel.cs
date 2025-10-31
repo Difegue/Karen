@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Karen.Services;
+using Microsoft.UI;
 using Microsoft.Windows.AppLifecycle;
+using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Threading.Tasks;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
 
 namespace Karen.ViewModels
 {
@@ -66,11 +66,9 @@ namespace Karen.ViewModels
         }
 
         [RelayCommand]
-        public async Task PickContentFolder(long hWnd)
+        public async Task PickContentFolder(WindowId windowId)
         {
-            var picker = new FolderPicker();
-            InitializeWithWindow.Initialize(picker, (nint)hWnd);
-            picker.FileTypeFilter.Add("*");
+            var picker = new FolderPicker(windowId);
             picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
             picker.CommitButtonText = "Select your LANraragi Content Folder";
 
@@ -81,11 +79,9 @@ namespace Karen.ViewModels
         }
 
         [RelayCommand]
-        public async Task PickThumbnailFolder(long hWnd)
+        public async Task PickThumbnailFolder(WindowId windowId)
         {
-            var picker = new FolderPicker();
-            InitializeWithWindow.Initialize(picker, (nint)hWnd);
-            picker.FileTypeFilter.Add("*");
+            var picker = new FolderPicker(windowId);
             picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
             picker.CommitButtonText = "Select your LANraragi Thumbnail Folder";
 

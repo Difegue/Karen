@@ -5,9 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
-	Closed="Window_Closed"
+    Closed="Window_Closed"
     Title="LANraragi Windows Settings">
 
     <Window.SystemBackdrop>
@@ -37,7 +37,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox Text="{x:Bind Data.ContentFolder, Mode=OneWay}" IsReadOnly="True" MaxWidth="370" />
-                        <Button Content="Browse..." Command="{x:Bind Data.PickContentFolderCommand}" CommandParameter="{x:Bind hWnd}"/>
+                        <Button Content="Browse..." Command="{x:Bind Data.PickContentFolderCommand}" CommandParameter="{x:Bind AppWindow.Id}"/>
 
                     </StackPanel>
                 </controls:SettingsCard>
@@ -47,7 +47,7 @@
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox Text="{x:Bind Data.ThumbnailFolder, Mode=OneWay}" IsReadOnly="True" MaxWidth="370" />
-                        <Button Content="Browse..." Command="{x:Bind Data.PickThumbnailFolderCommand}" CommandParameter="{x:Bind hWnd}"/>
+                        <Button Content="Browse..." Command="{x:Bind Data.PickThumbnailFolderCommand}" CommandParameter="{x:Bind AppWindow.Id}"/>
 
                     </StackPanel>
                 </controls:SettingsCard>
@@ -67,19 +67,19 @@
                     <ToggleSwitch IsOn="{x:Bind Data.ForceDebugMode, Mode=TwoWay}" />
                 </controls:SettingsCard>
                 <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="10">
-			You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi">LANraragi</Hyperlink>, Version 3.0. 🐝
-			<LineBreak/>
-			✨ Consider installing <Hyperlink Click="Hyperlink_Click">LRReader</Hyperlink> from the Microsoft Store! ✨
+                    You're using the <Hyperlink NavigateUri="https://github.com/Difegue/Karen">Karen</Hyperlink> Bootstrapper for <Hyperlink NavigateUri="https://github.com/Difegue/LANraragi">LANraragi</Hyperlink>, Version 3.0. 🐝
+                    <LineBreak/>
+                    ✨ Consider installing <Hyperlink Click="Hyperlink_Click">LRReader</Hyperlink> from the Microsoft Store! ✨
                 </TextBlock>
                 <Expander Header="License" HorizontalAlignment="Stretch">
                     <TextBlock TextWrapping="Wrap">
-				 <Run FontSize="10">
-					 Copyright 2020-2025 Difegue</Run>
-				 <LineBreak/>
-				 <Run FontSize="9">
-					 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-				 </Run>
-				 <LineBreak/>
+                     <Run FontSize="10">
+                         Copyright 2020-2025 Difegue</Run>
+                     <LineBreak/>
+                     <Run FontSize="9">
+                         Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+                     </Run>
+                     <LineBreak/>
                     </TextBlock>
                 </Expander>
             </StackPanel>
