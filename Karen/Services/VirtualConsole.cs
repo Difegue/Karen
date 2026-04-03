@@ -21,15 +21,9 @@ namespace Karen.Services
         {
             if (line == null) return;
 
-            Dispatcher.TryEnqueue(() => Lines.Add(line));
-        }
-
-
-        public void AddLines(IList<string> lines)
-        {
             Dispatcher.TryEnqueue(() =>
             {
-                foreach (var line in lines)
+                foreach (var line in line.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries))
                     Lines.Add(line);
             });
         }

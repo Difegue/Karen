@@ -52,7 +52,7 @@ namespace Karen.Services
                     }
                     else
                     {
-                        VirtualConsole.AddLines(output.Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
+                        VirtualConsole.AddLine(output);
                         Version = "An error occurred when testing the server runtime.\nPlease check the console";
                     }
                 }
@@ -63,7 +63,7 @@ namespace Karen.Services
             }
             catch (Exception ex)
             {
-                VirtualConsole.AddLines(ex.Message.Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
+                VirtualConsole.AddLine(ex.Message);
                 Version = "Something went wrong with the server runtime.\nPlease check the console.";
             }
         }
@@ -154,7 +154,7 @@ namespace Karen.Services
             }
             catch (Exception e)
             {
-                VirtualConsole.AddLines(e.ToString().Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
+                VirtualConsole.AddLine(e.ToString());
                 await WinUIUtils.ShowMessageDialog("Unable to start server", e.Message, "OK");
                 IsRunning = false;
             }
@@ -220,7 +220,7 @@ namespace Karen.Services
                 }
                 catch (Exception e)
                 {
-                    VirtualConsole.AddLines(e.ToString().Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
+                    VirtualConsole.AddLine(e.ToString());
                     return e;
                 }
             });
