@@ -1,10 +1,5 @@
-﻿using HideConsoleOnCloseManaged;
-using Karen.Util;
-using System;
-using System.Collections.Generic;
+﻿using Karen.Util;
 using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 using Windows.Win32;
 using Windows.Win32.UI.WindowsAndMessaging;
 
@@ -13,6 +8,7 @@ namespace Karen.Services
     public class Server
     {
         private readonly Settings Settings;
+        private readonly VirtualConsole VirtualConsole;
 
         private Process? redis, server;
 
@@ -22,17 +18,17 @@ namespace Karen.Services
         public bool IsRunning { get; private set; }
         public string Version { get; private set; } = "";
 
-        public Server(Settings settings)
+        public Server(Settings settings, VirtualConsole virtualConsole)
         {
             Settings = settings;
+            VirtualConsole = virtualConsole;
             workDir = Path.Combine(AppContext.BaseDirectory, "lanraragi");
             tempDir = Path.Combine(workDir, "temp");
             logsDir = Path.Combine(workDir, "log");
             PInvoke.AllocConsole();
             PInvoke.SetConsoleOutputCP(65001u);
             PInvoke.SetConsoleTitle("LANraragi Log Console");
-            HideConsole();
-            HideConsoleOnClose.EnableForWindow(PInvoke.GetConsoleWindow());
+            PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_HIDE);
 
             // Try to load version name (and check if the runtime is actually ok)
             try
@@ -56,7 +52,7 @@ namespace Karen.Services
                     }
                     else
                     {
-                        Console.WriteLine(output);
+                        VirtualConsole.AddLines(output.Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
                         Version = "An error occurred when testing the server runtime.\nPlease check the console";
                     }
                 }
@@ -67,7 +63,7 @@ namespace Karen.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                VirtualConsole.AddLines(ex.Message.Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
                 Version = "Something went wrong with the server runtime.\nPlease check the console.";
             }
         }
@@ -76,7 +72,7 @@ namespace Karen.Services
         {
             if (string.IsNullOrEmpty(Settings.ContentFolder))
             {
-                await PopupUtils.ShowMessageDialog("LANraragi", "Please setup your Content Folder in the Settings before starting the server!", "OK");
+                await WinUIUtils.ShowMessageDialog("LANraragi", "Please setup your Content Folder in the Settings before starting the server!", "OK");
                 return;
             }
 
@@ -130,9 +126,26 @@ namespace Karen.Services
                         procInfo.ArgumentList.Add("-d");
                         procInfo.ArgumentList.Add("script\\lanraragi");
 
+                        procInfo.RedirectStandardError = true;
+                        procInfo.RedirectStandardOutput = true;
+
                         procInfo.FileName = Path.Combine(workDir, "runtime", "bin", "perl.exe");
 
-                        server = Process.Start(procInfo);
+                        server = new Process
+                        {
+                            StartInfo = procInfo
+                        };
+                        server.OutputDataReceived += (sender, e) =>
+                        {
+                            VirtualConsole.AddLine(e.Data);
+                        };
+                        server.ErrorDataReceived += (sender, e) =>
+                        {
+                            VirtualConsole.AddLine(e.Data);
+                        };
+                        server.Start();
+                        server.BeginErrorReadLine();
+                        server.BeginOutputReadLine();
 
                         File.WriteAllText(serverPid, server!.Id.ToString());
                     }
@@ -141,8 +154,8 @@ namespace Karen.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
-                await PopupUtils.ShowMessageDialog("Unable to start server", e.Message, "OK");
+                VirtualConsole.AddLines(e.ToString().Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
+                await WinUIUtils.ShowMessageDialog("Unable to start server", e.Message, "OK");
                 IsRunning = false;
             }
 
@@ -207,33 +220,22 @@ namespace Karen.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    VirtualConsole.AddLines(e.ToString().Split(["\r\n", "\r", "\n"], StringSplitOptions.None));
                     return e;
                 }
             });
             if (exception != null)
             {
-                await PopupUtils.ShowMessageDialog("Error while stopping server", exception.Message, "OK");
+                await WinUIUtils.ShowMessageDialog("Error while stopping server", exception.Message, "OK");
             }
             IsRunning = false;
-        }
-
-        public static void ShowConsole()
-        {
-            PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_SHOW);
-            PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_RESTORE);
-        }
-
-        public static void HideConsole()
-        {
-            PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_HIDE);
         }
 
         private ProcessStartInfo CreateProcInfo(string lrrDirectory)
         {
             var procInfo = new ProcessStartInfo();
 
-            procInfo.Environment["Path"] = $"{Path.Combine(lrrDirectory, "runtime", "bin")};{Path.Combine(lrrDirectory, "runtime", "redis")};{Environment.GetEnvironmentVariable("Path")}";
+            procInfo.Environment["Path"] = $"{Path.Combine(lrrDirectory, "runtime", "bin")};{Path.Combine(lrrDirectory, "runtime", "redis")};%SystemRoot%\\system32;%SystemRoot%;%SystemRoot%\\System32\\Wbem;%SYSTEMROOT%\\System32\\WindowsPowerShell\\v1.0\\";
             procInfo.WorkingDirectory = lrrDirectory;
 
             return procInfo;

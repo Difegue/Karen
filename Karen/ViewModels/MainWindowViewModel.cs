@@ -4,8 +4,6 @@ using Karen.Services;
 using Microsoft.UI;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.Storage.Pickers;
-using System;
-using System.Threading.Tasks;
 
 namespace Karen.ViewModels
 {

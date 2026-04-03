@@ -115,12 +115,12 @@ namespace Setup
                 var pm = new PackageManager();
 
                 // Taken from the MSIX version field and it's the same across all packages
-                var targetVersion = new Version(8000, 642, 119, 0);
+                var targetVersion = new Version(8000, 806, 2252, 0);
 
-                var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.1.8_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
-                var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.1.8_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
-                var foundSingleton = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
-                var foundDDLM = pm.FindPackagesForUser(string.Empty, "Microsoft.WinAppRuntime.DDLM.8000.642.119.0-x6_8wekyb3d8bbwe").Where(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64).Any();
+                var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.1.8_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.1.8_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundSingleton = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundDDLM = pm.FindPackagesForUser(string.Empty, "Microsoft.WinAppRuntime.DDLM.8000.806.2252.0-x6_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
 
                 if (foundFramework && foundMain && foundSingleton && foundDDLM)
                 {
@@ -138,7 +138,7 @@ namespace Setup
 
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile("https://aka.ms/windowsappsdk/1.8/1.8.251003001/windowsappruntimeinstall-x64.exe", exe);
+                    client.DownloadFile("https://aka.ms/windowsappsdk/1.8/1.8.260317003/windowsappruntimeinstall-x64.exe", exe);
                 }
                 IncrementProgressBar(session, 1);
 

@@ -1,6 +1,5 @@
 ﻿using Karen.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Karen.Services
 {
@@ -14,6 +13,7 @@ namespace Karen.Services
 
             collection.AddSingleton<Settings>();
             collection.AddSingleton<Server>();
+            collection.AddSingleton<VirtualConsole>();
 
             collection.AddTransient<MainWindowViewModel>();
             collection.AddTransient<KarenPopupViewModel>();
@@ -23,5 +23,6 @@ namespace Karen.Services
 
         public static Settings Settings => Services.GetRequiredService<Settings>();
         public static Server Server => Services.GetRequiredService<Server>();
+        public static VirtualConsole VirtualConsole => Services.GetRequiredService<VirtualConsole>();
     }
 }

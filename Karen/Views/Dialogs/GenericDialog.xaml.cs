@@ -1,6 +1,5 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using System.Threading.Tasks;
 using WinRT;
 using WinUIEx;
 

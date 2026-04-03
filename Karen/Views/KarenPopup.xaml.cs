@@ -1,4 +1,3 @@
-using H.NotifyIcon;
 using Karen.Services;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -9,6 +8,7 @@ using Windows.Win32.Foundation;
 using Windows.Win32.UI.Shell;
 using WinRT;
 using WinRT.Interop;
+using WinUIEx;
 
 namespace Karen.Views
 {
@@ -54,6 +54,7 @@ namespace Karen.Views
         private async void Button_Tapped(object sender, TappedRoutedEventArgs e)
         {
             sender.As<Button>().IsEnabled = false;
+            Service.VirtualConsole.CloseConsole();
             await Service.Server.StopAsync();
             Close();
         }

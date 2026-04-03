@@ -13,6 +13,8 @@ ShowWindow
 GetDesktopWindow
 SetConsoleOutputCP
 SetConsoleTitle
+CalculatePopupWindowPosition
 WM_ACTIVATE
 WM_DPICHANGED
 USER_DEFAULT_SCREEN_DPI
+TRACK_POPUP_MENU_FLAGS

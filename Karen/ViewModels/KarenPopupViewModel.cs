@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Karen.Services;
 using Karen.Views;
-using System;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
 
@@ -13,6 +11,7 @@ namespace Karen.ViewModels
     {
         private readonly Settings Settings;
         private readonly Server Server;
+        private readonly VirtualConsole VirtualConsole;
 
         [ObservableProperty]
         public partial bool IsRunning { get; set; }
@@ -20,10 +19,11 @@ namespace Karen.ViewModels
         public string Version => Server.Version;
         public bool CanRun => Server.CanRun;
 
-        public KarenPopupViewModel(Settings settings, Server server)
+        public KarenPopupViewModel(Settings settings, Server server, VirtualConsole virtualConsole)
         {
             Settings = settings;
             Server = server;
+            VirtualConsole = virtualConsole;
             IsRunning = server.IsRunning;
         }
 
@@ -44,7 +44,7 @@ namespace Karen.ViewModels
         [RelayCommand]
         public void ShowConsole()
         {
-            Server.ShowConsole();
+            VirtualConsole.ShowConsole();
         }
 
         [RelayCommand]
@@ -64,5 +64,6 @@ namespace Karen.ViewModels
         {
             new MainWindow().Activate();
         }
+
     }
 }
