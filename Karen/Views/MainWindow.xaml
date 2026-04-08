@@ -15,19 +15,18 @@
     </Window.SystemBackdrop>
 
     <Grid>
-        
+
         <Grid x:Name="AppTitleBar" VerticalAlignment="Top">
             <Image Source="/Assets/favicon.ico"
-                   HorizontalAlignment="Left" 
-                   Width="16" Height="16" 
-                   Margin="8"/>
+                HorizontalAlignment="Left"
+                Width="16" Height="16"
+                Margin="8"/>
             <TextBlock x:Name="AppTitleTextBlock" Text="LANraragi Windows Settings"
-                       TextWrapping="NoWrap"
-                       Style="{StaticResource CaptionTextBlockStyle}" 
-                       VerticalAlignment="Center"
-                       Margin="32,0,0,0"/>
+                TextWrapping="NoWrap"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                VerticalAlignment="Center"
+                Margin="32,0,0,0"/>
         </Grid>
-        
 
         <ScrollViewer Margin="0,32,0,0">
             <StackPanel Orientation="Vertical" Margin="10" Spacing="3">
@@ -86,6 +85,5 @@
         </ScrollViewer>
 
     </Grid>
-
 
 </Window>

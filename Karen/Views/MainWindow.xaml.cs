@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
-using System;
 using Windows.Graphics;
 using Windows.System;
 using Windows.Win32;
