@@ -28,6 +28,7 @@ namespace Karen.Services
             PInvoke.AllocConsole();
             PInvoke.SetConsoleOutputCP(65001u);
             PInvoke.SetConsoleTitle("LANraragi Log Console");
+            // This is needed to ensure processes launched by Karen (Redis/Perl) don't spawn additional windows
             PInvoke.ShowWindow(PInvoke.GetConsoleWindow(), SHOW_WINDOW_CMD.SW_HIDE);
 
             // Try to load version name (and check if the runtime is actually ok)
