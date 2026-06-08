@@ -1,14 +1,12 @@
-﻿using Karen.Services;
+﻿using DesktopFlyouts;
+using Karen.Services;
 using Karen.Util;
 using Karen.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Microsoft.Windows.AppNotifications;
-using Windows.Graphics;
 using Windows.Win32;
-using Windows.Win32.Foundation;
-using Windows.Win32.UI.WindowsAndMessaging;
-using WinRT.Interop;
+using Windows.Win32.UI.Shell;
 using WinUIEx;
 
 namespace Karen
@@ -17,11 +15,12 @@ namespace Karen
     public partial class App : Application
     {
         private KarenPopup Popup = null!;
-        private TrayIcon TrayIcon = null!;
+        public TrayIcon TrayIcon { get; private set; } = null!;
 
         public App()
         {
             InitializeComponent();
+            DispatcherShutdownMode = DispatcherShutdownMode.OnExplicitShutdown;
             Service.BuildServices();
         }
 
@@ -43,11 +42,6 @@ namespace Karen
             AppNotificationManager.Default.Register();
 
             Popup = new KarenPopup();
-            Popup.Closed += (sender, args) =>
-            {
-                TrayIcon.Dispose();
-                AppNotificationManager.Default.Unregister();
-            };
 
             TrayIcon = new(1, "Assets/favicon.ico", "LANraragi for Windows")
             {
@@ -69,7 +63,7 @@ namespace Karen
             if (Service.Settings.FirstLaunch)
             {
                 await WinUIUtils.ShowMessageDialog("LANraragi", "Looks like this is your first time running the app! Please setup your Content Folder in the Settings.", "OK");
-                new MainWindow().Activate();
+                new SettingsWindow().Activate();
                 Service.Settings.FirstLaunch = false;
             }
         }
@@ -78,21 +72,38 @@ namespace Karen
         {
             unsafe
             {
-                var hwnd = new HWND((void*)WindowNative.GetWindowHandle(Popup));
-                PInvoke.GetCursorPos(out var point);
+                // Figure out where the taskbar is and place the flyout in the correct location
+                APPBARDATA appBarData = new()
+                {
+                    cbSize = (uint)sizeof(APPBARDATA)
+                };
+                PInvoke.SHAppBarMessage(PInvoke.ABM_GETTASKBARPOS, &appBarData);
 
-                var dpi = Popup.Content.XamlRoot?.RasterizationScale ?? (float)(PInvoke.GetDpiForWindow(hwnd) / (float)PInvoke.USER_DEFAULT_SCREEN_DPI);
-
-                Popup.AppWindow.Resize(new SizeInt32((int)(266 * dpi), (int)(498 * dpi)));
-                var size = Popup.AppWindow.Size;
-                PInvoke.CalculatePopupWindowPosition(point, new SIZE(size.Width, size.Height), (uint)(TRACK_POPUP_MENU_FLAGS.TPM_CENTERALIGN | TRACK_POPUP_MENU_FLAGS.TPM_BOTTOMALIGN | TRACK_POPUP_MENU_FLAGS.TPM_WORKAREA), null, out var popupWindowPosition);
-
-                Popup.AppWindow.Move(new PointInt32(popupWindowPosition.X, popupWindowPosition.Y));
-                Popup.Show();
-                Popup.Activate();
-
-                PInvoke.SetForegroundWindow(hwnd);
+                switch(appBarData.uEdge)
+                {
+                    case PInvoke.ABE_LEFT:
+                        Popup.PopupDirection = DesktopFlyoutPopupDirection.LeftToRight;
+                        Popup.Placement = DesktopFlyoutPlacementMode.BottomLeft;
+                        break;
+                    case PInvoke.ABE_TOP:
+                        Popup.PopupDirection = DesktopFlyoutPopupDirection.TopToBottom;
+                        Popup.Placement = DesktopFlyoutPlacementMode.TopRight;
+                        break;
+                    case PInvoke.ABE_RIGHT:
+                        Popup.PopupDirection = DesktopFlyoutPopupDirection.RightToLeft;
+                        Popup.Placement = DesktopFlyoutPlacementMode.BottomRight;
+                        break;
+                    case PInvoke.ABE_BOTTOM:
+                        Popup.PopupDirection = DesktopFlyoutPopupDirection.BottomToTop;
+                        Popup.Placement = DesktopFlyoutPlacementMode.BottomRight;
+                        break;
+                }
             }
+
+            if (Popup.IsOpen)
+                Popup.Hide();
+            else
+                Popup.Show();
             e.Handled = true;
         }
 

@@ -15,7 +15,7 @@ namespace Karen.Services
             collection.AddSingleton<Server>();
             collection.AddSingleton<VirtualConsole>();
 
-            collection.AddTransient<MainWindowViewModel>();
+            collection.AddTransient<SettingsWindowViewModel>();
             collection.AddTransient<KarenPopupViewModel>();
 
             Services = collection.BuildServiceProvider();

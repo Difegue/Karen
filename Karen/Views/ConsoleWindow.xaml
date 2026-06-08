@@ -9,54 +9,54 @@
     mc:Ignorable="d"
     Title="LANraragi Log Console">
 
-	<Window.SystemBackdrop>
-		<MicaBackdrop />
-	</Window.SystemBackdrop>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
 
-	<Grid>
+    <Grid>
 
-		<Grid x:Name="AppTitleBar" VerticalAlignment="Top">
-			<Image Source="/Assets/favicon.ico"
+        <Grid x:Name="AppTitleBar" VerticalAlignment="Top">
+            <Image Source="/Assets/favicon.ico"
                HorizontalAlignment="Left" 
                Width="16" Height="16" 
                Margin="8"/>
-			<TextBlock x:Name="AppTitleTextBlock" Text="LANraragi Log Console"
+            <TextBlock x:Name="AppTitleTextBlock" Text="LANraragi Log Console"
                 TextWrapping="NoWrap"
                 Style="{StaticResource CaptionTextBlockStyle}" 
                 VerticalAlignment="Center"
                 Margin="32,0,0,0"/>
-		</Grid>
+        </Grid>
 
-		<ListView x:Name="LogListView" Margin="0,32,0,0" Padding="8" ItemsSource="{x:Bind Data.Lines}" SelectionMode="None" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollMode="Enabled" >
-			<ListView.ItemTemplate>
-				<DataTemplate x:DataType="x:String">
-					<TextBlock Text="{x:Bind}" FontFamily="Consolas" IsTextSelectionEnabled="True" />
-				</DataTemplate>
-			</ListView.ItemTemplate>
-			<ListView.ItemsPanel>
-				<ItemsPanelTemplate>
-					<ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"  />
-				</ItemsPanelTemplate>
-			</ListView.ItemsPanel>
-			<ListView.ItemContainerStyle>
-				<Style TargetType="ListViewItem">
-					<Setter Property="Margin" Value="0" />
-					<Setter Property="Padding" Value="0" />
-					<Setter Property="MinHeight" Value="0" />
-					<Setter Property="MinWidth" Value="0" />
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="ListViewItem">
-								<ListViewItemPresenter x:Name="Root" ContentMargin="0" CornerRadius="0" />
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-				</Style>
-			</ListView.ItemContainerStyle>
-			<ListView.ItemContainerTransitions>
-				<TransitionCollection />
-			</ListView.ItemContainerTransitions>
-		</ListView>
+        <ListView x:Name="LogListView" Margin="0,32,0,0" Padding="8" ItemsSource="{x:Bind Data.Lines}" SelectionMode="None" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollMode="Enabled" >
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock Text="{x:Bind}" FontFamily="Consolas" IsTextSelectionEnabled="True" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"  />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="MinHeight" Value="0" />
+                    <Setter Property="MinWidth" Value="0" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <ListViewItemPresenter x:Name="Root" ContentMargin="0" CornerRadius="0" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
+        </ListView>
 
-	</Grid>
+    </Grid>
 </Window>

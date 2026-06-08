@@ -15,20 +15,20 @@ using WinRT.Interop;
 namespace Karen.Views
 {
 
-    public sealed partial class MainWindow : Window
+    public sealed partial class SettingsWindow : Window
     {
-        private MainWindowViewModel Data;
+        private SettingsWindowViewModel Data;
         private SUBCLASSPROC _subclassProc;
         private long hWnd;
 
-        public MainWindow()
+        public SettingsWindow()
         {
             InitializeComponent();
 
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
-            Data = Service.Services.GetRequiredService<MainWindowViewModel>();
+            Data = Service.Services.GetRequiredService<SettingsWindowViewModel>();
 
             AppWindow.SetIcon("Assets/favicon.ico");
 

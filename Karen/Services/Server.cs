@@ -1,11 +1,12 @@
-﻿using Karen.Util;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Karen.Util;
 using System.Diagnostics;
 using Windows.Win32;
 using Windows.Win32.UI.WindowsAndMessaging;
 
 namespace Karen.Services
 {
-    public class Server
+    public partial class Server : ObservableObject
     {
         private readonly Settings Settings;
         private readonly VirtualConsole VirtualConsole;
@@ -14,9 +15,12 @@ namespace Karen.Services
 
         private string workDir, tempDir, logsDir;
 
-        public bool CanRun { get; private set; }
-        public bool IsRunning { get; private set; }
-        public string Version { get; private set; } = "";
+        [ObservableProperty]
+        public partial bool CanRun { get; private set; }
+        [ObservableProperty]
+        public partial bool IsRunning { get; private set; }
+        [ObservableProperty]
+        public partial string Version { get; private set; } = "";
 
         public Server(Settings settings, VirtualConsole virtualConsole)
         {
@@ -43,7 +47,7 @@ namespace Karen.Services
 
                 if (verProc != null)
                 {
-                    var output = verProc.StandardOutput.ReadToEnd();
+                    var output = verProc.StandardOutput.ReadToEnd().Trim();
                     verProc.WaitForExit();
 
                     if (verProc.ExitCode == 0)

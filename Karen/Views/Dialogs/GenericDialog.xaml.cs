@@ -12,7 +12,7 @@ namespace Karen.Views.Dialogs
         public object DialogContent { get; set; }
         public object PrimaryButtonText { get; set; }
 
-        private TaskCompletionSource tsc = new();
+        private TaskCompletionSource tcs = new();
 
         public GenericDialog(string title, object content, string primaryButtonText)
         {
@@ -35,7 +35,7 @@ namespace Karen.Views.Dialogs
 
         public Task ShowAsync()
         {
-            return tsc.Task;
+            return tcs.Task;
         }
 
         private void BackgroundElement_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -54,7 +54,7 @@ namespace Karen.Views.Dialogs
 
         private void Window_Closed(object sender, WindowEventArgs args)
         {
-            tsc.SetResult();
+            tcs.SetResult();
         }
     }
 }
