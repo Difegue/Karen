@@ -114,7 +114,7 @@ namespace Setup
                 var pm = new PackageManager();
 
                 // Taken from the MSIX version field and it's the same across all packages
-                var targetVersion = new Version(2, 1, 3, 0);
+                var targetVersion = new Version(2, 2, 0, 0);
 
                 var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
                 var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.2_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
@@ -144,7 +144,8 @@ namespace Setup
                         IncrementProgressBar(session, args.ProgressPercentage - lastPercent);
                         lastPercent = args.ProgressPercentage;
                     };
-                    client.DownloadFileTaskAsync("https://aka.ms/windowsappsdk/2.1/2.1.3/windowsappruntimeinstall-x64.exe", exe).ConfigureAwait(false).GetAwaiter().GetResult();
+
+                    client.DownloadFileTaskAsync($"https://aka.ms/windowsappsdk/{targetVersion.ToString(2)}/{targetVersion.ToNoRevisionString()}/windowsappruntimeinstall-x64.exe", exe).ConfigureAwait(false).GetAwaiter().GetResult();
                 }
 
                 ResetProgressBar(session, 1);
