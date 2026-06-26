@@ -7,7 +7,7 @@ using Microsoft.Windows.Storage.Pickers;
 
 namespace Karen.ViewModels
 {
-    public partial class MainWindowViewModel : ObservableObject
+    public partial class SettingsWindowViewModel : ObservableObject
     {
         private readonly Settings Settings;
 
@@ -52,7 +52,7 @@ namespace Karen.ViewModels
 
         partial void OnForceDebugModeChanged(bool value) => Settings.ForceDebugMode = value;
 
-        public MainWindowViewModel(Settings settings)
+        public SettingsWindowViewModel(Settings settings)
         {
             Settings = settings;
             ContentFolder = settings.ContentFolder;
@@ -66,9 +66,11 @@ namespace Karen.ViewModels
         [RelayCommand]
         public async Task PickContentFolder(WindowId windowId)
         {
-            var picker = new FolderPicker(windowId);
-            picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-            picker.CommitButtonText = "Select your LANraragi Content Folder";
+            var picker = new FolderPicker(windowId)
+            {
+                SuggestedStartLocation = PickerLocationId.ComputerFolder,
+                CommitButtonText = "Select your LANraragi Content Folder"
+            };
 
             var folder = await picker.PickSingleFolderAsync();
 
@@ -79,9 +81,11 @@ namespace Karen.ViewModels
         [RelayCommand]
         public async Task PickThumbnailFolder(WindowId windowId)
         {
-            var picker = new FolderPicker(windowId);
-            picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-            picker.CommitButtonText = "Select your LANraragi Thumbnail Folder";
+            var picker = new FolderPicker(windowId)
+            {
+                SuggestedStartLocation = PickerLocationId.ComputerFolder,
+                CommitButtonText = "Select your LANraragi Thumbnail Folder"
+            };
 
             var folder = await picker.PickSingleFolderAsync();
 

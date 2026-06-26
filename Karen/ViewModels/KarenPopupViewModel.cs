@@ -13,32 +13,38 @@ namespace Karen.ViewModels
         private readonly Server Server;
         private readonly VirtualConsole VirtualConsole;
 
-        [ObservableProperty]
-        public partial bool IsRunning { get; set; }
-
-        public string Version => Server.Version;
-        public bool CanRun => Server.CanRun;
+        private SettingsWindow? SettingsWindow;
 
         public KarenPopupViewModel(Settings settings, Server server, VirtualConsole virtualConsole)
         {
             Settings = settings;
             Server = server;
             VirtualConsole = virtualConsole;
-            IsRunning = server.IsRunning;
         }
 
         [RelayCommand]
         public async Task StartAsync()
         {
             await Server.StartAsync();
-            IsRunning = Server.IsRunning;
         }
 
         [RelayCommand]
         public async Task StopAsync()
         {
             await Server.StopAsync();
-            IsRunning = false;
+        }
+
+        [RelayCommand]
+        public async Task StartStopAsync(bool startStop)
+        {
+            if (startStop)
+            {
+                await Server.StartAsync();
+            }
+            else
+            {
+                await Server.StopAsync();
+            }
         }
 
         [RelayCommand]
@@ -62,7 +68,26 @@ namespace Karen.ViewModels
         [RelayCommand]
         public void OpenSettings()
         {
-            new MainWindow().Activate();
+            if (SettingsWindow != null)
+            {
+                SettingsWindow.Activate();
+            }
+            else
+            {
+                SettingsWindow = new();
+                SettingsWindow.Closed += (sender, e) =>
+                {
+                    SettingsWindow = null;
+                };
+                SettingsWindow.Activate();
+            }
+        }
+
+        public async Task Quit()
+        {
+            SettingsWindow?.Close();
+            VirtualConsole.CloseConsole();
+            await Server.StopAsync();
         }
 
     }

@@ -105,8 +105,7 @@ namespace Setup
         {
             return session.HandleErrors(() =>
             {
-                ResetProgressBar(session, 3);
-                IncrementProgressBar(session, 1);
+                ResetProgressBar(session, 1);
 
                 var temp = session.Property("TempFolder");
 
@@ -115,12 +114,14 @@ namespace Setup
                 var pm = new PackageManager();
 
                 // Taken from the MSIX version field and it's the same across all packages
-                var targetVersion = new Version(8000, 806, 2252, 0);
+                var targetVersion = new Version(2, 2, 0, 0);
 
-                var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.1.8_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
-                var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.1.8_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
-                var foundSingleton = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
-                var foundDDLM = pm.FindPackagesForUser(string.Empty, "Microsoft.WinAppRuntime.DDLM.8000.806.2252.0-x6_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.2_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundSingleton = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Singleton_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= new Version(8000 + targetVersion.Major /* Offset by 8k because MS I guess */, targetVersion.Minor, targetVersion.Build, targetVersion.Revision) && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+                var foundDDLM = pm.FindPackagesForUser(string.Empty, $"Microsoft.WinAppRuntime.DDLM.{targetVersion}-x6_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
+
+                IncrementProgressBar(session, 1);
 
                 if (foundFramework && foundMain && foundSingleton && foundDDLM)
                 {
@@ -128,9 +129,8 @@ namespace Setup
                     return;
                 }
 
-                IncrementProgressBar(session, 1);
-
-                session.Log("Installing WinAppSDK Runtime");
+                ResetProgressBar(session, 100);
+                session.Log("Downloading WinAppSDK Runtime");
 
                 var exe = Path.Combine(temp, $"{Path.GetRandomFileName()}.exe");
 
@@ -138,9 +138,18 @@ namespace Setup
 
                 using (var client = new WebClient())
                 {
-                    client.DownloadFile("https://aka.ms/windowsappsdk/1.8/1.8.260317003/windowsappruntimeinstall-x64.exe", exe);
+                    var lastPercent = 0;
+                    client.DownloadProgressChanged += (sender, args) =>
+                    {
+                        IncrementProgressBar(session, args.ProgressPercentage - lastPercent);
+                        lastPercent = args.ProgressPercentage;
+                    };
+
+                    client.DownloadFileTaskAsync($"https://aka.ms/windowsappsdk/{targetVersion.ToString(2)}/{targetVersion.ToNoRevisionString()}/windowsappruntimeinstall-x64.exe", exe).ConfigureAwait(false).GetAwaiter().GetResult();
                 }
-                IncrementProgressBar(session, 1);
+
+                ResetProgressBar(session, 1);
+                session.Log("Installing WinAppSDK Runtime");
 
                 var procInfo = new ProcessStartInfo(exe, "--quiet")
                 {

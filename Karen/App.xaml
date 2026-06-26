@@ -8,9 +8,28 @@
     <Application.Resources>
         <XamlControlsResources>
             <XamlControlsResources.MergedDictionaries>
-				<ResourceDictionary>
-					<converters:BoolToVisibilityConverter x:Name="BoolToVisibilityConverter" />
+                <ResourceDictionary>
+                    <converters:BoolToVisibilityConverter x:Name="BoolToVisibilityConverter" />
                     <converters:BoolToVisibilityConverter x:Name="NegateBoolToVisibilityConverter" TrueValue="Collapsed" FalseValue="Visible" />
+                    <converters:BoolToObjectConverter x:Key="BoolToAppStateConverter" TrueValue="Stop" FalseValue="Start" />
+                    <converters:BoolToObjectConverter x:Key="BoolToAppIconConverter" TrueValue="&#xE8CE;" FalseValue="&#xE8CD;" />
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Default">
+                            <SolidColorBrush x:Key="FlyoutOverlayBackgroundBrush">#09FFFFFF</SolidColorBrush>
+                            <SolidColorBrush x:Key="FlyoutSeparatorPrimaryBackgroundBrush">#15FFFFFF</SolidColorBrush>
+                            <SolidColorBrush x:Key="FlyoutSeparatorSecondaryBackgroundBrush">#18000000</SolidColorBrush>
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Light">
+                            <SolidColorBrush x:Key="FlyoutOverlayBackgroundBrush">#40FFFFFF</SolidColorBrush>
+                            <SolidColorBrush x:Key="FlyoutSeparatorPrimaryBackgroundBrush">#0F000000</SolidColorBrush>
+                            <SolidColorBrush x:Key="FlyoutSeparatorSecondaryBackgroundBrush">#10000000</SolidColorBrush>
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="HighContrast">
+                            <SolidColorBrush x:Key="FlyoutOverlayBackgroundBrush">#09FFFFFF</SolidColorBrush>
+                            <SolidColorBrush x:Key="FlyoutSeparatorPrimaryBackgroundBrush">#15FFFFFF</SolidColorBrush>
+                            <SolidColorBrush x:Key="FlyoutSeparatorSecondaryBackgroundBrush">#18000000</SolidColorBrush>
+                        </ResourceDictionary>
+                    </ResourceDictionary.ThemeDictionaries>
                 </ResourceDictionary>
             </XamlControlsResources.MergedDictionaries>
         </XamlControlsResources>

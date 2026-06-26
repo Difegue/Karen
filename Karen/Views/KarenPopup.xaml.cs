@@ -1,62 +1,40 @@
+using DesktopFlyouts;
 using Karen.Services;
-using Microsoft.UI.Windowing;
+using Karen.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Windows.Win32;
-using Windows.Win32.Foundation;
-using Windows.Win32.UI.Shell;
+using Microsoft.Windows.AppLifecycle;
+using Microsoft.Windows.AppNotifications;
 using WinRT;
-using WinRT.Interop;
-using WinUIEx;
 
 namespace Karen.Views
 {
 
-    public sealed partial class KarenPopup : Window
+    public sealed partial class KarenPopup : DesktopFlyout
     {
 
-        private SUBCLASSPROC _subclassProc;
+        private readonly KarenPopupViewModel Data;
+        private readonly Server Server;
 
         public KarenPopup()
         {
             InitializeComponent();
-
-            AppWindow.IsShownInSwitchers = false;
-            var presenter = AppWindow.Presenter.As<OverlappedPresenter>();
-            presenter.SetBorderAndTitleBar(true, false);
-            presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
-            presenter.IsMaximizable = false;
-            presenter.IsMinimizable = false;
-
-            unsafe
-            {
-                HWND hwnd = new HWND((void*)WindowNative.GetWindowHandle(this));
-                PInvoke.SetWindowSubclass(hwnd, _subclassProc = new SUBCLASSPROC(WindowSubclassProc), 0, 0);
-            }
-        }
-
-        private LRESULT WindowSubclassProc(HWND hWnd, uint uMsg, WPARAM wParam, LPARAM lParam, nuint uIdSubclass, nuint dwRefData)
-        {
-            switch (uMsg)
-            {
-                case PInvoke.WM_ACTIVATE:
-                    if (wParam == 0)
-                    {
-                        this.Hide();
-                    }
-                    break;
-            }
-            return PInvoke.DefSubclassProc(hWnd, uMsg, wParam, lParam);
+            Data = Service.Services.GetRequiredService<KarenPopupViewModel>();
+            Server = Service.Services.GetRequiredService<Server>();
         }
 
         private async void Button_Tapped(object sender, TappedRoutedEventArgs e)
         {
             sender.As<Button>().IsEnabled = false;
-            Service.VirtualConsole.CloseConsole();
-            await Service.Server.StopAsync();
-            Close();
+            Hide();
+            ((App)Application.Current).TrayIcon.Dispose();
+            await Task.WhenAll(Data.Quit(), Task.Delay(267)); // Wait for server stop and/or animation duration
+            Dispose();
+            AppInstance.GetCurrent().UnregisterKey();
+            AppNotificationManager.Default.Unregister();
+            DispatcherQueue.EnqueueEventLoopExit();
         }
     }
 }
