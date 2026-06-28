@@ -158,8 +158,16 @@ namespace Setup
 
                 var proc = Process.Start(procInfo);
                 proc.WaitForExit();
-                System.IO.File.Delete(exe);
-
+                try {
+                    System.IO.File.Delete(exe);
+                }
+                catch (Exception e) {
+                    // This seems to happen on some systems, making the MSI finish with an error message. 
+                    // (potentially because something is still locking the WASDK installer)
+                    // The app still installs so it's not a big deal, but might as well avoid throwing here. 
+                    session.Log("Failed to delete temporary WinAppSDK installer: " + e.Message);
+                }
+                
                 IncrementProgressBar(session, 1);
 
                 session.Log("Exit code: " + proc.ExitCode);
