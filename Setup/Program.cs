@@ -114,7 +114,7 @@ namespace Setup
                 var pm = new PackageManager();
 
                 // Taken from the MSIX version field and it's the same across all packages
-                var targetVersion = new Version(2, 3, 1, 0);
+                var targetVersion = new Version(2, 4, 0, 0);
 
                 var foundFramework = pm.FindPackagesForUser(string.Empty, "Microsoft.WindowsAppRuntime.2_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
                 var foundMain = pm.FindPackagesForUser(string.Empty, "MicrosoftCorporationII.WinAppRuntime.Main.2_8wekyb3d8bbwe").Any(pkg => pkg.Id.Version.ToVersion() >= targetVersion && pkg.Id.Architecture == Windows.System.ProcessorArchitecture.X64);
