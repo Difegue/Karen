@@ -43,7 +43,7 @@ namespace Karen
 
             Popup = new KarenPopup();
 
-            TrayIcon = new(1, "Assets/favicon.ico", "LANraragi for Windows")
+            TrayIcon = new(1, Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "Assets/favicon.ico")), "LANraragi for Windows")
             {
                 IsVisible = true
             };
