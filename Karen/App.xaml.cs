@@ -70,6 +70,7 @@ namespace Karen
 
         private void Selected(TrayIcon sender, TrayIconEventArgs e)
         {
+            DesktopFlyoutPosition flyoutPos = DesktopFlyoutPosition.InWorkArea(DesktopFlyoutWorkAreaPosition.BottomRight);
             unsafe
             {
                 // Figure out where the taskbar is and place the flyout in the correct location
@@ -82,20 +83,16 @@ namespace Karen
                 switch(appBarData.uEdge)
                 {
                     case PInvoke.ABE_LEFT:
-                        Popup.PopupDirection = DesktopFlyoutPopupDirection.LeftToRight;
-                        Popup.Placement = DesktopFlyoutPlacementMode.BottomLeft;
+                        flyoutPos = DesktopFlyoutPosition.InWorkArea(DesktopFlyoutWorkAreaPosition.BottomLeft, transitionDirection: DesktopFlyoutPopupDirection.LeftToRight);
                         break;
                     case PInvoke.ABE_TOP:
-                        Popup.PopupDirection = DesktopFlyoutPopupDirection.TopToBottom;
-                        Popup.Placement = DesktopFlyoutPlacementMode.TopRight;
+                        flyoutPos = DesktopFlyoutPosition.InWorkArea(DesktopFlyoutWorkAreaPosition.TopRight);
                         break;
                     case PInvoke.ABE_RIGHT:
-                        Popup.PopupDirection = DesktopFlyoutPopupDirection.RightToLeft;
-                        Popup.Placement = DesktopFlyoutPlacementMode.BottomRight;
+                        flyoutPos = DesktopFlyoutPosition.InWorkArea(DesktopFlyoutWorkAreaPosition.BottomRight, transitionDirection: DesktopFlyoutPopupDirection.RightToLeft);
                         break;
                     case PInvoke.ABE_BOTTOM:
-                        Popup.PopupDirection = DesktopFlyoutPopupDirection.BottomToTop;
-                        Popup.Placement = DesktopFlyoutPlacementMode.BottomRight;
+                        flyoutPos = DesktopFlyoutPosition.InWorkArea(DesktopFlyoutWorkAreaPosition.BottomRight);
                         break;
                 }
             }
@@ -103,7 +100,7 @@ namespace Karen
             if (Popup.IsOpen)
                 Popup.Hide();
             else
-                Popup.Show();
+                Popup.Show(flyoutPos);
             e.Handled = true;
         }
 
