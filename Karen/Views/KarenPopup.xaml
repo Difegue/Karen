@@ -8,8 +8,6 @@
     xmlns:flyouts="using:DesktopFlyouts"
     FlyoutWidth="360"
     FlyoutHeight="Auto"
-    Placement="BottomRight"
-    PopupDirection="Vertical"
     mc:Ignorable="d">
 
     <flyouts:DesktopFlyoutIsland IslandHeight="Auto">
